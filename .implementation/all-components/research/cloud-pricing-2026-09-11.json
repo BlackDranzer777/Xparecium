@@ -1,0 +1,164 @@
+{
+  "collectedOn": "2026-09-11",
+  "currency": "USD",
+  "howToRead": [
+    "Every number was read from a machine-readable price list the provider publishes, on the date shown, with no account. Nothing is estimated or scaled.",
+    "vCPU is the provider's own unit, not a core. AWS Intel families: 1 vCPU = 1 hardware thread. AWS Graviton: 1 vCPU = 1 physical core. Azure v5 families: 1 vCPU = 1 hardware thread.",
+    "Compute prices are on-demand / pay-as-you-go, Linux, one instance, shared tenancy, no reservation. Windows adds a per-hour licence and is not listed.",
+    "Regions: AWS us-east-1, Azure eastus. Other regions differ.",
+    "Aparecium's CPU slot is a simulation unit. Mapping slots to a machine is a catalog judgement, never arithmetic on vCPU."
+  ],
+  "sources": {
+    "aws": {
+      "method": "AWS Price List Bulk API, per-region CSV: https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/{Offer}/current/us-east-1/index.csv",
+      "publicationDates": {
+        "AmazonEC2": "2026-09-10T19:55:14Z",
+        "AmazonRDS": "2026-09-11T12:45:02Z",
+        "AmazonElastiCache": "2026-09-11T12:44:27Z",
+        "AWSQueueService": "2026-09-11T12:46:07Z",
+        "AWSELB": "2026-09-11T12:45:44Z",
+        "AWSDataTransfer": "2026-09-11T13:33:59Z"
+      },
+      "humanPages": {
+        "ec2": "https://aws.amazon.com/ec2/pricing/on-demand/",
+        "rds": "https://aws.amazon.com/rds/postgresql/pricing/",
+        "elasticache": "https://aws.amazon.com/elasticache/pricing/",
+        "sqs": "https://aws.amazon.com/sqs/pricing/",
+        "elb": "https://aws.amazon.com/elasticloadbalancing/pricing/",
+        "transfer": "https://aws.amazon.com/ec2/pricing/on-demand/#Data_Transfer"
+      }
+    },
+    "azure": {
+      "method": "Azure Retail Prices API: https://prices.azure.com/api/retail/prices?$filter=... (public JSON, paginated)",
+      "retrievedAt": "2026-09-11",
+      "humanPages": {
+        "vm": "https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/",
+        "postgres": "https://azure.microsoft.com/en-us/pricing/details/postgresql/flexible-server/",
+        "redis": "https://azure.microsoft.com/en-us/pricing/details/cache/",
+        "lb": "https://azure.microsoft.com/en-us/pricing/details/load-balancer/",
+        "servicebus": "https://azure.microsoft.com/en-us/pricing/details/service-bus/",
+        "bandwidth": "https://azure.microsoft.com/en-us/pricing/details/bandwidth/"
+      }
+    },
+    "gcp": {
+      "method": "Cloud Billing Catalog API: https://cloudbilling.googleapis.com/v1/services/6F81-5844-456A/skus",
+      "status": "NOT COLLECTED. The API returns 403 without an API key, and the pricing web page renders its table with JavaScript. An API key is free to create in a Google Cloud project; that is an account action for the owner."
+    }
+  },
+  "aws": {
+    "region": "us-east-1",
+    "compute_ec2_linux_on_demand": [
+      { "type": "t3.small",    "vcpu": 2,  "memoryGiB": 2,  "usdPerHour": "0.0208", "processor": "Intel Skylake, burstable" },
+      { "type": "t3.medium",   "vcpu": 2,  "memoryGiB": 4,  "usdPerHour": "0.0416", "processor": "Intel Skylake, burstable" },
+      { "type": "t3.large",    "vcpu": 2,  "memoryGiB": 8,  "usdPerHour": "0.0832", "processor": "Intel Skylake, burstable" },
+      { "type": "t3.xlarge",   "vcpu": 4,  "memoryGiB": 16, "usdPerHour": "0.1664", "processor": "Intel Skylake, burstable" },
+      { "type": "m7i.large",   "vcpu": 2,  "memoryGiB": 8,  "usdPerHour": "0.1008", "processor": "Intel Sapphire Rapids" },
+      { "type": "m7i.xlarge",  "vcpu": 4,  "memoryGiB": 16, "usdPerHour": "0.2016", "processor": "Intel Sapphire Rapids" },
+      { "type": "m7i.2xlarge", "vcpu": 8,  "memoryGiB": 32, "usdPerHour": "0.4032", "processor": "Intel Sapphire Rapids" },
+      { "type": "m7i.4xlarge", "vcpu": 16, "memoryGiB": 64, "usdPerHour": "0.8064", "processor": "Intel Sapphire Rapids" },
+      { "type": "m6i.large",   "vcpu": 2,  "memoryGiB": 8,  "usdPerHour": "0.0960", "processor": "Intel Ice Lake" },
+      { "type": "m6i.xlarge",  "vcpu": 4,  "memoryGiB": 16, "usdPerHour": "0.1920", "processor": "Intel Ice Lake" },
+      { "type": "m6i.2xlarge", "vcpu": 8,  "memoryGiB": 32, "usdPerHour": "0.3840", "processor": "Intel Ice Lake" },
+      { "type": "c7i.large",   "vcpu": 2,  "memoryGiB": 4,  "usdPerHour": "0.0893", "processor": "Intel Sapphire Rapids, compute-optimised" },
+      { "type": "c7i.xlarge",  "vcpu": 4,  "memoryGiB": 8,  "usdPerHour": "0.1785", "processor": "Intel Sapphire Rapids, compute-optimised" },
+      { "type": "c7i.2xlarge", "vcpu": 8,  "memoryGiB": 16, "usdPerHour": "0.3570", "processor": "Intel Sapphire Rapids, compute-optimised" },
+      { "type": "r7i.large",   "vcpu": 2,  "memoryGiB": 16, "usdPerHour": "0.1323", "processor": "Intel Sapphire Rapids, memory-optimised" },
+      { "type": "r7i.xlarge",  "vcpu": 4,  "memoryGiB": 32, "usdPerHour": "0.2646", "processor": "Intel Sapphire Rapids, memory-optimised" },
+      { "type": "r7i.2xlarge", "vcpu": 8,  "memoryGiB": 64, "usdPerHour": "0.5292", "processor": "Intel Sapphire Rapids, memory-optimised" },
+      { "type": "m7g.large",   "vcpu": 2,  "memoryGiB": 8,  "usdPerHour": "0.0816", "processor": "AWS Graviton3, Arm; 1 vCPU = 1 core" },
+      { "type": "m7g.xlarge",  "vcpu": 4,  "memoryGiB": 16, "usdPerHour": "0.1632", "processor": "AWS Graviton3, Arm; 1 vCPU = 1 core" },
+      { "type": "m7g.2xlarge", "vcpu": 8,  "memoryGiB": 32, "usdPerHour": "0.3264", "processor": "AWS Graviton3, Arm; 1 vCPU = 1 core" }
+    ],
+    "database_rds_postgresql_single_az": [
+      { "type": "db.t4g.medium",  "vcpu": 2, "memoryGiB": 4,  "usdPerHour": "0.0650" },
+      { "type": "db.m6g.large",   "vcpu": 2, "memoryGiB": 8,  "usdPerHour": "0.1590" },
+      { "type": "db.m7g.large",   "vcpu": 2, "memoryGiB": 8,  "usdPerHour": "0.1680" },
+      { "type": "db.m7g.xlarge",  "vcpu": 4, "memoryGiB": 16, "usdPerHour": "0.3370" },
+      { "type": "db.m7g.2xlarge", "vcpu": 8, "memoryGiB": 32, "usdPerHour": "0.6740" },
+      { "type": "db.r7g.large",   "vcpu": 2, "memoryGiB": 16, "usdPerHour": "0.2390" }
+    ],
+    "database_rds_storage_gp_usdPerGbMonth": "0.115",
+    "cache_elasticache_redis": [
+      { "type": "cache.t4g.medium", "vcpu": 2, "memoryGiB": 3.09,  "usdPerHour": "0.0650" },
+      { "type": "cache.m6g.large",  "usdPerHour": "0.1190" },
+      { "type": "cache.m7g.large",  "vcpu": 2, "memoryGiB": 6.38,  "usdPerHour": "0.1580" },
+      { "type": "cache.m7g.xlarge", "vcpu": 4, "memoryGiB": 12.93, "usdPerHour": "0.3150" },
+      { "type": "cache.r7g.large",  "usdPerHour": "0.3500" },
+      { "type": "cache.r7g.xlarge", "usdPerHour": "0.6990" }
+    ],
+    "load_balancer_application": {
+      "usdPerHour": "0.0225",
+      "usdPerLcuHour": "0.008",
+      "note": "An LCU is measured across new connections, active connections, bytes processed and rule evaluations; a light workload uses a fraction of one."
+    },
+    "queue_sqs_usdPerMillionRequests": {
+      "standard": "0.40",
+      "fifo": "0.50",
+      "freeRequestsPerMonth": 1000000,
+      "note": "Each API call is a request: send, receive and delete are counted separately, so one message usually costs about three requests."
+    },
+    "egress_to_internet_tiers": [
+      { "fromGB": 0,      "toGB": 10240,  "usdPerGB": "0.090" },
+      { "fromGB": 10240,  "toGB": 51200,  "usdPerGB": "0.085" },
+      { "fromGB": 51200,  "toGB": 153600, "usdPerGB": "0.070" },
+      { "fromGB": 153600, "toGB": null,   "usdPerGB": "0.050" }
+    ],
+    "egress_note": "AWS also gives 100 GB/month of outbound transfer free per account; that credit is not a row in the price list."
+  },
+  "azure": {
+    "region": "eastus",
+    "compute_vm_linux_pay_as_you_go": [
+      { "type": "Standard_B2s",     "vcpu": 2, "memoryGiB": 4,  "usdPerHour": "0.0416", "series": "B, burstable" },
+      { "type": "Standard_B2ms",    "vcpu": 2, "memoryGiB": 8,  "usdPerHour": "0.0832", "series": "B, burstable" },
+      { "type": "Standard_D2s_v5",  "vcpu": 2, "memoryGiB": 8,  "usdPerHour": "0.0960", "series": "Dsv5 general purpose, Intel" },
+      { "type": "Standard_D4s_v5",  "vcpu": 4, "memoryGiB": 16, "usdPerHour": "0.1920", "series": "Dsv5 general purpose, Intel" },
+      { "type": "Standard_D8s_v5",  "vcpu": 8, "memoryGiB": 32, "usdPerHour": "0.3840", "series": "Dsv5 general purpose, Intel" },
+      { "type": "Standard_D2ps_v5", "vcpu": 2, "memoryGiB": 8,  "usdPerHour": "0.0770", "series": "Dpsv5 general purpose, Arm" },
+      { "type": "Standard_D4ps_v5", "vcpu": 4, "memoryGiB": 16, "usdPerHour": "0.1540", "series": "Dpsv5 general purpose, Arm" },
+      { "type": "Standard_E2s_v5",  "vcpu": 2, "memoryGiB": 16, "usdPerHour": "0.1260", "series": "Esv5 memory-optimised" },
+      { "type": "Standard_E4s_v5",  "vcpu": 4, "memoryGiB": 32, "usdPerHour": "0.2520", "series": "Esv5 memory-optimised" },
+      { "type": "Standard_F2s_v2",  "vcpu": 2, "memoryGiB": 4,  "usdPerHour": "0.0846", "series": "Fsv2 compute-optimised" },
+      { "type": "Standard_F4s_v2",  "vcpu": 4, "memoryGiB": 8,  "usdPerHour": "0.1690", "series": "Fsv2 compute-optimised" }
+    ],
+    "vm_note": "vCPU and memory are from the SKU's public specification; the price API carries only the price.",
+    "database_postgresql_flexible_server": {
+      "pricingModel": "per vCore-hour plus storage, not per instance",
+      "generalPurpose_Ddsv5_usdPerVcoreHour": "0.0890",
+      "generalPurpose_Dadsv5_usdPerVcoreHour": "0.0855",
+      "burstable_B2ms_usdPerHour": "0.1360",
+      "backupStorage_usdPerGbMonth": "0.095",
+      "examples": [
+        { "size": "D2ds_v5 (2 vCore)", "usdPerHour": "0.1780" },
+        { "size": "D4ds_v5 (4 vCore)", "usdPerHour": "0.3560" }
+      ]
+    },
+    "cache_redis": [
+      { "tier": "Standard C1 (1 GB)",   "usdPerHour": "0.1380" },
+      { "tier": "Standard C2 (2.5 GB)", "usdPerHour": "0.2250" },
+      { "tier": "Standard C3 (6 GB)",   "usdPerHour": "0.4500" },
+      { "tier": "Premium P1 (6 GB)",    "usdPerHour": "0.5550" },
+      { "tier": "Premium P2 (13 GB)",   "usdPerHour": "1.1100" }
+    ],
+    "load_balancer_standard": {
+      "usdPerHour": "0.025",
+      "includesRules": 5,
+      "usdPerExtraRuleHour": "0.010",
+      "usdPerGbProcessed": "0.005",
+      "pricedAs": "global, not per region"
+    },
+    "queue_service_bus_usdPerMillionOperations": {
+      "basic": "0.05",
+      "standard_tiers": ["0.80", "0.50", "0.20"],
+      "standard_note": "Standard tier has a base charge plus tiered operation prices as volume rises.",
+      "premium_usdPerMessagingUnitHour": "0.9275"
+    },
+    "egress_to_internet_tiers_default_routing": [
+      { "fromGB": 0,      "toGB": 100,    "usdPerGB": "0.000" },
+      { "fromGB": 100,    "toGB": 10335,  "usdPerGB": "0.087" },
+      { "fromGB": 10335,  "toGB": 51295,  "usdPerGB": "0.083" },
+      { "fromGB": 51295,  "toGB": 153695, "usdPerGB": "0.070" },
+      { "fromGB": 153695, "toGB": null,   "usdPerGB": "0.050" }
+    ],
+    "egress_note": "The 'Internet routing' option is cheaper: 0.080 / 0.065 / 0.060 / 0.040 per GB across the same tiers, also with the first 100 GB free."
+  }
+}

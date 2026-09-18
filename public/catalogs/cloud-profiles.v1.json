@@ -1,0 +1,2008 @@
+{
+  "catalogId": "cloud-profiles",
+  "version": 1,
+  "currency": "USD",
+  "publishedAt": "2026-09-14",
+  "notice": "AWS and Azure profiles in this file were read from the providers' own machine-readable price lists — the AWS Price List Bulk API and the Azure Retail Prices API — by scripts/refresh-cloud-prices.mjs on 2026-09-14, and carry the provider's publication date in their priceNote. They are on-demand, single-instance, Linux rates in one region each, and are exact quotes of those lists on that date; prices change, and the same script refreshes them. Google Cloud profiles are ILLUSTRATIVE placeholders: the Cloud Billing Catalog API needs an API key (set GCP_BILLING_API_KEY to read it), and the pricing web page carries no figures as text. Self-managed profiles have no rates by design. Every profile says which of these it is in its verified flag and priceNote.",
+  "profiles": [
+    {
+      "id": "aws.ec2.t3-medium.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "server"
+      ],
+      "sizeClass": "small",
+      "label": "EC2 t3.medium",
+      "description": "Burstable general purpose. 2 vCPU, 4 GiB. Intel Skylake E5 2686 v5.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-10T19:55:14Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.0416"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.09"
+        }
+      }
+    },
+    {
+      "id": "aws.ec2.m7i-large.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "server"
+      ],
+      "sizeClass": "medium",
+      "label": "EC2 m7i.large",
+      "description": "General purpose. 2 vCPU, 8 GiB. Intel Xeon Scalable (Sapphire Rapids).",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-10T19:55:14Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.1008"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.09"
+        }
+      }
+    },
+    {
+      "id": "aws.ec2.m7i-xlarge.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "server"
+      ],
+      "sizeClass": "large",
+      "label": "EC2 m7i.xlarge",
+      "description": "General purpose. 4 vCPU, 16 GiB. Intel Xeon Scalable (Sapphire Rapids).",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-10T19:55:14Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.2016"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.09"
+        }
+      }
+    },
+    {
+      "id": "aws.ec2.m7i-2xlarge.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "server"
+      ],
+      "sizeClass": "xlarge",
+      "label": "EC2 m7i.2xlarge",
+      "description": "General purpose. 8 vCPU, 32 GiB. Intel Xeon Scalable (Sapphire Rapids).",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-10T19:55:14Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.4032"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.09"
+        }
+      }
+    },
+    {
+      "id": "azure.vm.b2s.eastus",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "eastus",
+      "regionName": "East US (Virginia)",
+      "appliesTo": [
+        "server"
+      ],
+      "sizeClass": "small",
+      "label": "VM Standard_B2s",
+      "description": "Burstable general purpose. 2 vCPU, 4 GiB.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Linux, Virtual Machines BS Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.0416"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.087"
+        }
+      }
+    },
+    {
+      "id": "azure.vm.d2s-v5.eastus",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "eastus",
+      "regionName": "East US (Virginia)",
+      "appliesTo": [
+        "server"
+      ],
+      "sizeClass": "medium",
+      "label": "VM Standard_D2s_v5",
+      "description": "General purpose. 2 vCPU, 8 GiB.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Linux, Virtual Machines Dsv5 Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.096"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.087"
+        }
+      }
+    },
+    {
+      "id": "azure.vm.d4s-v5.eastus",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "eastus",
+      "regionName": "East US (Virginia)",
+      "appliesTo": [
+        "server"
+      ],
+      "sizeClass": "large",
+      "label": "VM Standard_D4s_v5",
+      "description": "General purpose. 4 vCPU, 16 GiB.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Linux, Virtual Machines Dsv5 Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.192"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.087"
+        }
+      }
+    },
+    {
+      "id": "azure.vm.d8s-v5.eastus",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "eastus",
+      "regionName": "East US (Virginia)",
+      "appliesTo": [
+        "server"
+      ],
+      "sizeClass": "xlarge",
+      "label": "VM Standard_D8s_v5",
+      "description": "General purpose. 8 vCPU, 32 GiB.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Linux, Virtual Machines Dsv5 Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.384"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.087"
+        }
+      }
+    },
+    {
+      "provider": "gcp",
+      "providerName": "Google Cloud",
+      "region": "us-central1",
+      "regionName": "Iowa (us-central1)",
+      "verified": false,
+      "priceCheckedAt": "2026-09-09",
+      "priceNote": "Placeholder rate. Google Cloud publishes prices only through the Cloud Billing Catalog API, which needs an API key, and its pricing web page renders the table with JavaScript so nothing could be read from the page text. Nothing here was verified.",
+      "id": "gcp.gce.e2-standard-2.us-central1",
+      "appliesTo": [
+        "server"
+      ],
+      "sizeClass": "medium",
+      "label": "Compute Engine e2-standard-2 (illustrative)",
+      "description": "General purpose, roughly 2 vCPU and 8 GiB.",
+      "priceSourceUrl": "https://cloud.google.com/compute/vm-instance-pricing",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.07"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null,
+          "note": "Tiered by destination; no single per-GB rate applies."
+        }
+      }
+    },
+    {
+      "provider": "gcp",
+      "providerName": "Google Cloud",
+      "region": "us-central1",
+      "regionName": "Iowa (us-central1)",
+      "verified": false,
+      "priceCheckedAt": "2026-09-09",
+      "priceNote": "Placeholder rate. Google Cloud publishes prices only through the Cloud Billing Catalog API, which needs an API key, and its pricing web page renders the table with JavaScript so nothing could be read from the page text. Nothing here was verified.",
+      "id": "gcp.gce.n2-standard-4.us-central1",
+      "appliesTo": [
+        "server"
+      ],
+      "sizeClass": "large",
+      "label": "Compute Engine n2-standard-4 (illustrative)",
+      "description": "General purpose, roughly 4 vCPU and 16 GiB.",
+      "priceSourceUrl": "https://cloud.google.com/compute/vm-instance-pricing",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.20"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null,
+          "note": "Tiered by destination; no single per-GB rate applies."
+        }
+      }
+    },
+    {
+      "id": "self-managed.unpriced",
+      "provider": "self-managed",
+      "providerName": "Self-managed / on-premises",
+      "region": "your-datacentre",
+      "regionName": "Your own hardware",
+      "appliesTo": [
+        "server",
+        "database",
+        "readReplica",
+        "cache"
+      ],
+      "label": "Self-managed hardware (no rates)",
+      "description": "Hardware you already own. Aparecium has no rates for it, so every charge is reported as unpriced rather than as zero.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "2026-09-09",
+      "priceNote": "Deliberately has no amounts. Use this to see how Aparecium reports a charge it cannot price.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null,
+          "note": "Depends on your own hardware and amortisation."
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": null,
+          "note": "Depends on your own storage."
+        }
+      }
+    },
+    {
+      "id": "aws.alb.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "loadBalancer"
+      ],
+      "label": "Application Load Balancer",
+      "description": "Managed layer-7 load balancer, billed per hour plus capacity units.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSELB/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AWSELB, published 2026-09-11T12:45:44Z). On-demand, USD, us-east-1. The hourly charge only. AWS also bills Load Balancer Capacity Units (connections, rules, bandwidth), which Aparecium does not model, so a busy balancer costs more than this.",
+      "charges": {
+        "compute": {
+          "unit": "balancer-hour",
+          "amount": "0.0225"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.09"
+        }
+      }
+    },
+    {
+      "id": "azure.lb.eastus",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "eastus",
+      "regionName": "East US (Virginia)",
+      "appliesTo": [
+        "loadBalancer"
+      ],
+      "label": "Load Balancer (Standard)",
+      "description": "Managed layer-4 load balancer, billed per hour plus data processed.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Priced globally. The hourly charge covers five rules; Azure also bills per GB processed, which Aparecium does not model.",
+      "charges": {
+        "compute": {
+          "unit": "balancer-hour",
+          "amount": "0.025"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.087"
+        }
+      }
+    },
+    {
+      "provider": "gcp",
+      "providerName": "Google Cloud",
+      "region": "us-central1",
+      "regionName": "Iowa (us-central1)",
+      "verified": false,
+      "priceCheckedAt": "2026-09-09",
+      "priceNote": "Placeholder rate. Google Cloud publishes prices only through the Cloud Billing Catalog API, which needs an API key, and its pricing web page renders the table with JavaScript so nothing could be read from the page text. Nothing here was verified.",
+      "id": "gcp.lb.us-central1",
+      "appliesTo": [
+        "loadBalancer"
+      ],
+      "label": "Cloud Load Balancing forwarding rule (illustrative)",
+      "description": "Managed load balancer, billed per forwarding rule per hour plus processed data.",
+      "priceSourceUrl": "https://cloud.google.com/vpc/network-pricing",
+      "charges": {
+        "compute": {
+          "unit": "forwarding-rule-hour",
+          "amount": "0.03"
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null,
+          "note": "Tiered by destination; no single per-GB rate applies."
+        }
+      }
+    },
+    {
+      "id": "aws.rds.m7g-large-postgres.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "database",
+        "readReplica"
+      ],
+      "label": "RDS PostgreSQL db.m7g.large, single AZ",
+      "description": "Managed relational database instance with separately billed storage. 2 vCPU, 8 GiB.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRDS/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonRDS, published 2026-09-11T12:45:02Z). On-demand, USD, us-east-1. Single-AZ; Multi-AZ roughly doubles the instance charge. Storage is General Purpose (gp3), billed per provisioned GB-month whether or not it is queried.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.168"
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.115"
+        }
+      }
+    },
+    {
+      "id": "azure.postgres.d2ds-v5.eastus",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "eastus",
+      "regionName": "East US (Virginia)",
+      "appliesTo": [
+        "database",
+        "readReplica"
+      ],
+      "label": "Azure Database for PostgreSQL Flexible Server, D2ds_v5",
+      "description": "Managed PostgreSQL, General Purpose, 2 vCore, with separately billed storage.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Azure prices this per vCore-hour; the amount here is the 2-vCore SKU. Storage is billed per GB-month.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.178"
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.115"
+        }
+      }
+    },
+    {
+      "provider": "gcp",
+      "providerName": "Google Cloud",
+      "region": "us-central1",
+      "regionName": "Iowa (us-central1)",
+      "verified": false,
+      "priceCheckedAt": "2026-09-09",
+      "priceNote": "Placeholder rate. Google Cloud publishes prices only through the Cloud Billing Catalog API, which needs an API key, and its pricing web page renders the table with JavaScript so nothing could be read from the page text. Nothing here was verified.",
+      "id": "gcp.cloudsql.postgres-2vcpu-8gb.us-central1",
+      "appliesTo": [
+        "database",
+        "readReplica"
+      ],
+      "label": "Cloud SQL for PostgreSQL, 2 vCPU 8 GB (illustrative)",
+      "description": "Managed relational database instance with separately billed storage.",
+      "priceSourceUrl": "https://cloud.google.com/sql/pricing",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.20"
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.17"
+        }
+      }
+    },
+    {
+      "id": "aws.elasticache.r7g-large-redis.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "cache"
+      ],
+      "label": "ElastiCache Redis cache.r7g.large",
+      "description": "Managed in-memory cache node. Memory is part of the node, not billed per GB.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonElastiCache/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonElastiCache, published 2026-09-14T06:37:14Z). On-demand, USD, us-east-1. Cache capacity is included in the node price, so no separate storage charge applies.",
+      "charges": {
+        "compute": {
+          "unit": "node-hour",
+          "amount": "0.35"
+        }
+      }
+    },
+    {
+      "id": "azure.redis.c1.eastus",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "eastus",
+      "regionName": "East US (Virginia)",
+      "appliesTo": [
+        "cache"
+      ],
+      "label": "Azure Cache for Redis, Standard C1 (1 GB)",
+      "description": "Managed Redis, replicated. Memory is part of the tier, not billed per GB.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Cache capacity is included in the tier price, so no separate storage charge applies.",
+      "charges": {
+        "compute": {
+          "unit": "node-hour",
+          "amount": "0.138"
+        }
+      }
+    },
+    {
+      "provider": "gcp",
+      "providerName": "Google Cloud",
+      "region": "us-central1",
+      "regionName": "Iowa (us-central1)",
+      "verified": false,
+      "priceCheckedAt": "2026-09-09",
+      "priceNote": "Placeholder rate. Google Cloud publishes prices only through the Cloud Billing Catalog API, which needs an API key, and its pricing web page renders the table with JavaScript so nothing could be read from the page text. Nothing here was verified.",
+      "id": "gcp.memorystore.redis-basic-4gb.us-central1",
+      "appliesTo": [
+        "cache"
+      ],
+      "label": "Memorystore for Redis, Basic 4 GB (illustrative)",
+      "description": "Managed in-memory cache. Billed per GB-hour of provisioned capacity.",
+      "priceSourceUrl": "https://cloud.google.com/memorystore/docs/redis/pricing",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.20"
+        }
+      }
+    },
+    {
+      "id": "aws.route53.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "dns"
+      ],
+      "label": "Route 53 (standard queries)",
+      "description": "Managed DNS. Billed per query answered; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRoute53/current/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonRoute53, published 2026-09-11T12:45:04Z). On-demand, USD, us-east-1. Route 53 is priced globally, not per region. First tier (up to one billion queries a month). AWS also charges $0.50 per hosted zone per month, which Aparecium does not model.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.40",
+          "note": "One lookup = one billed query."
+        }
+      }
+    },
+    {
+      "id": "azure.dns.zone1",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "zone1",
+      "regionName": "Zone 1 (North America, Europe)",
+      "appliesTo": [
+        "dns"
+      ],
+      "label": "Azure DNS (public queries)",
+      "description": "Managed DNS. Billed per query answered; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. DNS is priced by zone, not region; Zone 1 covers North America and Europe. First tier (up to one billion queries a month). Azure also charges $0.50 per hosted zone per month, which Aparecium does not model.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.40",
+          "note": "One lookup = one billed query."
+        }
+      }
+    },
+    {
+      "id": "self-managed.dns.unpriced",
+      "provider": "self-managed",
+      "providerName": "Self-managed / on-premises",
+      "region": "your-datacentre",
+      "regionName": "Your own hardware",
+      "appliesTo": [
+        "dns"
+      ],
+      "label": "Self-managed DNS (no rates)",
+      "description": "A resolver you run yourself, such as BIND or CoreDNS. Aparecium has no rates for it, so every charge is reported as unpriced rather than as zero.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "2026-09-12",
+      "priceNote": "Deliberately has no amounts. Use this to see how Aparecium reports a charge it cannot price.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": null,
+          "note": "Depends on the hardware you run the resolver on."
+        }
+      }
+    },
+    {
+      "id": "aws.cloudfront.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "cdn"
+      ],
+      "label": "CloudFront (United States edge)",
+      "description": "Managed CDN. Billed per request and per GB sent to users; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonCloudFront/current/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonCloudFront, published 2026-09-11T12:44:15Z). On-demand, USD, us-east-1. CloudFront is priced by edge location, not by region; these are the United States rates. HTTPS requests. Transfer to users uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 1 TB/month and 10 million requests free. Transfer from your origin to CloudFront is not modelled.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "1.00",
+          "note": "Every request through the CDN is billed, hit or miss."
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.085"
+        }
+      }
+    },
+    {
+      "id": "azure.cdn.zone1",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "zone1",
+      "regionName": "Zone 1 (North America, Europe)",
+      "appliesTo": [
+        "cdn"
+      ],
+      "label": "Azure CDN from Microsoft (Standard)",
+      "description": "Managed CDN. Billed per request and per GB sent to users; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. CDN is priced by zone, not region; Zone 1 covers North America and Europe. First tier of transfer.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.60",
+          "note": "Every request through the CDN is billed, hit or miss."
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": "0.081"
+        }
+      }
+    },
+    {
+      "id": "self-managed.cdn.unpriced",
+      "provider": "self-managed",
+      "providerName": "Self-managed / on-premises",
+      "region": "your-datacentre",
+      "regionName": "Your own hardware",
+      "appliesTo": [
+        "cdn"
+      ],
+      "label": "Self-managed edge cache (no rates)",
+      "description": "Caching proxies you run yourself, such as Varnish or nginx at the edge. Aparecium has no rates for them, so every charge is reported as unpriced rather than as zero.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "2026-09-12",
+      "priceNote": "Deliberately has no amounts. Use this to see how Aparecium reports a charge it cannot price.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": null,
+          "note": "Depends on the hardware you run the caches on."
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null,
+          "note": "Depends on your own network contract."
+        }
+      }
+    },
+    {
+      "id": "aws.waf.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "waf"
+      ],
+      "label": "AWS WAF (one web ACL)",
+      "description": "Managed web application firewall. A monthly charge for the rule set, plus a charge per request inspected.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/awswaf/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (awswaf, published 2026-09-11T12:46:22Z). On-demand, USD, us-east-1. One web ACL, prorated hourly from the monthly charge, plus the first request tier. AWS also charges $1.00 per rule per month, which Aparecium does not model, so a real firewall costs a little more.",
+      "charges": {
+        "compute": {
+          "unit": "web ACL-hour",
+          "amount": "0.0068",
+          "note": "The monthly web ACL charge spread over 730 hours."
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.60",
+          "note": "Every request inspected is billed, allowed or blocked."
+        }
+      }
+    },
+    {
+      "id": "self-managed.waf.unpriced",
+      "provider": "self-managed",
+      "providerName": "Self-managed / on-premises",
+      "region": "your-datacentre",
+      "regionName": "Your own hardware",
+      "appliesTo": [
+        "waf"
+      ],
+      "label": "Self-managed WAF / reverse proxy (no rates)",
+      "description": "A proxy you run yourself, such as nginx with ModSecurity or HAProxy. Aparecium has no rates for it, so every charge is reported as unpriced rather than as zero.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "2026-09-12",
+      "priceNote": "Deliberately has no amounts. Use this to see how Aparecium reports a charge it cannot price.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null,
+          "note": "Depends on the hardware you run the proxy on."
+        }
+      }
+    },
+    {
+      "id": "aws.apigateway-http.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "apiGateway"
+      ],
+      "label": "API Gateway (HTTP API)",
+      "description": "Managed API front door. Billed per request; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonApiGateway/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonApiGateway, published 2026-09-11T12:44:08Z). On-demand, USD, us-east-1. HTTP API, first tier (up to 300 million requests a month). The first million requests a month are free for a year and are not modelled.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "1.00",
+          "note": "Every request through the gateway is billed, forwarded or refused."
+        }
+      }
+    },
+    {
+      "id": "self-managed.apigateway.unpriced",
+      "provider": "self-managed",
+      "providerName": "Self-managed / on-premises",
+      "region": "your-datacentre",
+      "regionName": "Your own hardware",
+      "appliesTo": [
+        "apiGateway"
+      ],
+      "label": "Self-managed API gateway (no rates)",
+      "description": "A gateway you run yourself, such as Kong or Envoy. Aparecium has no rates for it, so every charge is reported as unpriced rather than as zero.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "2026-09-12",
+      "priceNote": "Deliberately has no amounts. Use this to see how Aparecium reports a charge it cannot price.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null,
+          "note": "Depends on the hardware you run the gateway on."
+        }
+      }
+    },
+    {
+      "id": "aws.sqs.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "queue",
+        "deadLetter"
+      ],
+      "label": "SQS standard queue",
+      "description": "A managed message queue. Nothing is provisioned: the whole charge is what passes through it.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSQueueService/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AWSQueueService, published 2026-09-11T12:46:07Z). On-demand, USD, us-east-1. First tier, standard queue. AWS counts every API call as a request — send, receive and delete — so one message is billed as three requests, which the multiplier below applies. The first million requests a month are free and are not modelled.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.40",
+          "unitsPerOperation": 3,
+          "note": "One message = send + receive + delete = three billed requests."
+        }
+      }
+    },
+    {
+      "id": "azure.servicebus.basic.eastus",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "eastus",
+      "regionName": "East US (Virginia)",
+      "appliesTo": [
+        "queue"
+      ],
+      "label": "Service Bus queue, Basic tier",
+      "description": "A managed message queue billed per operation, with nothing to provision.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Basic tier. Azure counts send, receive and complete as separate operations, so one message is billed as three, which the multiplier below applies.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.05",
+          "unitsPerOperation": 3,
+          "note": "One message = send + receive + complete = three billed operations."
+        }
+      }
+    },
+    {
+      "provider": "gcp",
+      "providerName": "Google Cloud",
+      "region": "us-central1",
+      "regionName": "Iowa (us-central1)",
+      "verified": false,
+      "priceCheckedAt": "2026-09-09",
+      "priceNote": "Placeholder rate. Google Cloud publishes prices only through the Cloud Billing Catalog API, which needs an API key, and its pricing web page renders the table with JavaScript so nothing could be read from the page text. Nothing here was verified.",
+      "id": "gcp.pubsub.us-central1",
+      "appliesTo": [
+        "queue",
+        "pubsub"
+      ],
+      "label": "Pub/Sub topic (illustrative)",
+      "description": "A managed message service charged by volume, with nothing to provision up front.",
+      "priceSourceUrl": "https://cloud.google.com/pubsub/pricing",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.40",
+          "note": "Illustrative. Pub/Sub is charged by data volume rather than per message; this profile approximates it per message so the shape of the bill is visible."
+        }
+      }
+    },
+    {
+      "id": "self-managed.queue.unpriced",
+      "provider": "self-managed",
+      "providerName": "Self-managed / on-premises",
+      "region": "your-datacentre",
+      "regionName": "Your own hardware",
+      "appliesTo": [
+        "queue"
+      ],
+      "label": "Self-managed broker (no rates)",
+      "description": "A broker you run yourself, such as RabbitMQ or Kafka. Aparecium has no rates for it, so every charge is reported as unpriced rather than as zero.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "2026-09-10",
+      "priceNote": "Deliberately has no amounts. Use this to see how Aparecium reports a charge it cannot price.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": null,
+          "note": "Depends on the hardware you run the broker on."
+        }
+      }
+    },
+    {
+      "id": "aws.documentdb.r6g-large-io.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "documentDb"
+      ],
+      "label": "DocumentDB db.r6g.large, I/O-Optimized",
+      "description": "Managed document database, MongoDB-compatible. One instance billed per hour, storage per GB-month; reads and writes are included in the I/O-Optimized configuration.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonDocDB/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonDocDB, published 2026-09-11T12:44:22Z). On-demand, USD, us-east-1. One db.r6g.large instance in the I/O-Optimized configuration, which includes all I/O in the instance and storage rates, so there is no per-request charge to map. Backups beyond the free allowance are not modelled.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.2895"
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.30"
+        }
+      }
+    },
+    {
+      "id": "generic.documentDb",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "documentDb"
+      ],
+      "label": "Document database (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "writes": {
+          "unit": "million requests",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.keyspaces.on-demand.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "wideColumn"
+      ],
+      "label": "Keyspaces (for Apache Cassandra), on-demand",
+      "description": "Managed wide-column store that scales itself. Billed per read, per write and per GB stored.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonMCS/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonMCS, published 2026-09-11T12:44:52Z). On-demand, USD, us-east-1. On-demand capacity. One read request unit per read and one write request unit per write, which holds for rows up to 4 KB read and 1 KB written; the synchronous write copies drawn on the component are how Keyspaces replicates internally and are not billed separately.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.125",
+          "note": "One read = one billed read request unit."
+        },
+        "writes": {
+          "unit": "million requests",
+          "amount": "0.625",
+          "note": "One write = one billed write request unit."
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.25"
+        }
+      }
+    },
+    {
+      "id": "generic.wideColumn",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "wideColumn"
+      ],
+      "label": "Wide-column store (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "writes": {
+          "unit": "million requests",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.opensearch.r6g-large.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "searchIndex"
+      ],
+      "label": "OpenSearch Service r6g.large.search",
+      "description": "Managed search cluster. One data node billed per hour, plus its gp3 storage per GB-month; searches and indexing are not billed per request.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonES/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonES, published 2026-09-11T12:44:27Z). On-demand, USD, us-east-1. One r6g.large.search data node with gp3 storage. A production domain usually has three or more nodes; multiply the compute line by your node count. Dedicated master nodes are not modelled.",
+      "charges": {
+        "compute": {
+          "unit": "node-hour",
+          "amount": "0.167"
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.122"
+        }
+      }
+    },
+    {
+      "id": "generic.searchIndex",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "searchIndex"
+      ],
+      "label": "Search index (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "writes": {
+          "unit": "million requests",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.athena.s3.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "warehouse"
+      ],
+      "label": "Athena over S3 Standard (per TB scanned)",
+      "description": "Serverless reporting over files in S3. Billed per terabyte a report scans, plus S3 storage for the data; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonAthena/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonAthena, published 2026-09-11T12:44:08Z). On-demand, USD, us-east-1. The scan rate is $5.00 per terabyte read, expressed here per GB (1,024 GB to the terabyte). Storage is the S3 Standard first-tier rate for the data the reports scan. Athena rounds each query up to 10 MB; that minimum is not modelled.",
+      "charges": {
+        "scan": {
+          "unit": "GB scanned",
+          "amount": "0.004883"
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.023"
+        }
+      }
+    },
+    {
+      "id": "aws.redshift.ra3-xlplus.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "warehouse"
+      ],
+      "label": "Redshift ra3.xlplus, one node",
+      "description": "A provisioned warehouse: one node billed per hour, plus managed storage per GB-month. Reports are not billed by what they scan.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRedshift/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonRedshift, published 2026-09-11T12:45:05Z). On-demand, USD, us-east-1. One ra3.xlplus node with Redshift Managed Storage. Provisioned Redshift does not charge per scan, so the component's scanned volume affects time, not cost, on this profile. Concurrency scaling and Spectrum are not modelled.",
+      "charges": {
+        "compute": {
+          "unit": "node-hour",
+          "amount": "1.086"
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.024"
+        }
+      }
+    },
+    {
+      "id": "generic.warehouse",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "warehouse"
+      ],
+      "label": "Data warehouse (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "storage": {
+          "unit": "GB-month",
+          "amount": null
+        },
+        "scan": {
+          "unit": "GB scanned",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.timestream.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "timeSeries"
+      ],
+      "label": "Timestream for LiveAnalytics",
+      "description": "Managed time-series store. Billed per GB of points taken in and per GB-month kept in the magnetic store; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonTimestream/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonTimestream, published 2026-09-11T12:45:13Z). On-demand, USD, us-east-1. Ingestion is billed by the gigabyte: the run's writes times the record size drawn on the component. Storage is the magnetic store rate; the memory store ($0.036 per GB-hour) and queries ($0.01 per GB scanned) are not modelled, because this model does not measure what a query scans.",
+      "charges": {
+        "ingest": {
+          "unit": "GB",
+          "amount": "0.50",
+          "note": "Writes times record size."
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.03"
+        }
+      }
+    },
+    {
+      "id": "generic.timeSeries",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "timeSeries"
+      ],
+      "label": "Time-series database (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "writes": {
+          "unit": "million requests",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.kinesis.provisioned.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "eventStream"
+      ],
+      "label": "Kinesis Data Streams, provisioned shards",
+      "description": "A managed event stream. Each partition is a shard billed per hour, and every record written is a payload unit.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonKinesis/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonKinesis, published 2026-09-11T12:44:43Z). On-demand, USD, us-east-1. Provisioned mode. The hourly charge is per shard and is multiplied by the partitions drawn on the component. One payload unit per record up to 25 KB. Retention beyond 24 hours and enhanced fan-out are not modelled.",
+      "charges": {
+        "compute": {
+          "unit": "shard-hour",
+          "amount": "0.015",
+          "note": "One shard per partition."
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.014",
+          "note": "One record written = one payload unit."
+        }
+      }
+    },
+    {
+      "id": "generic.eventStream",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "eventStream"
+      ],
+      "label": "Event stream (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "generic.deadLetter",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "deadLetter"
+      ],
+      "label": "Dead-letter queue (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.eventbridge-scheduler.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "scheduler"
+      ],
+      "label": "EventBridge Scheduler",
+      "description": "Managed schedules. Billed per job started; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSEvents/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AWSEvents, published 2026-09-11T12:45:49Z). On-demand, USD, us-east-1. Paid tier. The first 14 million scheduled invocations a month are free and are not modelled.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "1.00",
+          "note": "One job started = one billed invocation."
+        }
+      }
+    },
+    {
+      "id": "generic.scheduler",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "scheduler"
+      ],
+      "label": "Scheduler (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.apigateway-websocket.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "websocket"
+      ],
+      "label": "API Gateway WebSocket API",
+      "description": "Managed WebSocket connections. Billed per message; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonApiGateway/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonApiGateway, published 2026-09-11T12:44:08Z). On-demand, USD, us-east-1. First message tier (up to one billion a month). AWS also bills $0.25 per million connection-minutes, which this model does not measure and does not include, so a chatty long-lived connection costs a little more than shown.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "1.00",
+          "note": "One message either way = one billed message."
+        }
+      }
+    },
+    {
+      "id": "generic.websocket",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "websocket"
+      ],
+      "label": "WebSocket server (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "generic.rateLimiter",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "rateLimiter"
+      ],
+      "label": "Rate limiter (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "generic.serviceMesh",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "serviceMesh"
+      ],
+      "label": "Service mesh proxy (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.cognito.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "identity"
+      ],
+      "label": "Cognito user pool (no rates applied)",
+      "description": "A managed identity service billed per monthly active user, a unit this simulation does not measure, so its charge is reported as unpriced rather than as zero.",
+      "verified": false,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonCognito/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "No rates applied. Cognito bills per monthly active user, not per check: the price list read on 2026-09-14 (published 2026-09-11T12:44:17Z) gives $0.0055 per MAU for the first 50,000 after the free tier on the User Pools tier, and $0.015 per MAU on the Essentials tier. The simulation measures access checks, and an active user count is not a monthly active user count, so no rate is applied.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": null,
+          "note": "Billed per monthly active user, which the simulation does not measure."
+        }
+      }
+    },
+    {
+      "id": "generic.identity",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "identity"
+      ],
+      "label": "Identity service (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.cloudmap.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "discovery"
+      ],
+      "label": "Cloud Map",
+      "description": "Managed service discovery. Billed per registered resource per month and per discovery call.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSCloudMap/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AWSCloudMap, published 2026-09-11T12:45:31Z). On-demand, USD, us-east-1. One registered resource, its monthly charge spread over 730 hours, plus discovery API calls. DNS-based discovery through Route 53 is billed separately and is not modelled.",
+      "charges": {
+        "compute": {
+          "unit": "resource-hour",
+          "amount": "0.000137",
+          "note": "One registered resource, $0.10 a month spread over 730 hours."
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": "1.00",
+          "note": "One lookup = one billed API call."
+        }
+      }
+    },
+    {
+      "id": "generic.discovery",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "discovery"
+      ],
+      "label": "Service discovery / configuration (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.secretsmanager.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "secrets"
+      ],
+      "label": "Secrets Manager, one secret",
+      "description": "Managed secrets. Billed per secret per month and per API call.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSSecretsManager/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AWSSecretsManager, published 2026-09-11T12:46:10Z). On-demand, USD, us-east-1. One secret, its monthly charge spread over 730 hours, plus API calls. Rotation runs a Lambda function, whose cost is not modelled here.",
+      "charges": {
+        "compute": {
+          "unit": "secret-hour",
+          "amount": "0.000548",
+          "note": "One secret, $0.40 a month spread over 730 hours."
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": "5.00",
+          "note": "One fetch = one billed API call."
+        }
+      }
+    },
+    {
+      "id": "generic.secrets",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "secrets"
+      ],
+      "label": "Secrets manager (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.ses.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "notification"
+      ],
+      "label": "SES outbound email",
+      "description": "Managed email delivery. Billed per recipient; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonSES/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonSES, published 2026-09-11T12:45:07Z). On-demand, USD, us-east-1. Email only, one recipient per notification. SMS and push notifications are billed by other services at other rates. Attachments and dedicated IPs are not modelled.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "100.00",
+          "note": "One delivery attempt = one recipient billed."
+        }
+      }
+    },
+    {
+      "id": "generic.notification",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "notification"
+      ],
+      "label": "Notification service (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.cloudwatch-logs.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "monitoring"
+      ],
+      "label": "CloudWatch Logs, Standard class",
+      "description": "Managed logging. Billed per GB of records taken in; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonCloudWatch/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonCloudWatch, published 2026-09-11T13:44:05Z). On-demand, USD, us-east-1. Ingestion into the Standard log class: the run's records times the record size drawn on the component. Log storage ($0.03 per GB-month) is not modelled — at the default sixty-second retention it is negligible — and custom metrics, alarms and dashboards are separate charges not included here.",
+      "charges": {
+        "ingest": {
+          "unit": "GB",
+          "amount": "0.50",
+          "note": "Records times record size."
+        }
+      }
+    },
+    {
+      "id": "generic.monitoring",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "monitoring"
+      ],
+      "label": "Monitoring / logging (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null
+        },
+        "egress": {
+          "unit": "GB",
+          "amount": null
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "aws.sns.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "pubsub"
+      ],
+      "label": "SNS standard topic",
+      "description": "A managed topic: one publish, a copy to every subscriber. Billed per publish; delivery to queues is free.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonSNS/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonSNS, published 2026-09-11T12:45:11Z). On-demand, USD, us-east-1. Paid tier. The first million requests a month are free and are not modelled. Delivery to SQS queues and Lambda is free; HTTP and email deliveries cost extra and are not modelled.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.50",
+          "note": "One publish = one billed request, however many listeners copy it."
+        }
+      }
+    },
+    {
+      "id": "self-managed.pubsub.unpriced",
+      "provider": "self-managed",
+      "providerName": "Self-managed / on-premises",
+      "region": "your-datacentre",
+      "regionName": "Your own hardware",
+      "appliesTo": [
+        "pubsub"
+      ],
+      "label": "Self-managed topic (no rates)",
+      "description": "A broker with topics you run yourself, such as RabbitMQ exchanges or Kafka. Aparecium has no rates for it, so every charge is reported as unpriced rather than as zero.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "2026-09-12",
+      "priceNote": "Deliberately has no amounts. Use this to see how Aparecium reports a charge it cannot price.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": null,
+          "note": "Depends on the hardware you run the broker on."
+        }
+      }
+    },
+    {
+      "id": "aws.lambda.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "serverless"
+      ],
+      "label": "Lambda (x86)",
+      "description": "Code run per request with nothing provisioned. Billed per invocation and per gigabyte-second alive.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSLambda/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AWSLambda, published 2026-09-11T17:35:10Z). On-demand, USD, us-east-1. x86, first duration tier (up to 6 billion GB-seconds a month). The free tier — a million requests and 400,000 GB-seconds a month — is not modelled.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.20",
+          "note": "One invocation = one billed request."
+        },
+        "duration": {
+          "unit": "GB-second",
+          "amount": "0.0000166667",
+          "note": "Wall-clock time alive times memory allotted, rounded to the millisecond by the provider."
+        }
+      }
+    },
+    {
+      "id": "azure.functions.consumption.eastus",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "eastus",
+      "regionName": "East US (Virginia)",
+      "appliesTo": [
+        "serverless"
+      ],
+      "label": "Azure Functions, Consumption plan",
+      "description": "Code run per request with nothing provisioned. Billed per execution and per gigabyte-second alive.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Consumption plan, paid tiers. The free grant — a million executions and 400,000 GB-seconds a month — is not modelled.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.20",
+          "note": "One execution = one billed request."
+        },
+        "duration": {
+          "unit": "GB-second",
+          "amount": "0.000016",
+          "note": "Wall-clock time alive times memory allotted."
+        }
+      }
+    },
+    {
+      "id": "self-managed.serverless.unpriced",
+      "provider": "self-managed",
+      "providerName": "Self-managed / on-premises",
+      "region": "your-datacentre",
+      "regionName": "Your own hardware",
+      "appliesTo": [
+        "serverless"
+      ],
+      "label": "Self-hosted functions (no rates)",
+      "description": "A functions platform you run yourself, such as OpenFaaS or Knative. Aparecium has no rates for it, so every charge is reported as unpriced rather than as zero.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "2026-09-12",
+      "priceNote": "Deliberately has no amounts. Use this to see how Aparecium reports a charge it cannot price.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null,
+          "note": "Depends on the hardware you run the platform on."
+        }
+      }
+    },
+    {
+      "id": "aws.dynamodb.on-demand.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "kvStore"
+      ],
+      "label": "DynamoDB, on-demand",
+      "description": "A managed key-value store that scales itself. Billed per read, per write and per GB stored.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonDynamoDB/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonDynamoDB, published 2026-09-11T12:44:22Z). On-demand, USD, us-east-1. On-demand (pay per request), standard table class. One read request unit per read and one write request unit per write, which holds for items up to 4 KB read and 1 KB written; larger items cost more units. The first 25 GB of storage a month are free and are not modelled.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.125",
+          "note": "One read = one billed read request unit."
+        },
+        "writes": {
+          "unit": "million requests",
+          "amount": "0.625",
+          "note": "One write = one billed write request unit."
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.25"
+        }
+      }
+    },
+    {
+      "id": "self-managed.kvstore.unpriced",
+      "provider": "self-managed",
+      "providerName": "Self-managed / on-premises",
+      "region": "your-datacentre",
+      "regionName": "Your own hardware",
+      "appliesTo": [
+        "kvStore"
+      ],
+      "label": "Self-managed key-value store (no rates)",
+      "description": "A store you run yourself, such as MongoDB, Cassandra or ScyllaDB. Aparecium has no rates for it, so every charge is reported as unpriced rather than as zero.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "2026-09-12",
+      "priceNote": "Deliberately has no amounts. Use this to see how Aparecium reports a charge it cannot price.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null,
+          "note": "Depends on the hardware you run the store on."
+        },
+        "storage": {
+          "unit": "GB-month",
+          "amount": null,
+          "note": "Depends on your own storage."
+        }
+      }
+    },
+    {
+      "id": "aws.s3.standard.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "objectStorage"
+      ],
+      "label": "S3 Standard",
+      "description": "Managed object storage. Billed per GB kept, per read and per write.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonS3, published 2026-09-11T12:45:07Z). On-demand, USD, us-east-1. S3 Standard, first storage tier (up to 50 TB). Reads are GET requests and writes are PUT requests. Transfer out to the internet is billed separately and is not on this profile, since the server in front of the bucket carries the response.",
+      "charges": {
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.023"
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.40",
+          "note": "One read = one GET request."
+        },
+        "writes": {
+          "unit": "million requests",
+          "amount": "5.00",
+          "note": "One write = one PUT request."
+        }
+      }
+    },
+    {
+      "id": "azure.blob.hot-lrs.eastus",
+      "provider": "azure",
+      "providerName": "Microsoft Azure",
+      "region": "eastus",
+      "regionName": "East US (Virginia)",
+      "appliesTo": [
+        "objectStorage"
+      ],
+      "label": "Blob Storage, Hot, LRS",
+      "description": "Managed object storage. Billed per GB kept, per read and per write.",
+      "verified": true,
+      "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
+      "priceCheckedAt": "2026-09-14",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. General-purpose v2 block blobs, Hot tier, locally redundant, first storage tier (up to 50 TB).",
+      "charges": {
+        "storage": {
+          "unit": "GB-month",
+          "amount": "0.0208"
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": "0.40",
+          "note": "One read = one read operation."
+        },
+        "writes": {
+          "unit": "million requests",
+          "amount": "5.00",
+          "note": "One write = one write operation."
+        }
+      }
+    },
+    {
+      "id": "self-managed.objectstorage.unpriced",
+      "provider": "self-managed",
+      "providerName": "Self-managed / on-premises",
+      "region": "your-datacentre",
+      "regionName": "Your own hardware",
+      "appliesTo": [
+        "objectStorage"
+      ],
+      "label": "Self-managed object storage (no rates)",
+      "description": "Storage you run yourself, such as MinIO or Ceph. Aparecium has no rates for it, so every charge is reported as unpriced rather than as zero.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "2026-09-12",
+      "priceNote": "Deliberately has no amounts. Use this to see how Aparecium reports a charge it cannot price.",
+      "charges": {
+        "storage": {
+          "unit": "GB-month",
+          "amount": null,
+          "note": "Depends on your own disks."
+        }
+      }
+    }
+  ]
+}

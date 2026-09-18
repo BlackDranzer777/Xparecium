@@ -1,0 +1,302 @@
+[
+  {
+    "Path": "src\\app\\App.tsx",
+    "Hash": "26E6EDEA773EFAF49F299E2EA96352CE31338F9227FC284D183581A69E20F400"
+  },
+  {
+    "Path": "src\\app\\main.tsx",
+    "Hash": "85E968BAFE7D2C295244AF4691E0E6A698390CA442486ABB5E75FEE4251109E8"
+  },
+  {
+    "Path": "src\\app\\styles.css",
+    "Hash": "F6EF2834FF04EDBE1D252F7BCB9839D3EF6319FF73E683442F1AF7427AA714B7"
+  },
+  {
+    "Path": "src\\app\\theme.ts",
+    "Hash": "5DA6DA914C0E7C14AA4FEC02332C950886A6BCE96BA3A67346CAE72FC8909328"
+  },
+  {
+    "Path": "src\\catalogs\\loader.ts",
+    "Hash": "F7042998C24FD54E7D03B9B0F206484D3E6370B26090A7EEAFB95F77B46D7181"
+  },
+  {
+    "Path": "src\\catalogs\\server-pricing.ts",
+    "Hash": "5705B1C0841418F2006618A06B5C4DC748EF87264DEBA4A405ABC783730B3D5F"
+  },
+  {
+    "Path": "src\\catalogs\\types.ts",
+    "Hash": "63345488B47BE5FD200D85E3F342DA079D3054B358BD8972E81FD3F0AA598020"
+  },
+  {
+    "Path": "src\\domain\\defaults.ts",
+    "Hash": "315A62EFA6511D5EEF4ADEC71FF062FD0C70C2EFBEA03666FC4986B49FC76AEA"
+  },
+  {
+    "Path": "src\\domain\\ids.ts",
+    "Hash": "BA0DFB192AFB6855A0BDC663709514DBEA4300F5692306BFD9A65B8CF50B14AC"
+  },
+  {
+    "Path": "src\\domain\\schema.ts",
+    "Hash": "30B943F76FC54E7D004FA7EC608EA4117B58C2C054991CDD48700795FC87F015"
+  },
+  {
+    "Path": "src\\domain\\types.ts",
+    "Hash": "4F5C741EA4B23E06691631F5351A3754B10CBEE08A9C2DB9DAD60228466FB146"
+  },
+  {
+    "Path": "src\\domain\\units.ts",
+    "Hash": "09B43C9D3B69E49E24863A6551A316F2F060541A0A7BDA13CF34FDF95DEA23EE"
+  },
+  {
+    "Path": "src\\features\\editor\\Canvas.tsx",
+    "Hash": "3A911909BD79B697C2DB85DD8F55B006F5B677900BA666D9C0370B31908AAFA3"
+  },
+  {
+    "Path": "src\\features\\editor\\ControlBar.tsx",
+    "Hash": "230C856AF5291561DCA01DAFF62962AED42AFF71875D2D3AA49E84827CD5D577"
+  },
+  {
+    "Path": "src\\features\\editor\\Inspector.tsx",
+    "Hash": "1B5208C87ADC245545DDDF50C415C6A2282CC6B873B5986A7C9D6A639F3AB8F4"
+  },
+  {
+    "Path": "src\\features\\editor\\Palette.tsx",
+    "Hash": "CFA67F2DB609706F691F3DD2C62A0AC067965BC3CD79505D0BB238AD9BDA0536"
+  },
+  {
+    "Path": "src\\features\\editor\\store.ts",
+    "Hash": "499B23254C3C927412341BA5D429AA2A789756D33CCF923862FA6C3BFFC4A595"
+  },
+  {
+    "Path": "src\\features\\projects\\ProjectsPanel.tsx",
+    "Hash": "2C018995AF6F448FBBFA4B2F2298F8801EEDD6012D4F18BF133CF2569EDB42A0"
+  },
+  {
+    "Path": "src\\features\\results\\Chart.tsx",
+    "Hash": "E351FE058D5330E43C65D20A505F6B2CC1069978FC8A4A2C2E5C98871CC2902B"
+  },
+  {
+    "Path": "src\\features\\results\\ComparisonTable.tsx",
+    "Hash": "6EBD83C49A640EBA7C4FBFE7372612DF150A9EC5522D9A9560F5B26FB32B6566"
+  },
+  {
+    "Path": "src\\features\\results\\CostPanel.tsx",
+    "Hash": "E4C3A54234637A0847541BE19C6CCAF40BF77B4486A4B3908F7CD95601CB62D8"
+  },
+  {
+    "Path": "src\\features\\results\\node-metrics.ts",
+    "Hash": "AF3D82EE772144E443A22C7E3AF74320EC7E661D157C64440DE8258BFC16BEF5"
+  },
+  {
+    "Path": "src\\features\\results\\ResultsPanel.tsx",
+    "Hash": "DD4CF81A588B4220F0992ABFF41FC6567D238BDE9049CDAB72D230DC4551C346"
+  },
+  {
+    "Path": "src\\pricing\\pricing.ts",
+    "Hash": "47B5AA2FA863058683403A3642B647DCD9CBDF232351E3BD4F236DB851966960"
+  },
+  {
+    "Path": "src\\simulation\\engine.ts",
+    "Hash": "4F7C346B23D8C487A452D52D79D3611820F7DD786CE25418F531704F9A2B1463"
+  },
+  {
+    "Path": "src\\simulation\\event-queue.ts",
+    "Hash": "6B83B1F71747346E9A98CC2053D11305BCDD3A4F4EEBDF91C38977A1CF8EFF83"
+  },
+  {
+    "Path": "src\\simulation\\metrics.ts",
+    "Hash": "93983A9731A6873ACF05B99FC9971B954CF8C9CC78C177B1119B8F26A774251E"
+  },
+  {
+    "Path": "src\\simulation\\ring-queue.ts",
+    "Hash": "43FE5F1C4114CA0595AE5A0ADA31620EF1BCB52F81CFCA59FD53045E1E2F92FB"
+  },
+  {
+    "Path": "src\\simulation\\rng.ts",
+    "Hash": "F8A60D4380CD4FA243A5BFAA923F60BDC9B33D594AA8D046396154203698B3C9"
+  },
+  {
+    "Path": "src\\simulation\\routing.ts",
+    "Hash": "787A55F4728E8B3920CE32CDC0ABECDBEE6F625C236AD6CB7F75111DD4A7F38B"
+  },
+  {
+    "Path": "src\\simulation\\signature.ts",
+    "Hash": "DEB0285F298A6B4E59A6370D4C2168E8A6BBBE0A8DEBA6CED775474E1A1E7A29"
+  },
+  {
+    "Path": "src\\simulation\\types.ts",
+    "Hash": "5AFB1EF12FC18FA8D739070FDAD3F85935F1ADA0855B1639E5A23C2F835E92E4"
+  },
+  {
+    "Path": "src\\simulation\\models\\link.ts",
+    "Hash": "0C91288E1E3502E26D78603DB5B1C83F92DE62DC9C674EF3E2B5A894AEBDD7B9"
+  },
+  {
+    "Path": "src\\simulation\\models\\queue.ts",
+    "Hash": "1788ED39F0C9868D4CD9EC207FED057DD2EFA776E74543C0128AE6C14666BEA3"
+  },
+  {
+    "Path": "src\\simulation\\models\\server.ts",
+    "Hash": "0050F2903EEBA06955ED661022E7F77126A646C3DE1A6A7C98B555231E345C4F"
+  },
+  {
+    "Path": "src\\simulation\\models\\station.ts",
+    "Hash": "FFDA0B7A5DD9543E3E7CC729CD376835087A9BE753A963511257AC71D764F328"
+  },
+  {
+    "Path": "src\\storage\\db.ts",
+    "Hash": "B17896A212BBF93E27DA1F49D21C3B8B0FEA42FC6CF09D5EFE04DA952528604E"
+  },
+  {
+    "Path": "src\\storage\\exchange.ts",
+    "Hash": "45BBCCC1F6264C2543225326FA2F23965AF09A947E3DC4D93E74C91056512CFF"
+  },
+  {
+    "Path": "src\\storage\\run-schema.ts",
+    "Hash": "9B07B2DF94C77BA44ECCCE654B229B67A4BCCB0799D38320DFBD213FB7DCD9A3"
+  },
+  {
+    "Path": "src\\storage\\runs.ts",
+    "Hash": "533AF64F8B296CB07740D632CCEDF2F749074F104C40D8A8BB5B959DCFAFE07C"
+  },
+  {
+    "Path": "src\\ui\\icons.tsx",
+    "Hash": "D858127A7B801669056A2D9E865F3F3832B87D15F4374EB7CF73E180DA983EB3"
+  },
+  {
+    "Path": "src\\ui\\primitives.tsx",
+    "Hash": "29380D021DC214092E08DBD144288315774BD60B919DA3FECF6507A672E21536"
+  },
+  {
+    "Path": "src\\workers\\client.ts",
+    "Hash": "1B5E4928336ADF226E2A2C42D1C683C966ED75503CC72E71C88E9F5900171E27"
+  },
+  {
+    "Path": "src\\workers\\protocol.ts",
+    "Hash": "E9C89EDECB2FE53A78D63555C17EE018888B4FC00CA74A942C207F5B39FE5EEE"
+  },
+  {
+    "Path": "src\\workers\\runner.ts",
+    "Hash": "1D03A68DEC672A0C1DB9A2C0C20218817196000D7689C9F8BD3DE89719470482"
+  },
+  {
+    "Path": "src\\workers\\simulation.worker.ts",
+    "Hash": "BACBA5D8D9F8EA758747D814249F94780FABCF08E18EBEC83800A3008D804394"
+  },
+  {
+    "Path": "public\\catalogs\\cloud-profiles.v1.json",
+    "Hash": "3C2B15A737203A688B9BB5A13D0CD0A783F6408CC01E6F7E1DF4FC384A952D91"
+  },
+  {
+    "Path": "public\\catalogs\\hardware.v1.json",
+    "Hash": "D702B6AFAC224EFE150A527AB0531C930AD94681D75150413D8AA583E0619F10"
+  },
+  {
+    "Path": "tests\\arrivals.test.ts",
+    "Hash": "555DCF407AD6A9E95BCF72BF4B9F45159EE1B7C47539D52E5E487F8C7616BBCF"
+  },
+  {
+    "Path": "tests\\edge.test.ts",
+    "Hash": "0D287AC2C66B923B09A59C4EA71ABC0903F5EFE4331FA0E76A662335CCAE97C3"
+  },
+  {
+    "Path": "tests\\engine.test.ts",
+    "Hash": "5A846816171EF4657638CE53313B49D930884D2609907FAA32B4D44E4C15814D"
+  },
+  {
+    "Path": "tests\\hardware-pricing.test.ts",
+    "Hash": "4C7FE64BBC2D372727DCB8967B612602715C8F27BE8BAAE22FF2E0CEFC64AB47"
+  },
+  {
+    "Path": "tests\\helpers.ts",
+    "Hash": "09D16BA7524706E54A1114C7FCA5BC18F862F50F1A06852CE3309221A7E4B9BB"
+  },
+  {
+    "Path": "tests\\interactions.test.ts",
+    "Hash": "EDE2624CF61B8545DBF71F2CFB864A4CBEFDE160F3B0B31DA4313CD3E9D53AC2"
+  },
+  {
+    "Path": "tests\\live-simulation.test.ts",
+    "Hash": "E979061BEF7B7F2B517CB3E53DEA4441E76A9DF6424C3576236E52901D6E2666"
+  },
+  {
+    "Path": "tests\\naming.test.ts",
+    "Hash": "131CB42119AA89CB16E8C44CF916F7A6BE19CF83C8834F6E535671DBD4ACB7D9"
+  },
+  {
+    "Path": "tests\\persistence.test.ts",
+    "Hash": "1F9E303C7293381905049F6E0874DC9CE1C0E1669885D2BE294F4F7DD9A2F0C8"
+  },
+  {
+    "Path": "tests\\pricing.test.ts",
+    "Hash": "8EE336CCE5637CE723C357605ED0505CC552CDEBA67BA94D125CBC7D15E2894A"
+  },
+  {
+    "Path": "tests\\primitives.test.ts",
+    "Hash": "7254B350C2B6247842D57719F6F40CD8FCAF0E066C58DDFB2E8D4CE09D3384EA"
+  },
+  {
+    "Path": "tests\\queue.test.ts",
+    "Hash": "40C17A20B74A116D755DC972746301778C0AEEA9FE346D7668930B4A2C7F74B9"
+  },
+  {
+    "Path": "tests\\server-pricing.test.ts",
+    "Hash": "F7016FA82980D90C40385F66794EED2DCCAC84B6B04EE485A2B71CE6B43A5EB3"
+  },
+  {
+    "Path": "tests\\serverless-stores-pubsub.test.ts",
+    "Hash": "6F3C4208CCAE8F9CD0D72356898D76D3C52FD2B7321750A8DB9C4A5EA87E9F4A"
+  },
+  {
+    "Path": "tests\\settings-audit.test.ts",
+    "Hash": "9FB276E8E32692D7FC36BA333D465222C206820397940CF0BD22E264E9A5803A"
+  },
+  {
+    "Path": "tests\\signature.test.ts",
+    "Hash": "C1829F9D65E9D5324D031C2A71602AD53ADB39B3EFD1A4729926ED1170F64866"
+  },
+  {
+    "Path": "tests\\worker-client.test.ts",
+    "Hash": "FF36044298ECFC0578827F069A660D12EDFF6AAC784B0331601F682EFB060FFF"
+  },
+  {
+    "Path": "e2e\\async-queue.spec.ts",
+    "Hash": "AF590F880A09A152843241D0E16549E02BD328DEA2B87C7036A9F995B080FAFD"
+  },
+  {
+    "Path": "e2e\\canvas-regressions.spec.ts",
+    "Hash": "5C09BCCE6A8DCB19986F4CEFBA6B88C8E40DB6499D29D12429DDA0C26B5F45FB"
+  },
+  {
+    "Path": "e2e\\edge.spec.ts",
+    "Hash": "B50D51F64D45D4DBD605A2FDEDF68ECDC30BF8A75B1559EF5D9EDA86CD3DC532"
+  },
+  {
+    "Path": "e2e\\hardware-pricing.spec.ts",
+    "Hash": "DF78AC313E167E1CBEE36983770488955F93C69F08077B7D0B59BE8C9112FC0F"
+  },
+  {
+    "Path": "e2e\\live-simulation.spec.ts",
+    "Hash": "79C33A601F4E42BD5F6643C6969E5F9FC3FF6F445F161E3781F1DFA4E7FE1ABB"
+  },
+  {
+    "Path": "e2e\\persistence-regressions.spec.ts",
+    "Hash": "3FC6307301B91A380D3570F8FEA7F56C6FFF44E40BCD200558EC786118457740"
+  },
+  {
+    "Path": "e2e\\serverless-stores.spec.ts",
+    "Hash": "E912F6C3114FDE51AD889B0A7A96030682B35E582B0398B01863B2C44336AFF9"
+  },
+  {
+    "Path": "e2e\\settings-forms.spec.ts",
+    "Hash": "A739BD5D0605B832EF44D1F6BF61DBC13D7EA461473EF98CD697146ACAECD931"
+  },
+  {
+    "Path": "e2e\\starter-workflow.spec.ts",
+    "Hash": "473FEE1E7BDAED8CD247DB38910425A4200B714A8778A73925558CCA82886A19"
+  },
+  {
+    "Path": "scripts\\refresh-cloud-prices.mjs",
+    "Hash": "3F66947D467419E342528B33E3F97C79AC23F965541185997BD6B93B3E30ADFC"
+  }
+]

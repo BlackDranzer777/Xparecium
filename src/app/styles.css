@@ -1,0 +1,289 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --------------------------------------------------------------------------
+   Themes
+   Light is the default. `data-theme="dark"` on <html> swaps every value; no
+   component knows which theme is active.
+   -------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  --canvas: #fafaf9;
+  --canvas-dot: #dcd9d5;
+  --surface: #ffffff;
+  --surface-2: #f7f6f4;
+  --surface-3: #efedea;
+  --line: #e7e5e4;
+  --line-strong: #d3cfcb;
+
+  --ink: #1c1917;
+  --ink-2: #5c554f;
+  --ink-3: #9c948c;
+
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-soft: #eef1ff;
+  --accent-ink: #4338ca;
+
+  --ok: #059669;
+  --ok-soft: #ecfdf5;
+  --warn: #b45309;
+  --warn-soft: #fffbeb;
+  --bad: #dc2626;
+  --bad-soft: #fef2f2;
+
+  --kind-client: #0284c7;
+  --kind-balancer: #7c3aed;
+  --kind-server: #6366f1;
+  --kind-database: #059669;
+  --kind-cache: #d97706;
+  --kind-queue: #db2777;
+  --kind-edge: #0d9488;
+
+  --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04), 0 4px 16px rgba(28, 25, 23, 0.06);
+  --shadow-float: 0 2px 4px rgba(28, 25, 23, 0.05), 0 12px 32px rgba(28, 25, 23, 0.1);
+  --shadow-node: 0 1px 2px rgba(28, 25, 23, 0.05), 0 2px 8px rgba(28, 25, 23, 0.06);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --canvas: #0b0d12;
+  --canvas-dot: #262b36;
+  --surface: #14171f;
+  --surface-2: #1b1f29;
+  --surface-3: #232833;
+  --line: #262b36;
+  --line-strong: #363c4a;
+
+  --ink: #e8ecf3;
+  --ink-2: #9ba3b2;
+  --ink-3: #6b7383;
+
+  --accent: #7c6cf0;
+  --accent-hover: #9a8df5;
+  --accent-soft: #1f1c38;
+  --accent-ink: #b9aff8;
+
+  --ok: #34d399;
+  --ok-soft: #0d2a22;
+  --warn: #fbbf24;
+  --warn-soft: #2b2211;
+  --bad: #f87171;
+  --bad-soft: #2d1719;
+
+  --kind-client: #38bdf8;
+  --kind-balancer: #c084fc;
+  --kind-server: #9a8df5;
+  --kind-database: #34d399;
+  --kind-cache: #fbbf24;
+  --kind-queue: #f472b6;
+  --kind-edge: #2dd4bf;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-float: 0 2px 4px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.5);
+  --shadow-node: 0 1px 2px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-canvas text-ink antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'tnum';
+    /* Panels float over the canvas; nothing should ever scroll the page. */
+    overflow: hidden;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer components {
+  /* A floating card. Everything that sits over the canvas uses this. */
+  .ap-card {
+    @apply rounded-card border border-line bg-surface shadow-card;
+  }
+
+  .ap-input {
+    @apply w-full rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[13px] text-ink
+           transition-colors placeholder:text-ink-3 hover:border-line-strong
+           focus:border-accent focus:outline-none;
+  }
+
+  .ap-select {
+    @apply ap-input cursor-pointer appearance-none pr-7;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ink-3) 50%),
+      linear-gradient(135deg, var(--ink-3) 50%, transparent 50%);
+    background-position:
+      calc(100% - 14px) calc(50% + 1px),
+      calc(100% - 9px) calc(50% + 1px);
+    background-size:
+      5px 5px,
+      5px 5px;
+    background-repeat: no-repeat;
+  }
+
+  .ap-btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px]
+           font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .ap-btn-primary {
+    @apply ap-btn bg-accent text-white hover:bg-accent-hover;
+  }
+  .ap-btn-ghost {
+    @apply ap-btn border border-line text-ink-2 hover:bg-surface-2 hover:text-ink;
+  }
+  .ap-btn-quiet {
+    @apply ap-btn text-ink-2 hover:bg-surface-2 hover:text-ink;
+  }
+  .ap-btn-danger {
+    @apply ap-btn text-bad hover:bg-bad-soft;
+  }
+
+  /* A small square icon button, used in the top bar and card headers. */
+  .ap-icon-btn {
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-ink-2
+           transition-colors hover:bg-surface-2 hover:text-ink;
+  }
+
+  .ap-label {
+    @apply mb-1.5 block text-[12px] font-medium text-ink-2;
+  }
+
+  .ap-hint {
+    @apply mt-1.5 text-[11px] leading-relaxed text-ink-3;
+  }
+
+  .ap-eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-[0.09em] text-ink-3;
+  }
+
+  .ap-tag {
+    @apply inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold
+           uppercase tracking-wide;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   React Flow
+   -------------------------------------------------------------------------- */
+
+.react-flow {
+  --xy-background-color: var(--canvas);
+  --xy-edge-stroke-default: var(--line-strong);
+  --xy-edge-stroke-selected-default: var(--accent);
+  --xy-connectionline-stroke-default: var(--accent);
+}
+
+.react-flow__edge-path {
+  stroke-width: 1.5;
+}
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke-width: 2.25;
+}
+
+/* Connection points stay out of the way until you approach a node. */
+.react-flow__handle {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1.5px solid var(--line-strong);
+  opacity: 0;
+  transition:
+    opacity 120ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+.react-flow__node:hover .react-flow__handle,
+.react-flow__node.selected .react-flow__handle,
+.react-flow.dragging .react-flow__handle {
+  opacity: 1;
+}
+.react-flow__handle:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.react-flow__attribution {
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.react-flow__controls {
+  box-shadow: var(--shadow-card);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.react-flow__controls-button {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  fill: var(--ink-2);
+  width: 28px;
+  height: 28px;
+}
+.react-flow__controls-button:hover {
+  background: var(--surface-2);
+  fill: var(--ink);
+}
+
+.react-flow__minimap {
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+}
+
+/* Continuous motion is not for everyone. The edge colour still shows which
+   connections carried traffic, so nothing is lost by removing the packets. */
+@media (prefers-reduced-motion: reduce) {
+  .ap-packet {
+    display: none;
+  }
+}
+
+/* The quiet "reveal" motif: two very soft washes behind the canvas. */
+.ap-reveal-wash::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(760px 420px at 18% 8%, var(--accent-soft), transparent 62%),
+    radial-gradient(680px 380px at 86% 92%, var(--ok-soft), transparent 62%);
+  opacity: 0.75;
+}

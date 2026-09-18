@@ -1,0 +1,41 @@
+{
+  "name": "aparecium",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Aparecium \u2014 a browser-based system-design simulator. Reveal how your system works.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "prices:refresh": "node scripts/refresh-cloud-prices.mjs",
+    "prices:check": "node scripts/refresh-cloud-prices.mjs --check"
+  },
+  "dependencies": {
+    "@xyflow/react": "^12.3.6",
+    "decimal.js": "^10.4.3",
+    "dexie": "^4.0.10",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.24.1",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.17",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^3.2.7"
+  }
+}

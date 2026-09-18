@@ -1,0 +1,44 @@
+{
+  "catalogId": "hardware",
+  "version": 1,
+  "publishedAt": "2026-09-11",
+  "notice": "Resource profiles describe hardware only: how many CPU slots the machine has, how much memory it has, and how much memory the process uses before serving any request. They deliberately do not set application settings such as CPU work per request or the concurrency limit, because those belong to your software, not to the machine.",
+  "profiles": [
+    {
+      "id": "small",
+      "label": "Small",
+      "description": "1 CPU slot, 2 GB RAM",
+      "cpuSlots": 1,
+      "ramMb": 2048,
+      "baselineMemoryMb": 256,
+      "suggestedCloudProfileId": "aws.ec2.t3-medium.us-east-1"
+    },
+    {
+      "id": "medium",
+      "label": "Medium",
+      "description": "2 CPU slots, 4 GB RAM",
+      "cpuSlots": 2,
+      "ramMb": 4096,
+      "baselineMemoryMb": 384,
+      "suggestedCloudProfileId": "aws.ec2.m7i-large.us-east-1"
+    },
+    {
+      "id": "large",
+      "label": "Large",
+      "description": "4 CPU slots, 8 GB RAM",
+      "cpuSlots": 4,
+      "ramMb": 8192,
+      "baselineMemoryMb": 512,
+      "suggestedCloudProfileId": "aws.ec2.m7i-xlarge.us-east-1"
+    },
+    {
+      "id": "xlarge",
+      "label": "Extra large",
+      "description": "8 CPU slots, 16 GB RAM",
+      "cpuSlots": 8,
+      "ramMb": 16384,
+      "baselineMemoryMb": 768,
+      "suggestedCloudProfileId": "aws.ec2.m7i-2xlarge.us-east-1"
+    }
+  ]
+}

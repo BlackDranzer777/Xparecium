@@ -1,0 +1,494 @@
+[
+  {
+    "id": "generic.documentDb",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "documentDb"
+    ],
+    "label": "Document database (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "storage": {
+        "unit": "GB-month",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "writes": {
+        "unit": "million requests",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.wideColumn",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "wideColumn"
+    ],
+    "label": "Wide-column store (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "storage": {
+        "unit": "GB-month",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "writes": {
+        "unit": "million requests",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.searchIndex",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "searchIndex"
+    ],
+    "label": "Search index (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "storage": {
+        "unit": "GB-month",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "writes": {
+        "unit": "million requests",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.warehouse",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "warehouse"
+    ],
+    "label": "Data warehouse (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "storage": {
+        "unit": "GB-month",
+        "amount": null
+      },
+      "scan": {
+        "unit": "GB scanned",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.timeSeries",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "timeSeries"
+    ],
+    "label": "Time-series database (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "storage": {
+        "unit": "GB-month",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "writes": {
+        "unit": "million requests",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.eventStream",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "eventStream"
+    ],
+    "label": "Event stream (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "storage": {
+        "unit": "GB-month",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.deadLetter",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "deadLetter"
+    ],
+    "label": "Dead-letter queue (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "storage": {
+        "unit": "GB-month",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.scheduler",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "scheduler"
+    ],
+    "label": "Scheduler (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.websocket",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "websocket"
+    ],
+    "label": "WebSocket server (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "egress": {
+        "unit": "GB",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.notification",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "notification"
+    ],
+    "label": "Notification service (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "egress": {
+        "unit": "GB",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.identity",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "identity"
+    ],
+    "label": "Identity service (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "egress": {
+        "unit": "GB",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.rateLimiter",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "rateLimiter"
+    ],
+    "label": "Rate limiter (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "egress": {
+        "unit": "GB",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.discovery",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "discovery"
+    ],
+    "label": "Service discovery / configuration (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "egress": {
+        "unit": "GB",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.secrets",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "secrets"
+    ],
+    "label": "Secrets manager (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "egress": {
+        "unit": "GB",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.monitoring",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "monitoring"
+    ],
+    "label": "Monitoring / logging (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "egress": {
+        "unit": "GB",
+        "amount": null
+      },
+      "storage": {
+        "unit": "GB-month",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.serviceMesh",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "serviceMesh"
+    ],
+    "label": "Service mesh proxy (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null
+      },
+      "egress": {
+        "unit": "GB",
+        "amount": null
+      }
+    }
+  }
+]
