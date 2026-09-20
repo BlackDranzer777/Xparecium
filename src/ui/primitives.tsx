@@ -171,7 +171,13 @@ export function Popover({
 
     place();
     function onPointerDown(event: MouseEvent) {
-      if (ref.current && !ref.current.contains(event.target as Node)) onClose();
+      const target = event.target as Node;
+      // A press inside the panel is the panel's business. A press on the
+      // anchor — the trigger that opened this — is the trigger's: it toggles
+      // on click, and closing here first would flip it straight back open.
+      if (ref.current?.contains(target)) return;
+      if (marker.current?.parentElement?.contains(target)) return;
+      onClose();
     }
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') onClose();

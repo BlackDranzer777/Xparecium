@@ -17,7 +17,7 @@ import { ProjectsPanel } from '../features/projects/ProjectsPanel';
 import { ResultsSheet } from '../features/results/ResultsPanel';
 import {
   GridIcon,
-  MenuIcon,
+  MenuToggleIcon,
   MoonIcon,
   RedoIcon,
   SunIcon,
@@ -76,9 +76,9 @@ function TopLeft() {
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
             aria-label="Projects, import and export"
-            title="Projects, import and export"
+            title={menuOpen ? 'Close the menu' : 'Projects, import and export'}
           >
-            <MenuIcon size={16} />
+            <MenuToggleIcon size={16} open={menuOpen} />
           </button>
           <Popover open={menuOpen} onClose={() => setMenuOpen(false)} placement="below">
             <ProjectsPanel onDone={() => setMenuOpen(false)} />

@@ -665,3 +665,16 @@ Next-stage design: WebSocket connection leases and heartbeat traffic; notificati
 - **Tests.** `e2e/starter-workflow.spec.ts` (title and brand text) and `tests/persistence.test.ts` (two message strings) now expect the new name; no behaviour changed.
 - **Verification (performed):** `npx tsc --noEmit` passes; `npx vitest run tests/persistence.test.ts` — 20 passed; `npx playwright test e2e/starter-workflow.spec.ts e2e/persistence-regressions.spec.ts` — 22 passed; the dev server shows the new title and brand mark.
 
+#### 073 — The menu button opens the menu but could not close it (2026-09-20)
+- **Report:** on xparecium.com, the hamburger button opens the projects menu, but pressing it again does not close it; only a click elsewhere does.
+- **Cause.** `Popover` closes on any mouse-down outside its own panel — including one on the button that opened it. That mouse-down closed the menu, and the button's click, a moment later, toggled it straight back open. Every popover with a toggle button had it: the projects menu, the traffic-shape and problems panels in the control bar.
+- **Fix** (`src/ui/primitives.tsx`): a press on the anchor — the element wrapping the trigger, which the popover already knows to position itself — is left to the trigger, whose click toggles. A press anywhere else still closes the panel, Escape still closes it, and a click on a *different* trigger still closes this one first, since that trigger is not inside this anchor.
+- **Regression** (`e2e/async-queue.spec.ts`, "the button that opens a popover also closes it"): open the menu, press the button, expect it hidden and `aria-expanded="false"`; the same for the traffic-shape popover, then a click elsewhere still closes it. Against the old code the test fails at the first close ("Saved in this browser" still visible); with the fix the four tests in the file pass.
+- **Verification (performed):** `npx tsc --noEmit` passes; `npx playwright test e2e/async-queue.spec.ts` — 4 passed.
+
+#### 074 — The menu button's glyph folds into a cross (2026-09-20)
+- **Request:** the hamburger should turn into a cross while the menu is open, with a smooth transition.
+- **What changed.** `MenuToggleIcon` in `src/ui/icons.tsx` draws three identical bars through the icon's centre and places them with transforms: closed, the outer two sit 5 px above and below; open, they rotate ±45° about the centre and the middle one shrinks and fades. Because the two shapes are the same three elements, the browser animates between them — 220 ms on the transform, 160 ms on the fade (`.ap-burger-line` in `styles.css`), and no transition at all for people who have asked for reduced motion. The button's tooltip reads "Close the menu" while it is open. The static `MenuIcon` had no other user and was removed.
+- **Regression** (`e2e/async-queue.spec.ts`, in the toggle test from entry 073): the top bar's computed transform is `translateY(-5px)` closed, a 45° rotation matrix open, and back after closing.
+- **Verification (performed):** `npx tsc --noEmit` passes; `npx playwright test e2e/async-queue.spec.ts e2e/starter-workflow.spec.ts` — 15 passed; the dev server shows the cross while the menu is open and the transition durations read 0.22 s / 0.16 s in the browser.
+

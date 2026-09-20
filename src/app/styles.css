@@ -340,11 +340,22 @@
   box-shadow: var(--shadow-card);
 }
 
+/* The menu glyph's three bars: each rotates about the icon's centre. */
+.ap-burger-line {
+  transform-origin: 12px 12px;
+  transition:
+    transform 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 160ms ease;
+}
+
 /* Continuous motion is not for everyone. The edge colour still shows which
    connections carried traffic, so nothing is lost by removing the packets. */
 @media (prefers-reduced-motion: reduce) {
   .ap-packet {
     display: none;
+  }
+  .ap-burger-line {
+    transition: none;
   }
 }
 

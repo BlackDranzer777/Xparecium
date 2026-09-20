@@ -130,6 +130,35 @@ test('the control bar popovers are on screen, not clipped away', async ({ page }
   expect(errors, `console errors: ${errors.join(' | ')}`).toEqual([]);
 });
 
+test('the button that opens a popover also closes it', async ({ page }) => {
+  // The panel closed on any press outside itself, including one on its own
+  // button — whose click then reopened it. So the menu could be opened but
+  // never closed from where it was opened.
+  await openFresh(page);
+  const menu = page.getByRole('button', { name: 'Projects, import and export' });
+  // The glyph folds from three bars into a cross while the menu is open.
+  const topBar = menu.locator('.ap-burger-line').first();
+  await expect(topBar).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, -5)');
+  await menu.click();
+  await expect(page.getByText('Saved in this browser', { exact: false })).toBeVisible();
+  await expect(topBar).toHaveCSS('transform', /matrix\(0\.7071/);
+  await menu.click();
+  await expect(page.getByText('Saved in this browser', { exact: false })).toBeHidden();
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
+  await expect(topBar).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, -5)');
+
+  // The same for a control-bar popover, and a press elsewhere still closes it.
+  const shape = page.getByRole('button', { name: 'Steady' });
+  await shape.click();
+  await expect(page.getByRole('tab', { name: 'Bursty' })).toBeVisible();
+  await shape.click();
+  await expect(page.getByRole('tab', { name: 'Bursty' })).toBeHidden();
+  await shape.click();
+  await expect(page.getByRole('tab', { name: 'Bursty' })).toBeVisible();
+  await page.mouse.click(700, 300);
+  await expect(page.getByRole('tab', { name: 'Bursty' })).toBeHidden();
+});
+
 test('wiring up a queue does not stop the traffic', async ({ page }) => {
   const errors = collectConsoleErrors(page);
   await openFresh(page);

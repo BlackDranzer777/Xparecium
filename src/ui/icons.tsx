@@ -230,9 +230,30 @@ export const MoonIcon = (p: IconProps) => (
   </Icon>
 );
 
-export const MenuIcon = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M4 7h16M4 12h16M4 17h16" />
+/**
+ * The menu button's glyph: three bars that fold into a cross while the menu
+ * is open, and back when it closes. The three lines are all drawn through
+ * the centre and moved into place with transforms, so the open and closed
+ * shapes are the same three elements and the browser can animate between
+ * them; `.ap-burger-line` in styles.css carries the transition.
+ */
+export const MenuToggleIcon = ({ open, ...p }: IconProps & { open: boolean }) => (
+  <Icon {...p} strokeWidth={1.8}>
+    <path
+      className="ap-burger-line"
+      d="M4 12h16"
+      style={{ transform: open ? 'rotate(45deg)' : 'translateY(-5px)' }}
+    />
+    <path
+      className="ap-burger-line"
+      d="M4 12h16"
+      style={{ transform: open ? 'scaleX(0)' : 'none', opacity: open ? 0 : 1 }}
+    />
+    <path
+      className="ap-burger-line"
+      d="M4 12h16"
+      style={{ transform: open ? 'rotate(-45deg)' : 'translateY(5px)' }}
+    />
   </Icon>
 );
 
