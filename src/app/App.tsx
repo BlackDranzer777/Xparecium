@@ -1,5 +1,5 @@
 /**
- * The Aparecium shell.
+ * The Xparecium shell.
  *
  * The canvas fills the viewport. Everything else floats above it as a card and
  * can be put away: the palette and settings share one panel on the right, the
@@ -85,8 +85,8 @@ function TopLeft() {
           </Popover>
         </div>
 
-        <span className="select-none px-1 text-[14px] font-semibold tracking-tight text-ink">
-          Aparecium
+        <span className="select-none px-1 text-[14px] font-extrabold tracking-tight text-ink">
+          <span className="text-accent">X</span>parecium
         </span>
 
         <span className="mx-1 h-5 w-px bg-line" aria-hidden />
@@ -301,7 +301,7 @@ export default function App() {
     return (
       <div className="flex h-full items-center justify-center bg-canvas">
         <div className="text-center">
-          <p className="text-[17px] font-semibold text-ink">Aparecium</p>
+          <p className="text-[17px] font-semibold text-ink">Xparecium</p>
           <p className="mt-1.5 text-[12px] text-ink-3">Preparing your workspace…</p>
         </div>
       </div>

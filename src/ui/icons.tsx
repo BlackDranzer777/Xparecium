@@ -2,7 +2,7 @@
  * A small hand-rolled icon set.
  *
  * An icon library would be several hundred kilobytes for the dozen glyphs
- * Aparecium uses, and the specification asks for a modest dependency count.
+ * Xparecium uses, and the specification asks for a modest dependency count.
  * These are 24x24 stroked paths that inherit `currentColor`, so they take on
  * whatever text colour surrounds them in either theme.
  */

@@ -352,7 +352,7 @@ export type ParseResult<T> = ParseSuccess<T> | ParseFailure;
 
 /**
  * Validate an imported export envelope. Rejects schema versions produced by a
- * newer build of Aparecium rather than guessing at their meaning.
+ * newer build of Xparecium rather than guessing at their meaning.
  */
 export function parseImport(raw: unknown): ParseResult<ExportEnvelope> {
   const parsed = exportEnvelopeSchema.safeParse(raw);
@@ -362,7 +362,7 @@ export function parseImport(raw: unknown): ParseResult<ExportEnvelope> {
       .map((issue) => `${issue.path.join('.') || '(root)'}: ${issue.message}`);
     return {
       ok: false,
-      message: 'This file is not a valid Aparecium project export.',
+      message: 'This file is not a valid Xparecium project export.',
       details,
     };
   }
@@ -370,13 +370,13 @@ export function parseImport(raw: unknown): ParseResult<ExportEnvelope> {
   if (value.formatVersion > EXPORT_FORMAT_VERSION) {
     return {
       ok: false,
-      message: `This file uses export format version ${value.formatVersion}, but this build of Aparecium understands version ${EXPORT_FORMAT_VERSION}. Update Aparecium to open it.`,
+      message: `This file uses export format version ${value.formatVersion}, but this build of Xparecium understands version ${EXPORT_FORMAT_VERSION}. Update Xparecium to open it.`,
     };
   }
   if (value.project.document.schemaVersion > DOCUMENT_SCHEMA_VERSION) {
     return {
       ok: false,
-      message: `This project uses document schema version ${value.project.document.schemaVersion}, but this build of Aparecium understands version ${DOCUMENT_SCHEMA_VERSION}. Update Aparecium to open it.`,
+      message: `This project uses document schema version ${value.project.document.schemaVersion}, but this build of Xparecium understands version ${DOCUMENT_SCHEMA_VERSION}. Update Xparecium to open it.`,
     };
   }
   return { ok: true, value };

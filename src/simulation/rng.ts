@@ -24,7 +24,7 @@ export function hashString(value: string): number {
 
 /**
  * mulberry32: a 32-bit generator with a period of 2^32. Plenty for the sample
- * sizes Aparecium produces, and short enough to read and verify.
+ * sizes Xparecium produces, and short enough to read and verify.
  */
 export class Rng {
   private state: number;

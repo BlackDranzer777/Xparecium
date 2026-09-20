@@ -5,7 +5,7 @@ import { DATA_KINDS, DATA_SERVICES, dataDefaults } from './data-services';
 /**
  * Sensible defaults, hardware profiles and the starter architectures.
  *
- * A beginner should be able to open Aparecium, press Run, and get a meaningful
+ * A beginner should be able to open Xparecium, press Run, and get a meaningful
  * result without touching a single advanced field. Everything here exists to
  * make that true.
  */
@@ -395,12 +395,12 @@ export function normaliseComponentNames(document: ArchitectureDocument): Archite
 /**
  * Why this build cannot open a saved document, or null when it can. A document
  * stamped with a schema version newer than this build's was written by a newer
- * Aparecium; its meaning is unknown here, so it is left exactly as it is.
+ * Xparecium; its meaning is unknown here, so it is left exactly as it is.
  */
 export function unsupportedDocumentReason(document: { schemaVersion: number }): string | null {
   const version = document.schemaVersion;
   if (!(version > DOCUMENT_SCHEMA_VERSION)) return null;
-  return `This project uses document schema version ${version}, but this build of Aparecium understands version ${DOCUMENT_SCHEMA_VERSION}. Update Aparecium to open it.`;
+  return `This project uses document schema version ${version}, but this build of Xparecium understands version ${DOCUMENT_SCHEMA_VERSION}. Update Xparecium to open it.`;
 }
 
 /**

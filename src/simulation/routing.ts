@@ -533,7 +533,7 @@ export function validateAndResolve(doc: ArchitectureDocument): RoutingResult {
         severity: 'error',
         code: 'edge/duplicate',
         message: `There is more than one connection from "${nameOf(graph, edge.source)}" to "${nameOf(graph, edge.target)}".`,
-        hint: 'Aparecium cannot tell which link a message should use. Delete one of them.',
+        hint: 'Xparecium cannot tell which link a message should use. Delete one of them.',
         edgeIds: [edge.id],
       });
     }
@@ -610,7 +610,7 @@ export function validateAndResolve(doc: ArchitectureDocument): RoutingResult {
       issues.push({
         severity: 'error',
         code: 'route/client-ambiguous',
-        message: `"${client.name}" has ${out.length} outgoing connections, so Aparecium cannot tell where a request should go.`,
+        message: `"${client.name}" has ${out.length} outgoing connections, so Xparecium cannot tell where a request should go.`,
         hint: 'This version supports exactly one entry point per group of users. Keep one connection, or put a Load Balancer in front to fan out.',
         nodeIds: [client.id],
         edgeIds: out.map((e) => e.id),
@@ -665,7 +665,7 @@ export function validateAndResolve(doc: ArchitectureDocument): RoutingResult {
         issues.push({
           severity: 'error',
           code: 'route/edge-ambiguous',
-          message: `"${nameOf(graph, hopId)}" forwards to ${hopOut.length} things, so Aparecium cannot tell where a request should go.`,
+          message: `"${nameOf(graph, hopId)}" forwards to ${hopOut.length} things, so Xparecium cannot tell where a request should go.`,
           hint: 'An edge component forwards to exactly one thing. Put a Load Balancer behind it to fan out.',
           nodeIds: [hopId],
           edgeIds: hopOut.map((e) => e.id),

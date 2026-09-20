@@ -121,7 +121,7 @@ describe('acceptance 13 — saving, reloading and JSON round-tripping preserve a
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.message).toContain('export format version 99');
-    expect(result.message).toContain('Update Aparecium');
+    expect(result.message).toContain('Update Xparecium');
   });
 
   it('rejects a newer document schema version', () => {
@@ -144,11 +144,11 @@ describe('acceptance 13 — saving, reloading and JSON round-tripping preserve a
     if (!huge.ok) expect(huge.message).toContain('import limit');
   });
 
-  it('rejects a file that is valid JSON but not an Aparecium export', () => {
+  it('rejects a file that is valid JSON but not an Xparecium export', () => {
     const result = importFromJson(JSON.stringify({ hello: 'world' }));
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.message).toContain('not a valid Aparecium project export');
+      expect(result.message).toContain('not a valid Xparecium project export');
       expect(result.details?.length).toBeGreaterThan(0);
     }
   });

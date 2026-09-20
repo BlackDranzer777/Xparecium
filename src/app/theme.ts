@@ -5,7 +5,7 @@
  * not in the editor store: it must not end up in a saved project, an export or
  * a run snapshot.
  *
- * Light is the default: it is the look Aparecium is designed around, so a first
+ * Light is the default: it is the look Xparecium is designed around, so a first
  * visit always shows the intended thing rather than depending on an operating
  * system setting the user may not associate with this app. Once someone picks a
  * theme, that choice wins on every later visit.

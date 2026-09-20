@@ -703,7 +703,15 @@ were the problem.
 told what is covered. ADR-014 is the consequence.
 
 ### ADR-013 — Colour is a role, expressed as a CSS custom property
-**Status:** accepted. **Entry:** 018.
+**Status:** accepted; the roles were extended in entry 071. **Entries:** 018, 071.
+*Entry 071* restyled the app after a dashboard mock — cream ground, pastel
+component cards by category, one orange-red action, pill tabs, firm outlines —
+without changing this rule. New roles: `--outline` (the firm border),
+`--tint-<category>` for the six palette categories, `--ink-on-tint` and
+`--ok/warn/bad-on-tint` (a pastel card keeps dark text and dark status colours
+in both themes), and `--frame*` for dark panels. `src/ui/kind-style.ts` maps a
+component kind to its category's tint once, for the canvas node and the palette
+tile alike.
 Two value sets, one on `:root` and one on `:root[data-theme="dark"]`; Tailwind
 maps semantic names onto them.
 *Why:* with two themes, any component that names a hue is a future bug. Naming

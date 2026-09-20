@@ -103,7 +103,7 @@ export function parseDocument(raw: unknown): ParseResult<ArchitectureDocument> {
   if (!parsed.success) {
     return {
       ok: false,
-      message: 'That is not a valid Aparecium architecture document.',
+      message: 'That is not a valid Xparecium architecture document.',
       details: parsed.error.issues.slice(0, 6).map((i) => `${i.path.join('.')}: ${i.message}`),
     };
   }

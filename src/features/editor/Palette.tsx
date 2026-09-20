@@ -15,6 +15,7 @@ import {
 } from '../../domain/defaults';
 import type { ComponentKind } from '../../domain/types';
 import { KIND_ICONS, SearchIcon } from '../../ui/icons';
+import { kindTintClass } from '../../ui/kind-style';
 import { Section } from '../../ui/primitives';
 import { useEditor } from './store';
 
@@ -42,34 +43,6 @@ const CATEGORIES = ALL_CATEGORIES.map((category) => ({
 })).filter((category) => category.kinds.length > 0);
 
 
-const KIND_COLOR: Record<ComponentKind, string> = {
-  ...Object.fromEntries(SUPPORT_KINDS.map(k => [k, 'text-kind-edge'])) as Record<(typeof SUPPORT_KINDS)[number], string>,
-  eventStream: 'text-kind-queue',
-  deadLetter: 'text-kind-queue',
-  scheduler: 'text-kind-queue',
-  documentDb: 'text-kind-database',
-  wideColumn: 'text-kind-database',
-  searchIndex: 'text-kind-database',
-  warehouse: 'text-kind-database',
-  timeSeries: 'text-kind-database',
-
-  client: 'text-kind-client',
-  loadBalancer: 'text-kind-balancer',
-  server: 'text-kind-server',
-  database: 'text-kind-database',
-  cache: 'text-kind-cache',
-  queue: 'text-kind-queue',
-  dns: 'text-kind-edge',
-  cdn: 'text-kind-edge',
-  waf: 'text-kind-edge',
-  apiGateway: 'text-kind-edge',
-  serverless: 'text-kind-server',
-  readReplica: 'text-kind-database',
-  kvStore: 'text-kind-database',
-  objectStorage: 'text-kind-database',
-  pubsub: 'text-kind-queue',
-};
-
 function Tile({ kind, onAdd }: { kind: ComponentKind; onAdd: () => void }) {
   const Glyph = KIND_ICONS[kind];
   return (
@@ -77,12 +50,12 @@ function Tile({ kind, onAdd }: { kind: ComponentKind; onAdd: () => void }) {
       type="button"
       onClick={onAdd}
       title={COMPONENT_DESCRIPTIONS[kind]}
-      className="flex h-[74px] flex-col items-center justify-center gap-1.5 rounded-xl border border-line bg-surface px-2 transition-colors hover:border-accent hover:bg-accent-soft"
+      className={`flex h-[76px] flex-col items-center justify-center gap-1.5 rounded-2xl border-[1.5px] border-outline px-2 text-ink-on-tint transition-[filter,transform] hover:brightness-95 active:scale-[0.98] ${kindTintClass(kind)}`}
     >
-      <span className={KIND_COLOR[kind]}>
+      <span>
         <Glyph size={20} />
       </span>
-      <span className="text-center text-[11.5px] font-medium leading-tight text-ink-2">
+      <span className="text-center text-[11.5px] font-semibold leading-tight">
         {COMPONENT_LABELS[kind]}
       </span>
     </button>
@@ -169,9 +142,9 @@ export function Palette() {
                     });
                     select(null);
                   }}
-                  className="w-full rounded-lg border border-line px-3 py-2.5 text-left transition-colors hover:border-accent hover:bg-accent-soft"
+                  className="w-full rounded-2xl border-[1.5px] border-outline px-3.5 py-2.5 text-left transition-colors hover:bg-surface-2"
                 >
-                  <span className="block text-[12.5px] font-medium text-ink">{template.name}</span>
+                  <span className="block text-[12.5px] font-semibold text-ink">{template.name}</span>
                   <span className="mt-0.5 block text-[11px] leading-snug text-ink-3">
                     {template.summary}
                   </span>

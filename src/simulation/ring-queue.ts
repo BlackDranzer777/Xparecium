@@ -6,7 +6,7 @@
  * circular buffer that doubles when full, so dequeueing never re-indexes the
  * whole array.
  *
- * Every waiting line in Aparecium (server admission queue, database queue,
+ * Every waiting line in Xparecium (server admission queue, database queue,
  * cache queue, link transmission queue, CPU wait queue) uses this.
  */
 export class RingQueue<T> {

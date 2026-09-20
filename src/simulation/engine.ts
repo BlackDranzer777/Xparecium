@@ -10,7 +10,7 @@ import type { DataServiceNode } from '../domain/data-services';
 import { DataServiceModel } from './models/data-service';
 import type { DataOperation } from './models/data-service';
 /**
- * The Aparecium simulation engine.
+ * The Xparecium simulation engine.
  *
  * Pure TypeScript: no React, no DOM, no IndexedDB, no worker APIs. The worker
  * wraps this; the tests call it directly.
@@ -817,15 +817,15 @@ export class SimulationEngine {
 
     while (!this.finished && processed < maxEvents) {
       if (!this.input.continuous && this.eventsProcessed >= limits.maxProcessedEvents) {
-        this.stop('incomplete', `Stopped after processing ${limits.maxProcessedEvents.toLocaleString()} events. The run reached Aparecium's event limit, so these results cover only part of the configured duration.`);
+        this.stop('incomplete', `Stopped after processing ${limits.maxProcessedEvents.toLocaleString()} events. The run reached Xparecium's event limit, so these results cover only part of the configured duration.`);
         break;
       }
       if (this.queue.size >= limits.maxPendingEvents) {
-        this.stop('incomplete', `Stopped with ${this.queue.size.toLocaleString()} events waiting to be processed, which is Aparecium's pending-event limit. The configuration generates work faster than the model can retire it.`);
+        this.stop('incomplete', `Stopped with ${this.queue.size.toLocaleString()} events waiting to be processed, which is Xparecium's pending-event limit. The configuration generates work faster than the model can retire it.`);
         break;
       }
       if (this.requests.size >= limits.maxInFlightRequests) {
-        this.stop('incomplete', `Stopped with ${this.requests.size.toLocaleString()} requests in flight, which is Aparecium's in-flight limit. Requests are arriving much faster than the system can complete them.`);
+        this.stop('incomplete', `Stopped with ${this.requests.size.toLocaleString()} requests in flight, which is Xparecium's in-flight limit. Requests are arriving much faster than the system can complete them.`);
         break;
       }
 
@@ -2856,7 +2856,7 @@ export function buildFindings(result: SimulationResult): Finding[] {
 
   // A backlog is not a request waiting, so none of the figures above see it.
   // Saying "nothing had to wait" while a queue is filling would be the single
-  // most misleading sentence Aparecium could print.
+  // most misleading sentence Xparecium could print.
   for (const queue of result.queues) {
     if (queue.refused > 0) {
       findings.push({

@@ -2,7 +2,7 @@ import type { SupportKind, SupportNode } from './support-services';
 import type { JobKind, JobServiceNode } from './job-services';
 import type { DataKind, DataServiceNode } from './data-services';
 /**
- * Aparecium domain types.
+ * Xparecium domain types.
  *
  * These describe what the user draws and configures. They are plain, serialisable
  * data: no classes, no functions, no references to React, the DOM or IndexedDB.
@@ -528,10 +528,10 @@ export interface Workload {
   arrivalOptions: ArrivalOptions;
 }
 
-/** The three kinds of charge Aparecium prices. Declared here so the domain
+/** The three kinds of charge Xparecium prices. Declared here so the domain
  * layer stays the base of the dependency graph. */
 /**
- * The kinds of charge Aparecium prices. `writes` is for stores that bill reads
+ * The kinds of charge Xparecium prices. `writes` is for stores that bill reads
  * and writes at different rates; `duration` is for compute billed by the
  * gigabyte-second it is alive rather than by the hour it is provisioned.
  */

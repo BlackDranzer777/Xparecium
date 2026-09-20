@@ -63,12 +63,14 @@ export interface CatalogRecord {
   payload: unknown;
 }
 
-class ApareciumDatabase extends Dexie {
+class XpareciumDatabase extends Dexie {
   projects!: Table<ProjectRecord, string>;
   runs!: Table<RunRecord, string>;
   catalogs!: Table<CatalogRecord, string>;
 
   constructor() {
+    // The on-disk name predates the rename to Xparecium and stays as it is:
+    // changing it would hide every project people have already saved.
     super('aparecium');
     // Version 1 of the on-disk schema. Future versions add a .version(n)
     // block with an .upgrade() so existing data is migrated, never dropped.
@@ -80,7 +82,7 @@ class ApareciumDatabase extends Dexie {
   }
 }
 
-export const db = new ApareciumDatabase();
+export const db = new XpareciumDatabase();
 
 /** True when IndexedDB is usable. Private-mode browsers can refuse it. */
 export async function storageAvailable(): Promise<boolean> {

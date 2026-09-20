@@ -3,7 +3,7 @@ import type { ConsoleMessage, Page } from '@playwright/test';
 
 /**
  * The primary browser workflow, end to end, against the production build:
- * open Aparecium, run the starter example, change something, compare, break
+ * open Xparecium, run the starter example, change something, compare, break
  * the design and see it explained, then cancel a long run.
  *
  * Console errors fail the test. Acceptance check 17 asks for the starter
@@ -40,8 +40,8 @@ test('the starter example runs, compares, validates and cancels', async ({ page 
   await openFresh(page);
 
   // ---- The app identifies itself -----------------------------------------
-  await expect(page).toHaveTitle(/Aparecium/);
-  await expect(page.getByText('Aparecium', { exact: true })).toBeVisible();
+  await expect(page).toHaveTitle(/Xparecium/);
+  await expect(page.getByText('Xparecium', { exact: true })).toBeVisible();
 
   // ---- The starter design is present and runnable -------------------------
   await expect(page.getByText('Users', { exact: true }).first()).toBeVisible();
@@ -228,12 +228,12 @@ test('a project survives export and re-import', async ({ page }) => {
   expect(errors, `console errors: ${errors.join(' | ')}`).toEqual([]);
 });
 
-test('rejects an import that is not an Aparecium export', async ({ page }) => {
+test('rejects an import that is not an Xparecium export', async ({ page }) => {
   await openFresh(page);
   await page.evaluate(async () => {
     await window.aparecium!.store.getState().importFile(JSON.stringify({ hello: 'world' }));
   });
-  await expect(page.getByText('This file is not a valid Aparecium project export.')).toBeVisible();
+  await expect(page.getByText('This file is not a valid Xparecium project export.')).toBeVisible();
 });
 
 test('a superseded run is stopped and its messages are ignored', async ({ page }) => {

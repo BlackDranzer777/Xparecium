@@ -38,14 +38,14 @@ export function ProjectsPanel({ onDone }: { onDone?: () => void }) {
   return (
     <div className="max-h-[70vh] w-[340px] overflow-auto p-4">
       <div className="mb-5 border-b border-line pb-3">
-        <div className="text-[13px] font-semibold text-ink">Aparecium</div>
+        <div className="text-[13px] font-semibold text-ink">Xparecium</div>
         <div className="mt-0.5 text-[11.5px] text-ink-3">Reveal how your system works</div>
       </div>
 
       {!storageOk && (
         <div className="mb-4">
           <Callout tone="warn" title="Local storage is unavailable">
-            This browser is not letting Aparecium save projects (private browsing often does this).
+            This browser is not letting Xparecium save projects (private browsing often does this).
             You can still build and run — use Export before closing the tab.
           </Callout>
         </div>

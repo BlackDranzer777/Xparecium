@@ -30,7 +30,11 @@ test('the starter result remains readable in both themes', async ({ page }, test
   await expect(page.getByText('Offered', { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('aparecium-light.png'), animations: 'disabled' });
   await page.getByRole('button', { name: 'Switch to the dark theme' }).click();
-  await expect(page.getByRole('button', { name: 'Users', exact: true })).toHaveCSS('background-color', 'rgb(20, 23, 31)');
+  // The ground changes with the theme; the pastel component cards deliberately
+  // do not, so the check is on the page, not on a tile.
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(30, 28, 26)');
+  await expect(page.getByRole('button', { name: 'Users', exact: true })).toHaveCSS('background-color', 'rgb(255, 216, 77)');
   await page.screenshot({ path: testInfo.outputPath('aparecium-dark.png'), animations: 'disabled' });
 });
 

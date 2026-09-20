@@ -171,7 +171,7 @@ export function estimateCost(input: PricingInput): CostEstimate {
           profileLabel: 'No cloud profile selected',
           chargeType: 'compute',
           chargeLabel: CHARGE_LABELS.compute,
-          basis: 'This component has no cloud profile, so Aparecium has no rates for it.',
+          basis: 'This component has no cloud profile, so Xparecium has no rates for it.',
           quantity: '1',
           quantityUnit: 'component',
           rate: null,
@@ -232,7 +232,7 @@ export function estimateCost(input: PricingInput): CostEstimate {
           monthly,
           unpricedReason:
             compute.amount === null
-              ? (compute.note ?? 'Aparecium has no rate for this charge.')
+              ? (compute.note ?? 'Xparecium has no rate for this charge.')
               : null,
           edited: compute.edited,
         }),
@@ -288,7 +288,7 @@ export function estimateCost(input: PricingInput): CostEstimate {
             monthly,
             unpricedReason:
               storage.amount === null
-                ? (storage.note ?? 'Aparecium has no rate for this charge.')
+                ? (storage.note ?? 'Xparecium has no rate for this charge.')
                 : null,
             edited: storage.edited,
           }),
@@ -347,7 +347,7 @@ export function estimateCost(input: PricingInput): CostEstimate {
             monthly,
             unpricedReason:
               metered.amount === null
-                ? (metered.note ?? 'Aparecium has no rate for this charge.')
+                ? (metered.note ?? 'Xparecium has no rate for this charge.')
                 : null,
             edited: metered.edited,
           }),
@@ -382,7 +382,7 @@ export function estimateCost(input: PricingInput): CostEstimate {
             monthly,
             unpricedReason:
               meteredWrites.amount === null
-                ? (meteredWrites.note ?? 'Aparecium has no rate for this charge.')
+                ? (meteredWrites.note ?? 'Xparecium has no rate for this charge.')
                 : null,
             edited: meteredWrites.edited,
           }),
@@ -420,7 +420,7 @@ export function estimateCost(input: PricingInput): CostEstimate {
             monthly,
             unpricedReason:
               duration.amount === null
-                ? (duration.note ?? 'Aparecium has no rate for this charge.')
+                ? (duration.note ?? 'Xparecium has no rate for this charge.')
                 : null,
             edited: duration.edited,
           }),
@@ -492,7 +492,7 @@ export function estimateCost(input: PricingInput): CostEstimate {
             rateUnit: `${catalog.currency} per ${ingest.unit}`,
             monthly,
             unpricedReason:
-              ingest.amount === null ? (ingest.note ?? 'Aparecium has no rate for this charge.') : null,
+              ingest.amount === null ? (ingest.note ?? 'Xparecium has no rate for this charge.') : null,
             edited: ingest.edited,
           }),
         );
@@ -526,7 +526,7 @@ export function estimateCost(input: PricingInput): CostEstimate {
             monthly,
             unpricedReason:
               egress.amount === null
-                ? (egress.note ?? 'Aparecium has no rate for this charge.')
+                ? (egress.note ?? 'Xparecium has no rate for this charge.')
                 : null,
             edited: egress.edited,
           }),
@@ -576,7 +576,7 @@ export function estimateCost(input: PricingInput): CostEstimate {
       'Additional high availability replicas and multi-zone deployments that are not drawn.',
       'Reserved instances, savings plans, committed-use discounts, spot pricing and free tiers.',
       'Support plans, licences, taxes and currency conversion.',
-      'Anything the architecture does not contain: Aparecium prices what you drew, nothing else.',
+      'Anything the architecture does not contain: Xparecium prices what you drew, nothing else.',
     ],
     warnings,
     catalogPublishedAt: catalog.publishedAt,

@@ -70,7 +70,7 @@ function parseCloud(raw: unknown): CloudCatalog {
   }
   if (parsed.data.version > CLOUD_CATALOG_SUPPORTED_VERSION) {
     throw new Error(
-      `The cloud pricing catalog is version ${parsed.data.version}, but this build of Aparecium understands version ${CLOUD_CATALOG_SUPPORTED_VERSION}.`,
+      `The cloud pricing catalog is version ${parsed.data.version}, but this build of Xparecium understands version ${CLOUD_CATALOG_SUPPORTED_VERSION}.`,
     );
   }
   return parsed.data;
@@ -85,7 +85,7 @@ function parseHardware(raw: unknown): HardwareCatalog {
   }
   if (parsed.data.version > HARDWARE_CATALOG_SUPPORTED_VERSION) {
     throw new Error(
-      `The hardware catalog is version ${parsed.data.version}, but this build of Aparecium understands version ${HARDWARE_CATALOG_SUPPORTED_VERSION}.`,
+      `The hardware catalog is version ${parsed.data.version}, but this build of Xparecium understands version ${HARDWARE_CATALOG_SUPPORTED_VERSION}.`,
     );
   }
   return parsed.data;

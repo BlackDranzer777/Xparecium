@@ -1,4 +1,4 @@
-import { SUPPORT_KINDS, SUPPORT_SERVICES, isSupportKind } from '../../domain/support-services';
+import { SUPPORT_SERVICES, isSupportKind } from '../../domain/support-services';
 import { isJobKind, JOB_SERVICES } from '../../domain/job-services';
 import { isDataKind, DATA_SERVICES } from '../../domain/data-services';
 /**
@@ -45,6 +45,7 @@ import { clientRequestRate } from '../../simulation/engine';
 import type { ValidationIssue } from '../../simulation/routing';
 import { formatNumber, formatRate } from '../../domain/units';
 import { KIND_ICONS } from '../../ui/icons';
+import { kindTintClass } from '../../ui/kind-style';
 import { activeEdgeIds, nodeMetricsFrom } from '../results/node-metrics';
 import type { NodeMetric } from '../results/node-metrics';
 import { analyseDocument, useEditor } from './store';
@@ -57,50 +58,23 @@ const NODE_WIDTH = 212;
 const NODE_HEIGHT = 88;
 const NODE_HEIGHT_WITH_METRIC = 118;
 
-const KIND_COLOR: Record<ComponentKind, string> = {
-  ...Object.fromEntries(SUPPORT_KINDS.map(k => [k, 'text-kind-edge'])) as Record<(typeof SUPPORT_KINDS)[number], string>,
-  eventStream: 'text-kind-queue',
-  deadLetter: 'text-kind-queue',
-  scheduler: 'text-kind-queue',
-  documentDb: 'text-kind-database',
-  wideColumn: 'text-kind-database',
-  searchIndex: 'text-kind-database',
-  warehouse: 'text-kind-database',
-  timeSeries: 'text-kind-database',
-
-  client: 'text-kind-client',
-  loadBalancer: 'text-kind-balancer',
-  server: 'text-kind-server',
-  database: 'text-kind-database',
-  cache: 'text-kind-cache',
-  queue: 'text-kind-queue',
-  dns: 'text-kind-edge',
-  cdn: 'text-kind-edge',
-  waf: 'text-kind-edge',
-  apiGateway: 'text-kind-edge',
-  serverless: 'text-kind-server',
-  readReplica: 'text-kind-database',
-  kvStore: 'text-kind-database',
-  objectStorage: 'text-kind-database',
-  pubsub: 'text-kind-queue',
-};
-
+// On a pastel card the status colours are the dark shades in both themes.
 const TONE_DOT: Record<NodeMetric['tone'], string> = {
-  ok: 'bg-ok',
-  warn: 'bg-warn',
-  bad: 'bg-bad',
+  ok: 'bg-ok-on-tint',
+  warn: 'bg-warn-on-tint',
+  bad: 'bg-bad-on-tint',
 };
 
 const TONE_BAR: Record<NodeMetric['tone'], string> = {
-  ok: 'bg-ok',
-  warn: 'bg-warn',
-  bad: 'bg-bad',
+  ok: 'bg-ok-on-tint',
+  warn: 'bg-warn-on-tint',
+  bad: 'bg-bad-on-tint',
 };
 
 const TONE_TEXT: Record<NodeMetric['tone'], string> = {
-  ok: 'text-ok',
-  warn: 'text-warn',
-  bad: 'text-bad',
+  ok: 'text-ok-on-tint',
+  warn: 'text-warn-on-tint',
+  bad: 'text-bad-on-tint',
 };
 
 interface ComponentNodeData extends Record<string, unknown> {
@@ -150,6 +124,7 @@ const ComponentNodeView = memo(function ComponentNodeView({
 }: NodeProps<ComponentNode>) {
   const Glyph = KIND_ICONS[data.kind];
   const metric = data.metric;
+  // The card wears its category's colour; the outline says how it is doing.
   const ring = data.hasError
     ? 'border-bad ring-2 ring-bad-soft'
     : selected
@@ -158,12 +133,12 @@ const ComponentNodeView = memo(function ComponentNodeView({
         ? 'border-bad'
         : data.hasWarning
           ? 'border-warn'
-          : 'border-line';
+          : 'border-outline';
 
   return (
     <div
       style={{ width: NODE_WIDTH, height: metric ? NODE_HEIGHT_WITH_METRIC : NODE_HEIGHT }}
-      className={`relative flex flex-col overflow-hidden rounded-xl border bg-surface px-3.5 py-3 shadow-node transition-colors ${ring}`}
+      className={`relative flex flex-col overflow-hidden rounded-node border-2 px-3.5 py-3 text-ink-on-tint shadow-node transition-colors ${kindTintClass(data.kind)} ${ring}`}
     >
       {HANDLE_SIDES.map((side) => (
         <Handle key={side.id} id={side.id} type="source" position={side.position} />
@@ -178,11 +153,11 @@ const ComponentNodeView = memo(function ComponentNodeView({
       )}
 
       <div className="flex items-start gap-2.5">
-        <span className={`mt-0.5 shrink-0 ${KIND_COLOR[data.kind]}`}>
+        <span className="mt-0.5 shrink-0 text-ink-on-tint">
           <Glyph size={17} />
         </span>
         <div className="min-w-0 flex-1">
-          <div className="truncate pr-3 text-[13.5px] font-semibold leading-tight text-ink">
+          <div className="truncate pr-3 text-[13.5px] font-bold leading-tight text-ink-on-tint">
             {data.title}
           </div>
           {/* The type, unless the name already is the type — a component called
@@ -191,12 +166,12 @@ const ComponentNodeView = memo(function ComponentNodeView({
               either way, and renaming it to something of your own brings the
               line back. */}
           {!namesItsOwnType(data.title, data.kind) && (
-            <div className="ap-eyebrow mt-1">{COMPONENT_LABELS[data.kind]}</div>
+            <div className="ap-eyebrow mt-1 text-ink-on-tint-2">{COMPONENT_LABELS[data.kind]}</div>
           )}
         </div>
       </div>
 
-      <div className="mt-2.5 truncate font-mono text-[11px] leading-snug text-ink-3">
+      <div className="mt-2.5 truncate font-mono text-[11px] leading-snug text-ink-on-tint-2">
         {metric ? metric.detail : data.summary}
       </div>
 
@@ -207,7 +182,7 @@ const ComponentNodeView = memo(function ComponentNodeView({
       {metric && (
         <div className="mt-2 flex items-center gap-2">
           {metric.utilisation !== null && (
-            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-3">
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-tint-track">
               <div
                 className={`h-full rounded-full ${TONE_BAR[metric.tone]}`}
                 style={{ width: `${Math.min(100, Math.max(2, metric.utilisation * 100))}%` }}
@@ -215,7 +190,7 @@ const ComponentNodeView = memo(function ComponentNodeView({
             </div>
           )}
           <span
-            className={`shrink-0 font-mono text-[11px] ${TONE_TEXT[metric.tone]} ${
+            className={`shrink-0 font-mono text-[11px] font-semibold ${TONE_TEXT[metric.tone]} ${
               metric.utilisation === null ? 'flex-1' : ''
             }`}
           >
@@ -322,7 +297,7 @@ const FlowEdge = memo(function FlowEdge({
         <EdgeLabelRenderer>
           <div
             style={{ transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)` }}
-            className="pointer-events-none absolute rounded-md border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px] text-ink-2 shadow-card"
+            className="pointer-events-none absolute rounded-full border-[1.5px] border-outline bg-surface px-2 py-0.5 font-mono text-[10px] font-semibold text-ink shadow-card"
           >
             {data?.label}
           </div>

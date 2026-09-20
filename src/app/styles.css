@@ -8,84 +8,141 @@
    component knows which theme is active.
    -------------------------------------------------------------------------- */
 
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/Manrope-Variable.ttf') format('truetype');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
+   The look: a warm cream ground, white cards with a firm dark outline, one
+   orange-red for the action that matters, and a pastel per component
+   category — yellow for traffic, sky for the edge, lilac for compute, peach
+   for data, pink for messaging, mint for shared services. The pastel cards
+   keep dark text in both themes, the way a yellow tag reads on a dark panel.
+*/
 :root {
   color-scheme: light;
 
-  --canvas: #fafaf9;
-  --canvas-dot: #dcd9d5;
+  --canvas: #f3efe6;
+  --canvas-dot: #d9d2c4;
   --surface: #ffffff;
-  --surface-2: #f7f6f4;
-  --surface-3: #efedea;
-  --line: #e7e5e4;
-  --line-strong: #d3cfcb;
+  --surface-2: #f6f2ea;
+  --surface-3: #ebe5d9;
+  --line: #e3dccf;
+  --line-strong: #c9c0af;
+  /* The firm outline on cards, nodes and pills. */
+  --outline: #1f1d1b;
 
-  --ink: #1c1917;
-  --ink-2: #5c554f;
-  --ink-3: #9c948c;
+  --ink: #1f1d1b;
+  --ink-2: #5d574f;
+  --ink-3: #8f877c;
+  /* Text on a pastel card, whatever the theme; the second is its quieter line. */
+  --ink-on-tint: #1f1d1b;
+  --ink-on-tint-2: #4d473f;
+  /* The track behind a bar on a pastel card, and the status colours on one. */
+  --tint-track: rgba(31, 29, 27, 0.14);
+  --ok-on-tint: #1a7a43;
+  --warn-on-tint: #8a5600;
+  --bad-on-tint: #c22a18;
+  /* Text on the dark frame panels. */
+  --frame: #2a2825;
+  --frame-2: #383532;
+  --frame-ink: #f5f1e8;
+  --frame-ink-2: #b9b2a6;
 
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
-  --accent-soft: #eef1ff;
-  --accent-ink: #4338ca;
+  --accent: #ff5a2d;
+  --accent-hover: #e8491f;
+  --accent-soft: #ffe9e0;
+  --accent-ink: #c43d15;
 
-  --ok: #059669;
-  --ok-soft: #ecfdf5;
-  --warn: #b45309;
-  --warn-soft: #fffbeb;
-  --bad: #dc2626;
-  --bad-soft: #fef2f2;
+  --ok: #1f9d55;
+  --ok-soft: #dcf3e4;
+  --warn: #a86a00;
+  --warn-soft: #fff0bf;
+  --bad: #d5321e;
+  --bad-soft: #fde1dc;
 
-  --kind-client: #0284c7;
-  --kind-balancer: #7c3aed;
-  --kind-server: #6366f1;
-  --kind-database: #059669;
-  --kind-cache: #d97706;
-  --kind-queue: #db2777;
-  --kind-edge: #0d9488;
+  --tint-traffic: #ffd84d;
+  --tint-edge: #bfe3f5;
+  --tint-compute: #dcc3ff;
+  --tint-data: #ffd2b0;
+  --tint-messaging: #ffc4d8;
+  --tint-shared: #c4ebd0;
 
-  --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04), 0 4px 16px rgba(28, 25, 23, 0.06);
-  --shadow-float: 0 2px 4px rgba(28, 25, 23, 0.05), 0 12px 32px rgba(28, 25, 23, 0.1);
-  --shadow-node: 0 1px 2px rgba(28, 25, 23, 0.05), 0 2px 8px rgba(28, 25, 23, 0.06);
+  --kind-client: #a86a00;
+  --kind-balancer: #6d3fc7;
+  --kind-server: #6d3fc7;
+  --kind-database: #b85b1a;
+  --kind-cache: #b85b1a;
+  --kind-queue: #c0325f;
+  --kind-edge: #1d6f95;
+  --kind-shared: #1f7a48;
+
+  --shadow-card: 0 1px 0 rgba(31, 29, 27, 0.04);
+  --shadow-float: 0 8px 24px rgba(31, 29, 27, 0.1);
+  --shadow-node: 0 2px 0 rgba(31, 29, 27, 0.06);
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --canvas: #0b0d12;
-  --canvas-dot: #262b36;
-  --surface: #14171f;
-  --surface-2: #1b1f29;
-  --surface-3: #232833;
-  --line: #262b36;
-  --line-strong: #363c4a;
+  --canvas: #1e1c1a;
+  --canvas-dot: #33302c;
+  --surface: #2a2825;
+  --surface-2: #33302c;
+  --surface-3: #3d3934;
+  --line: #3d3934;
+  --line-strong: #56514a;
+  --outline: #ece6da;
 
-  --ink: #e8ecf3;
-  --ink-2: #9ba3b2;
-  --ink-3: #6b7383;
+  --ink: #f5f1e8;
+  --ink-2: #b9b2a6;
+  --ink-3: #857e73;
+  --ink-on-tint: #1f1d1b;
+  --ink-on-tint-2: #4d473f;
+  --tint-track: rgba(31, 29, 27, 0.14);
+  --ok-on-tint: #1a7a43;
+  --warn-on-tint: #8a5600;
+  --bad-on-tint: #c22a18;
+  --frame: #15140f;
+  --frame-2: #24221f;
+  --frame-ink: #f5f1e8;
+  --frame-ink-2: #b9b2a6;
 
-  --accent: #7c6cf0;
-  --accent-hover: #9a8df5;
-  --accent-soft: #1f1c38;
-  --accent-ink: #b9aff8;
+  --accent: #ff5a2d;
+  --accent-hover: #ff7350;
+  --accent-soft: #4a2418;
+  --accent-ink: #ffb39c;
 
-  --ok: #34d399;
-  --ok-soft: #0d2a22;
-  --warn: #fbbf24;
-  --warn-soft: #2b2211;
-  --bad: #f87171;
-  --bad-soft: #2d1719;
+  --ok: #4fc97f;
+  --ok-soft: #1c3a29;
+  --warn: #f0c24b;
+  --warn-soft: #3d3216;
+  --bad: #ff6b57;
+  --bad-soft: #43221e;
 
-  --kind-client: #38bdf8;
-  --kind-balancer: #c084fc;
-  --kind-server: #9a8df5;
-  --kind-database: #34d399;
-  --kind-cache: #fbbf24;
-  --kind-queue: #f472b6;
-  --kind-edge: #2dd4bf;
+  --tint-traffic: #ffd84d;
+  --tint-edge: #bfe3f5;
+  --tint-compute: #dcc3ff;
+  --tint-data: #ffd2b0;
+  --tint-messaging: #ffc4d8;
+  --tint-shared: #c4ebd0;
 
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.35);
-  --shadow-float: 0 2px 4px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.5);
-  --shadow-node: 0 1px 2px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.4);
+  --kind-client: #ffd84d;
+  --kind-balancer: #dcc3ff;
+  --kind-server: #dcc3ff;
+  --kind-database: #ffd2b0;
+  --kind-cache: #ffd2b0;
+  --kind-queue: #ffc4d8;
+  --kind-edge: #bfe3f5;
+  --kind-shared: #c4ebd0;
+
+  --shadow-card: 0 1px 0 rgba(0, 0, 0, 0.3);
+  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-node: 0 2px 0 rgba(0, 0, 0, 0.35);
 }
 
 @layer base {
@@ -105,7 +162,7 @@
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 6px;
+    border-radius: 10px;
   }
 
   ::-webkit-scrollbar {
@@ -133,13 +190,13 @@
 @layer components {
   /* A floating card. Everything that sits over the canvas uses this. */
   .ap-card {
-    @apply rounded-card border border-line bg-surface shadow-card;
+    @apply rounded-card border-2 border-outline bg-surface shadow-card;
   }
 
   .ap-input {
-    @apply w-full rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[13px] text-ink
-           transition-colors placeholder:text-ink-3 hover:border-line-strong
-           focus:border-accent focus:outline-none;
+    @apply w-full rounded-xl border-[1.5px] border-line-strong bg-surface px-3 py-1.5 text-[13px] text-ink
+           transition-colors placeholder:text-ink-3 hover:border-outline
+           focus:border-outline focus:outline-none;
   }
 
   .ap-select {
@@ -156,14 +213,14 @@
   }
 
   .ap-btn {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px]
-           font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px]
+           font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40;
   }
   .ap-btn-primary {
     @apply ap-btn bg-accent text-white hover:bg-accent-hover;
   }
   .ap-btn-ghost {
-    @apply ap-btn border border-line text-ink-2 hover:bg-surface-2 hover:text-ink;
+    @apply ap-btn border-[1.5px] border-outline text-ink hover:bg-surface-2;
   }
   .ap-btn-quiet {
     @apply ap-btn text-ink-2 hover:bg-surface-2 hover:text-ink;
@@ -172,10 +229,19 @@
     @apply ap-btn text-bad hover:bg-bad-soft;
   }
 
-  /* A small square icon button, used in the top bar and card headers. */
+  /* A small round icon button, used in the top bar and card headers. */
   .ap-icon-btn {
-    @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-ink-2
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-full text-ink-2
            transition-colors hover:bg-surface-2 hover:text-ink;
+  }
+
+  /* A pill: the selected tab is solid ink, the rest are outlined. */
+  .ap-pill {
+    @apply inline-flex items-center rounded-full border-[1.5px] border-outline px-3 py-1 text-[12px]
+           font-semibold text-ink transition-colors hover:bg-surface-2;
+  }
+  .ap-pill-selected {
+    @apply ap-pill bg-outline text-surface hover:bg-outline;
   }
 
   .ap-label {
@@ -191,8 +257,14 @@
   }
 
   .ap-tag {
-    @apply inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold
            uppercase tracking-wide;
+  }
+
+  /* A category tag on a card: a pastel pill with a firm outline. */
+  .ap-chip {
+    @apply inline-flex items-center rounded-full border-[1.5px] border-outline px-2.5 py-0.5
+           text-[11px] font-semibold text-ink-on-tint;
   }
 }
 
@@ -202,25 +274,25 @@
 
 .react-flow {
   --xy-background-color: var(--canvas);
-  --xy-edge-stroke-default: var(--line-strong);
+  --xy-edge-stroke-default: var(--outline);
   --xy-edge-stroke-selected-default: var(--accent);
   --xy-connectionline-stroke-default: var(--accent);
 }
 
 .react-flow__edge-path {
-  stroke-width: 1.5;
+  stroke-width: 2;
 }
 .react-flow__edge.selected .react-flow__edge-path {
-  stroke-width: 2.25;
+  stroke-width: 3;
 }
 
 /* Connection points stay out of the way until you approach a node. */
 .react-flow__handle {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: 999px;
   background: var(--surface);
-  border: 1.5px solid var(--line-strong);
+  border: 2px solid var(--outline);
   opacity: 0;
   transition:
     opacity 120ms ease,
@@ -246,9 +318,9 @@
 
 .react-flow__controls {
   box-shadow: var(--shadow-card);
-  border-radius: 10px;
+  border-radius: 14px;
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 2px solid var(--outline);
 }
 .react-flow__controls-button {
   background: var(--surface);
@@ -263,8 +335,8 @@
 }
 
 .react-flow__minimap {
-  border-radius: 10px;
-  border: 1px solid var(--line);
+  border-radius: 14px;
+  border: 2px solid var(--outline);
   box-shadow: var(--shadow-card);
 }
 
@@ -283,7 +355,7 @@
   inset: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(760px 420px at 18% 8%, var(--accent-soft), transparent 62%),
-    radial-gradient(680px 380px at 86% 92%, var(--ok-soft), transparent 62%);
-  opacity: 0.75;
+    radial-gradient(760px 420px at 18% 8%, var(--tint-traffic), transparent 62%),
+    radial-gradient(680px 380px at 86% 92%, var(--tint-edge), transparent 62%);
+  opacity: 0.22;
 }

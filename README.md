@@ -1,8 +1,10 @@
-# Aparecium
+# Xparecium
 
-**Reveal how your system works.**
+**Reveal how your system works.** Live at [xparecium.com](https://xparecium.com).
 
-A browser-based system-design simulator. Draw a small architecture, choose
+A browser-based system-design simulator (formerly *Aparecium*; the journal and
+the older design notes use that name, and the browser database and export file
+type still carry it so saved work keeps opening). Draw a small architecture, choose
 hardware and cloud profiles, set the traffic, press Run, and see performance,
 resource usage and an estimated monthly cost — then change one thing and compare.
 
@@ -96,7 +98,7 @@ error stops one — they are marked as belonging to an earlier configuration, so
 they can never be mistaken for current. The simulation keeps running either way;
 the problems chip says why no newer numbers are arriving.
 
-Aparecium ships a light theme and a dark one. Light is the default; the toggle
+Xparecium ships a light theme and a dark one. Light is the default; the toggle
 is top right and your choice is remembered in this browser.
 
 ### Keyboard
@@ -332,6 +334,10 @@ engine be unit tested in plain Node and run either in a worker or inline.
 | Types | `npm run typecheck` | passes |
 | Unit tests | `npm test` | 428 passed, 22 files |
 | Browser workflow | `npm run test:e2e` | 66 passed |
+
+The interface font is [Manrope](https://github.com/googlefonts/manrope), served
+from `public/fonts` under the SIL Open Font Licence (`Manrope-OFL.txt`); the
+page loads nothing from a third party.
 | Production build | `npm run build` | succeeds |
 
 The unit tests are named after the acceptance checks they cover, so a failure

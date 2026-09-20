@@ -7,7 +7,7 @@ import { simulationClient } from '../workers/client';
 import './styles.css';
 
 const container = document.getElementById('root');
-if (!container) throw new Error('Aparecium could not find its mount point.');
+if (!container) throw new Error('Xparecium could not find its mount point.');
 
 // Applied before the first paint so there is no flash of the wrong theme.
 initTheme();

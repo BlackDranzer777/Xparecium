@@ -307,7 +307,7 @@ export const useEditor = create<EditorState>((set, get) => {
 
   /**
    * Open the most recent project this build can read. One saved by a newer
-   * Aparecium is refused by `openProject` and left alone, so the next one is
+   * Xparecium is refused by `openProject` and left alone, so the next one is
    * tried; a fresh starter is created only when nothing saved can be opened.
    */
   async function openFirstReadable(projects: ProjectRecord[]): Promise<void> {
@@ -435,7 +435,7 @@ export const useEditor = create<EditorState>((set, get) => {
         get().pushToast({ tone: 'error', message: 'That project could not be opened.' });
         return;
       }
-      // A project saved by a newer Aparecium is refused here, before anything
+      // A project saved by a newer Xparecium is refused here, before anything
       // is upgraded, replaced or written back. It stays in storage as it is,
       // and whatever was open stays open.
       const unsupported = unsupportedDocumentReason(record.document);
@@ -866,10 +866,10 @@ export const useEditor = create<EditorState>((set, get) => {
     exportCurrent() {
       const { project, runs, latestRun } = get();
       if (!project) return;
-      const safe = project.name.replace(/[^a-z0-9-_ ]/gi, '').trim() || 'aparecium-project';
+      const safe = project.name.replace(/[^a-z0-9-_ ]/gi, '').trim() || 'xparecium-project';
       const snapshots = latestRun && !runs.some(r => r.id === latestRun.id)
         ? [latestRun, ...runs].slice(0, RUNS_KEPT) : runs;
-      download(`${safe}.aparecium.json`, exportToJson(project, snapshots));
+      download(`${safe}.xparecium.json`, exportToJson(project, snapshots));
       get().pushToast({ tone: 'success', message: `Exported "${project.name}".` });
     },
 

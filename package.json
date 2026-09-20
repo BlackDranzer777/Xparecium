@@ -2,7 +2,7 @@
   "name": "aparecium",
   "private": true,
   "version": "0.1.0",
-  "description": "Aparecium \u2014 a browser-based system-design simulator. Reveal how your system works.",
+  "description": "Xparecium \u2014 a browser-based system-design simulator. Reveal how your system works.",
   "type": "module",
   "license": "MIT",
   "scripts": {

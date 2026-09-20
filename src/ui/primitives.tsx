@@ -58,12 +58,12 @@ export function Collapsible({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="rounded-lg border border-line">
+    <div className="rounded-xl border-[1.5px] border-line-strong">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:bg-surface-2"
+        className="flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left transition-colors hover:bg-surface-2"
       >
         <span className="text-[12px] font-medium text-ink-2">{title}</span>
         <span className="flex items-center gap-2">
@@ -92,11 +92,7 @@ export function SegmentedControl<T extends string>({
   label: string;
 }) {
   return (
-    <div
-      role="tablist"
-      aria-label={label}
-      className="inline-flex items-center gap-0.5 rounded-lg bg-surface-2 p-0.5"
-    >
+    <div role="tablist" aria-label={label} className="inline-flex items-center gap-1.5">
       {options.map((option) => {
         const selected = option.value === value;
         return (
@@ -107,11 +103,7 @@ export function SegmentedControl<T extends string>({
             aria-selected={selected}
             title={option.title ?? undefined}
             onClick={() => onChange(option.value)}
-            className={`rounded-[6px] px-2.5 py-1 text-[12px] font-medium transition-colors ${
-              selected
-                ? 'bg-surface text-ink shadow-card'
-                : 'text-ink-2 hover:text-ink'
-            }`}
+            className={selected ? 'ap-pill-selected' : 'ap-pill'}
           >
             {option.label}
           </button>

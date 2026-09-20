@@ -22,7 +22,7 @@ export const CHARGE_LABELS: Record<ChargeType, string> = {
 };
 
 /**
- * `amount: null` means "this charge applies but Aparecium has no rate for it".
+ * `amount: null` means "this charge applies but Xparecium has no rate for it".
  * A charge that is simply absent from the object does not apply at all.
  * Neither case is ever treated as zero.
  */

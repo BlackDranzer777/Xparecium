@@ -50,6 +50,6 @@ export function transmissionMs(bytes: number, bandwidthMbps: number): number {
 export const BYTES_PER_GB = 1_000_000_000;
 export const BYTES_PER_GIB = 1_073_741_824;
 export const SECONDS_PER_HOUR = 3600;
-/** Aparecium projects a month as 730 hours, the usual cloud-billing convention. */
+/** Xparecium projects a month as 730 hours, the usual cloud-billing convention. */
 export const HOURS_PER_MONTH = 730;
 export const SECONDS_PER_MONTH = HOURS_PER_MONTH * SECONDS_PER_HOUR;

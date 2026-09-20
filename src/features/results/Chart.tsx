@@ -1,7 +1,7 @@
 /**
  * A deliberately small chart.
  *
- * Aparecium needs one visual: "how does this total split up?". A horizontal
+ * Xparecium needs one visual: "how does this total split up?". A horizontal
  * bar list answers that, reads correctly at any panel width, and needs no
  * charting library. Values are printed next to every bar so the picture is
  * never the only source of the number.
