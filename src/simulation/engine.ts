@@ -1,7 +1,11 @@
 import { SupportServiceModel } from './models/support-service';
+import type { ServiceNode } from './models/support-service';
+import { ChainContractModel } from './models/chain';
+import { isChainServiceKind } from '../domain/chain-services';
+import type { ChainNodeOf, ChainServiceNode } from '../domain/chain-services';
 import { isSupportKind } from '../domain/support-services';
 import type { SupportNode } from '../domain/support-services';
-import type { EventStreamNode, EventStreamSettings, DeadLetterNode, SchedulerNode, SchedulerSettings } from '../domain/job-services';
+import type { EventStreamNode, EventStreamSettings, DeadLetterNode, SchedulerNode, SchedulerSettings, WorkflowNode } from '../domain/job-services';
 import { RetainedLog } from './models/retained-log';
 import { StreamBacklog } from './models/stream-backlog';
 import { DeadLetterModel } from './models/dead-letter';
@@ -100,6 +104,11 @@ type EventPayload =
   | { t: 'streamStart'; key: string }
   | { t: 'jobMaintenance'; nodeId: string }
   | { t: 'retry'; key: string; message: PendingMessage }
+  | { t: 'workflowStep'; key: string; message: PendingMessage }
+  | { t: 'autoscaleCheck'; server: string }
+  | { t: 'chainBlock'; nodeId: string }
+  | { t: 'oracleTick'; nodeId: string }
+  | { t: 'instanceReady'; server: string }
   | { t: 'replay'; key: string }
   | { t: 'dataEnd'; nodeId: string; request: number }
   | { t: 'arrival'; route: number; user: number }
@@ -171,7 +180,19 @@ interface CompiledReplica {
 function queueSettingsOf(routing: RoutingResult, queueId: string | null): QueueSettings | null {
   if (!queueId) return null;
   const node = routing.graph.nodesById.get(queueId);
-  return node && node.kind === 'queue' ? node.settings : null;
+  // A workflow's fields are a queue's, plus the time to move between steps.
+  return node && (node.kind === 'queue' || node.kind === 'workflow') ? node.settings : null;
+}
+
+/** What one workflow engine has done. Its steps' backlogs keep their own tallies. */
+interface WorkflowTally {
+  started: number;
+  completed: number;
+  failed: number;
+  /** Step executions, retries included: what a provider bills as state transitions. */
+  transitions: number;
+  /** Start to finish, for workflows that finished. */
+  duration: StreamingStat;
 }
 
 /** A small control message: a lookup key, an acknowledgement. */
@@ -180,9 +201,9 @@ const CONTROL_BYTES = 256;
 /** One edge component on a route, with the channels on either side of it. */
 interface SupportCall { nodeId: string; outChannel: string; inChannel: string }
 interface CompiledHop {
-  identity: SupportCall | null; support: SupportNode | null;
+  identity: SupportCall | null; support: ServiceNode | null;
   nodeId: string;
-  kind: 'cdn' | 'waf' | 'apiGateway' | 'websocket' | 'rateLimiter' | 'serviceMesh';
+  kind: 'cdn' | 'waf' | 'apiGateway' | 'websocket' | 'rateLimiter' | 'serviceMesh' | 'wallet';
   name: string;
   /** Forward: into this hop. */
   inChannel: string;
@@ -232,6 +253,8 @@ interface CompiledRoute {
   queueId: string | null;
   /** Consumer routes only: which backlog — the queue's, or this subscriber's. */
   backlogKey: string | null;
+  /** Workflow steps only: the next step's backlog, or null on the last step. */
+  workflowNext?: string | null;
   clientId: string;
   clientName: string;
   /** Null when the users talk to one server directly. */
@@ -267,6 +290,12 @@ interface CompiledRoute {
 
 interface RequestState {
   actor: string; supportIndex: number; pendingSupport: { call: SupportCall; next: 'branch' | 'gateway' | 'inline'; hopId?: string } | null;
+  /**
+   * Whether this request is a transaction rather than a read, decided by the
+   * first chain piece that asks — a wallet, or the contract — so a request
+   * signed as a transaction is also sent to the chain as one.
+   */
+  chainTx?: boolean;
   streamPublished: boolean; jobExecutionChecked: boolean;
   dataIndex: number;
   dataOperation: DataOperation | null;
@@ -330,6 +359,13 @@ export class SimulationEngine {
   private readonly maintenanceAt = new Map<string, number>();
   /** Which route drains each queue, so a freed worker knows where to look. */
   private readonly consumerRouteByQueue = new Map<string, number>();
+  private readonly workflows = new Map<string, WorkflowTally>();
+  /** Contracts with a block already on the event queue. */
+  private readonly blockScheduled = new Set<string>();
+  /** Each oracle and the contract it updates. */
+  private readonly oracles = new Map<string, { node: ChainNodeOf<'oracle'>; contractId: string }>();
+  /** The indexers each contract feeds, by the drawn contract -> indexer links. */
+  private readonly indexersOf = new Map<string, string[]>();
   /** Which hop a request has reached, by the forward channel it arrives on. */
   private readonly hopByInChannel = new Map<string, { route: number; hop: CompiledHop }>();
   /**
@@ -412,11 +448,25 @@ export class SimulationEngine {
   private buildModels(doc: ArchitectureDocument): void {
     for (const node of doc.nodes) {
       if (isSupportKind(node.kind)) this.support.set(node.id, new SupportServiceModel(node as SupportNode, this.streams));
+      if (isChainServiceKind(node.kind)) {
+        const service = node as ChainServiceNode;
+        this.support.set(node.id, service.kind === 'smartContract'
+          ? new ChainContractModel(service, this.streams)
+          : new SupportServiceModel(service, this.streams));
+      }
+      if (node.kind === 'oracle') {
+        const target = (this.routing.graph.outgoing.get(node.id) ?? []).find((e) => this.routing.graph.nodesById.get(e.target)?.kind === 'smartContract');
+        if (target) this.oracles.set(node.id, { node, contractId: target.target });
+      }
+      if (node.kind === 'smartContract') {
+        this.indexersOf.set(node.id, (this.routing.graph.outgoing.get(node.id) ?? [])
+          .filter((e) => this.routing.graph.nodesById.get(e.target)?.kind === 'indexer').map((e) => e.target));
+      }
       if (isDataKind(node.kind)) this.dataServices.set(node.id, new DataServiceModel(node as DataServiceNode, this.streams));
       if (node.kind === 'deadLetter') this.backlogs.set(node.id, new DeadLetterModel(node));
       if (node.kind === 'eventStream') this.logs.set(node.id, new RetainedLog(node.settings.partitions, node.settings.maxDepth, node.settings.retentionSeconds * 1000));
-      if (node.kind === 'server' || node.kind === 'serverless') {
-        this.servers.set(node.id, new ServerModel(node as ServerNode | ServerlessNode));
+      if (node.kind === 'server' || node.kind === 'serverless' || node.kind === 'rpcNode') {
+        this.servers.set(node.id, new ServerModel(node as ServerNode | ServerlessNode | ChainNodeOf<'rpcNode'>));
       } else if (
         node.kind === 'database' ||
         node.kind === 'cache' ||
@@ -429,12 +479,17 @@ export class SimulationEngine {
         node.kind === 'readReplica' ||
         node.kind === 'kvStore' ||
         node.kind === 'objectStorage' ||
-        node.kind === 'pubsub' || node.kind === 'eventStream'
+        node.kind === 'pubsub' || node.kind === 'eventStream' || node.kind === 'workflow'
       ) {
         this.stations.set(node.id, new StationModel(node as StationNode));
         // A queue is two things: a broker that accepts publishes (the station
-        // above) and a pile of messages waiting for a consumer (this).
+        // above) and a pile of messages waiting for a consumer (this). A
+        // workflow's first step is the same pile.
         if (node.kind === 'queue') this.backlogs.set(node.id, new QueueModel(node as QueueNode));
+        if (node.kind === 'workflow') {
+          this.backlogs.set(node.id, new QueueModel(node as WorkflowNode, node.id, `${node.name} · step 1`));
+          this.workflows.set(node.id, { started: 0, completed: 0, failed: 0, transitions: 0, duration: new StreamingStat() });
+        }
       }
     }
     // A topic keeps one backlog per subscriber, so each listener's copy waits
@@ -445,6 +500,10 @@ export class SimulationEngine {
       if (source?.kind === 'eventStream') this.backlogs.set(consumer.backlogKey, new StreamBacklog(source, consumer.backlogKey, this.logs.get(source.id)!));
       if (source && source.kind === 'pubsub') {
         this.backlogs.set(consumer.backlogKey, new QueueModel(source as PubSubNode, consumer.backlogKey));
+      }
+      if (source && source.kind === 'workflow') {
+        const step = consumer.backlogKey.slice(consumer.backlogKey.lastIndexOf('#') + 1);
+        this.backlogs.set(consumer.backlogKey, new QueueModel(source as WorkflowNode, consumer.backlogKey, `${source.name} · step ${step}`));
       }
     }
     for (const edge of doc.edges) {
@@ -504,10 +563,10 @@ export class SimulationEngine {
       // The edge chain, and the map that walks a response back through it.
       const pathEdges = [...route.edgeChain.map((h) => h.inboundEdgeId), route.entryEdgeId];
       const hops: CompiledHop[] = route.edgeChain.map((hop, i) => {
-        const node = this.routing.graph.nodesById.get(hop.nodeId) as CdnNode | WafNode | ApiGatewayNode | SupportNode;
+        const node = this.routing.graph.nodesById.get(hop.nodeId) as CdnNode | WafNode | ApiGatewayNode | SupportNode | ChainNodeOf<'wallet'>;
         return {
           nodeId: hop.nodeId,
-          support: isSupportKind(node.kind) ? node as SupportNode : null,
+          support: isSupportKind(node.kind) || node.kind === 'wallet' ? node as ServiceNode : null,
           identity: node.kind === 'apiGateway' ? (() => {
             const e = (this.routing.graph.outgoing.get(node.id) ?? []).find(e => this.routing.graph.nodesById.get(e.target)?.kind === 'identity');
             return e ? { nodeId: e.target, outChannel: channelKey(e.id, FORWARD), inChannel: channelKey(e.id, REVERSE) } : null;
@@ -678,7 +737,7 @@ export class SimulationEngine {
     for (const consumer of this.routing.consumers) {
       const queueNode = this.routing.graph.nodesById.get(consumer.queueId) as
         | QueueNode
-        | PubSubNode | EventStreamNode | DeadLetterNode
+        | PubSubNode | EventStreamNode | DeadLetterNode | WorkflowNode
         | undefined;
       if (!queueNode) continue;
       const worker = this.routing.graph.nodesById.get(consumer.branch.serverId);
@@ -698,6 +757,7 @@ export class SimulationEngine {
         relayBack: new Map(),
         queueId: consumer.queueId,
         backlogKey: consumer.backlogKey,
+        ...(consumer.workflowNext !== undefined ? { workflowNext: consumer.workflowNext } : {}),
         clientId: consumer.queueId,
         clientName: queueNode.name,
         loadBalancerId: null,
@@ -725,6 +785,22 @@ export class SimulationEngine {
   }
 
   private scheduleInitialArrivals(): void {
+    // Scaling decisions happen while traffic arrives, like heartbeats. In a
+    // Timed run they stop with the arrival window, so a group that is only
+    // idling in the drain does not keep the run — and its measured interval —
+    // going.
+    for (const model of this.support.values()) if (model instanceof ChainContractModel) {
+      const at = model.blockMs;
+      if (this.input.continuous || at < this.arrivalWindowMs) { this.blockScheduled.add(model.node.id); this.queue.push(at, { t: 'chainBlock', nodeId: model.node.id }); }
+    }
+    for (const [id, oracle] of this.oracles) {
+      const at = oracle.node.settings.heartbeatSeconds * 1000;
+      if (this.input.continuous || at < this.arrivalWindowMs) this.queue.push(at, { t: 'oracleTick', nodeId: id });
+    }
+    for (const server of this.servers.values()) if (server.scaling) {
+      const at = server.scaling.checkMs;
+      if (this.input.continuous || at < this.arrivalWindowMs) this.queue.push(at, { t: 'autoscaleCheck', server: server.nodeId });
+    }
     for (const model of this.support.values()) if (model.node.kind === 'websocket') {
       const at = model.node.settings.heartbeatSeconds * 1000;
       if (this.input.continuous || at < this.arrivalWindowMs) this.queue.push(at, { t: 'heartbeat', nodeId: model.node.id });
@@ -921,6 +997,11 @@ export class SimulationEngine {
       case 'jobMaintenance': this.jobMaintenance(payload.nodeId); break;
       case 'replay': this.dispatchFromQueue(payload.key); break;
       case 'retry': { const b = this.backlogs.get(payload.key); if (b instanceof QueueModel) b.restoreRetry(payload.message, this.now); this.dispatchFromQueue(payload.key); break; }
+      case 'autoscaleCheck': this.autoscaleCheck(payload.server); break;
+      case 'chainBlock': this.chainBlock(payload.nodeId); break;
+      case 'oracleTick': this.oracleTick(payload.nodeId); break;
+      case 'instanceReady': this.instanceReady(payload.server); break;
+      case 'workflowStep': { const b = this.backlogs.get(payload.key); if (b instanceof QueueModel) b.restoreArrival(payload.message, this.now); this.dispatchFromQueue(payload.key); break; }
       case 'dataEnd':
         this.onDataEnd(payload.nodeId, payload.request);
         break;
@@ -1159,6 +1240,17 @@ export class SimulationEngine {
         // and then let through, stopped, or answered — see onServiceEnd.
         const at = this.hopByInChannel.get(key);
         if (at) {
+          if (at.hop.support?.kind === 'wallet') {
+            // Only a transaction is signed; reading passes straight through.
+            const wallet = this.support.get(at.hop.nodeId)!;
+            request.chainTx ??= wallet.decideTx();
+            if (!request.chainTx) {
+              wallet.details.passedThrough = (wallet.details.passedThrough ?? 0) + 1;
+              this.send(at.hop.outChannel, request, 'request', route.requestBytes);
+              return;
+            }
+            this.trace(request, 'Waiting for the person to sign', at.hop.name);
+          }
           if (at.hop.support) { request.pendingSupport = { call: { nodeId: at.hop.nodeId, outChannel: key, inChannel: at.hop.backChannel }, next: 'inline', hopId: at.hop.nodeId }; this.admitSupport(this.support.get(at.hop.nodeId)!, request.id, String(route.index), request.actor); return; }
           this.stationRequest(at.hop.nodeId, request, 'edgeForward');
           return;
@@ -1292,6 +1384,18 @@ export class SimulationEngine {
     const server = this.servers.get(branch.serverId);
     if (!server) return;
 
+    // A hosted RPC node refuses what is over its plan's rate, like a gateway.
+    if (server.kind === 'rpcNode') {
+      const node = this.routing.graph.nodesById.get(server.nodeId);
+      if (node?.kind === 'rpcNode' && !this.bucketAdmits(server.nodeId, node.settings.ratePerSecond, node.settings.burstCapacity)) {
+        server.throttled += 1;
+        server.rejected += 1;
+        this.trace(request, 'Refused by the RPC node', 'over the plan limit');
+        this.rejectRequest(request, 'rpc-rate-limited');
+        return;
+      }
+    }
+
     if (server.canAdmitNow()) {
       server.admit(this.now);
       request.admitted = true;
@@ -1389,7 +1493,7 @@ export class SimulationEngine {
       request.jobExecutionChecked = true;
       const route = this.routes[request.routeIndex]!;
       const source = route.queueId ? this.routing.graph.nodesById.get(route.queueId) : null;
-      if (source?.kind === 'queue' && this.streams.stream(`queue-failure:${source.id}`).bernoulli(source.settings.processingFailureShare)) { this.rejectRequest(request, 'worker-failed'); return; }
+      if ((source?.kind === 'queue' || source?.kind === 'workflow') && this.streams.stream(`queue-failure:${source.id}`).bernoulli(source.settings.processingFailureShare)) { this.rejectRequest(request, 'worker-failed'); return; }
     }
     const branch = this.branchOf(request);
     if (!branch) return;
@@ -1466,7 +1570,7 @@ export class SimulationEngine {
     // The last thing before answering: hand the slow work to the queue. The
     // caller waits only for the broker to take it, not for it to be done.
     if (branch.queueId && !request.queuePublished && branch.queueOutChannel) {
-      this.trace(request, 'Message published', branch.queueSettings
+      this.trace(request, this.workflows.has(branch.queueId) ? 'Workflow started' : 'Message published', branch.queueSettings
         ? `${branch.queueSettings.messageBytes} bytes`
         : undefined);
       this.send(
@@ -1594,7 +1698,9 @@ export class SimulationEngine {
       if (shouldTrace) this.tracedCount += 1;
       this.requests.set(id, job);
       this.prepareForBranch(job, branch);
-      this.trace(job, 'Taken from the queue', route.clientName);
+      const workflow = route.queueId ? this.workflows.get(route.queueId) : undefined;
+      if (workflow) workflow.transitions += 1;
+      this.trace(job, workflow ? 'Workflow step started' : 'Taken from the queue', backlog.name);
       this.send(route.clientOutChannel, job, 'request', route.requestBytes);
     }
   }
@@ -1648,7 +1754,11 @@ export class SimulationEngine {
   private gatewayAdmits(nodeId: string, settings: ApiGatewaySettings): boolean {
     const rate = settings.rateLimitPerSecond;
     if (rate === null) return true;
-    const capacity = Math.max(1, settings.burstCapacity);
+    return this.bucketAdmits(nodeId, rate, settings.burstCapacity);
+  }
+
+  private bucketAdmits(nodeId: string, rate: number, burst: number): boolean {
+    const capacity = Math.max(1, burst);
     let bucket = this.buckets.get(nodeId);
     if (!bucket) {
       bucket = { tokens: capacity, refilledAt: this.now };
@@ -1660,6 +1770,103 @@ export class SimulationEngine {
     if (bucket.tokens < 1) return false;
     bucket.tokens -= 1;
     return true;
+  }
+
+  /**
+   * Target tracking, the way cloud auto scaling does it. The group's CPU use
+   * since the last check, as a share of the capacity that was serving, is
+   * compared with the target: at twice the target it wants twice the
+   * instances. More than it has, and it starts the difference — billed from
+   * now, serving after the warm-up. Fewer, and nothing is still warming up,
+   * and it stops one instance per check, so it steps down gently.
+   */
+  private autoscaleCheck(serverId: string): void {
+    const server = this.servers.get(serverId);
+    const policy = server?.scaling;
+    if (!server || !policy) return;
+    const busyArea = server.cpuBusyAcc.integral(this.now);
+    const slotArea = server.slotsAcc.integral(this.now);
+    const used = slotArea > server.lastCheck.slotArea
+      ? (busyArea - server.lastCheck.busyArea) / (slotArea - server.lastCheck.slotArea)
+      : 0;
+    server.lastCheck = { busyArea, slotArea };
+    // Requests waiting for a slot are demand the busy share cannot show, so a
+    // group with a queue always asks for more.
+    const waiting = server.cpuQueue.length > 0 || server.admissionQueue.length > 0;
+    const wanted = Math.ceil(server.instances * Math.max(used, waiting ? 1 : 0) / policy.target);
+    const desired = Math.min(policy.max, Math.max(policy.min, wanted));
+    const readyBy = this.now + policy.warmupMs;
+    if (desired > server.instances + server.pending) {
+      // An instance that would only be ready after a Timed run's traffic has
+      // stopped would serve nothing; it is not started.
+      if (this.input.continuous || readyBy <= this.arrivalWindowMs) {
+        for (let i = server.instances + server.pending; i < desired; i += 1) {
+          server.startInstance(this.now);
+          this.queue.push(readyBy, { t: 'instanceReady', server: serverId });
+        }
+      }
+    } else if (desired < server.instances && server.pending === 0) {
+      server.scaleIns += 1;
+      server.setInstances(server.instances - 1, this.now);
+    }
+    const next = this.now + policy.checkMs;
+    if (this.input.continuous || next < this.arrivalWindowMs) this.queue.push(next, { t: 'autoscaleCheck', server: serverId });
+  }
+
+  /**
+   * A block. The chain keeps its beat while traffic arrives; after that, in a
+   * Timed run, only while transactions are still waiting for one, so an idle
+   * chain does not keep a run going.
+   */
+  private chainBlock(nodeId: string): void {
+    this.blockScheduled.delete(nodeId);
+    const model = this.support.get(nodeId);
+    if (!(model instanceof ChainContractModel)) return;
+    const appTxs = model.produceBlock(this.now, (id, ms, wait) => this.scheduleSupport(nodeId, id, ms, wait));
+    for (const indexerId of this.indexersOf.get(nodeId) ?? []) this.support.get(indexerId)?.indexBlock(this.now, appTxs);
+    const next = this.now + model.blockMs;
+    if (this.input.continuous || next < this.arrivalWindowMs || model.hasPending) {
+      this.blockScheduled.add(nodeId);
+      this.queue.push(next, { t: 'chainBlock', nodeId });
+    }
+  }
+
+  /** A transaction is waiting; make sure a block is coming for it. */
+  private ensureBlock(model: ChainContractModel): void {
+    const id = model.node.id;
+    if (this.blockScheduled.has(id) || !model.hasPending) return;
+    this.blockScheduled.add(id);
+    this.queue.push(model.nextBlockAt(this.now), { t: 'chainBlock', nodeId: id });
+  }
+
+  /** An oracle sends its update, while traffic arrives or for as long as Live runs. */
+  private oracleTick(oracleId: string): void {
+    const oracle = this.oracles.get(oracleId);
+    const model = oracle ? this.support.get(oracle.contractId) : undefined;
+    if (!oracle || !(model instanceof ChainContractModel)) return;
+    model.submitDetached(oracleId, oracle.node.settings.gasPerUpdate, this.now);
+    this.ensureBlock(model);
+    const next = this.now + oracle.node.settings.heartbeatSeconds * 1000;
+    if (this.input.continuous || next < this.arrivalWindowMs) this.queue.push(next, { t: 'oracleTick', nodeId: oracleId });
+  }
+
+  /** A new instance takes requests: whatever was waiting for room gets it. */
+  private instanceReady(serverId: string): void {
+    const server = this.servers.get(serverId);
+    if (!server) return;
+    server.instanceReady(this.now);
+    while (server.hasFreeCpu) {
+      const waiting = server.dequeueForCpu(this.now);
+      if (!waiting) break;
+      const next = this.requests.get(waiting.requestId);
+      if (!next) continue;
+      next.waitMs += this.now - waiting.queuedAt;
+      this.startCpu(server, next);
+    }
+    this.promoteFromQueue(server);
+    for (const route of this.routes) {
+      if (route.kind === 'consumer' && route.backlogKey && route.branches[0]?.serverId === serverId) this.dispatchFromQueue(route.backlogKey);
+    }
   }
 
   private promoteFromQueue(server: ServerModel): void {
@@ -1946,6 +2153,8 @@ export class SimulationEngine {
           return;
         }
         this.messagesPublished += 1;
+        const workflow = this.workflows.get(branch.queueId!);
+        if (workflow) workflow.started += 1;
         if (branch.queueInChannel) this.send(branch.queueInChannel, request, 'queueAck', 0);
         this.dispatchFromQueue(branch.queueId!);
         return;
@@ -2057,6 +2266,7 @@ export class SimulationEngine {
       if (backlog && request.message) {
         backlog.finish(request.message.enqueuedAt, this.now, request.message);
         this.messagesProcessed += 1;
+        if (route.workflowNext !== undefined) this.advanceWorkflow(route, request.message);
       }
       route.completed += 1;
       this.trace(request, 'Message processed', `${total.toFixed(2)} ms after publishing`);
@@ -2124,6 +2334,19 @@ export class SimulationEngine {
   private callSupport(call: SupportCall, request: RequestState, next: 'branch' | 'gateway', hopId?: string): void {
     const model = this.support.get(call.nodeId)!;
     request.pendingSupport = { call, next, hopId };
+    // A request that does not touch what the lock protects never asks for it.
+    if (model.skips()) { this.afterSupport(request); return; }
+    // A read is answered by the node from its copy of the chain; only a
+    // transaction goes to the chain and waits for a block.
+    if (model instanceof ChainContractModel) {
+      request.chainTx ??= model.decideTx();
+      if (!request.chainTx) {
+        model.details.reads = (model.details.reads ?? 0) + 1;
+        this.afterSupport(request);
+        return;
+      }
+      this.trace(request, 'Transaction sent to the chain', model.node.name);
+    }
     const cached = model.cached(next === 'gateway' ? hopId! : this.branchOf(request)!.serverId, request.actor, this.now);
     if (cached === 'secret-expired') { this.rejectRequest(request, cached); return; }
     if (cached === 'allowed') { this.afterSupport(request); return; }
@@ -2140,6 +2363,7 @@ export class SimulationEngine {
   private supportEnd(nodeId: string, id: number): void {
     const model = this.support.get(nodeId)!;
     const completed = model.finish(id, this.now, (id, ms, wait) => this.scheduleSupport(nodeId, id, ms, wait));
+    if (model instanceof ChainContractModel) this.ensureBlock(model);
     if (!completed) return;
     this.scheduleJobMaintenance(nodeId);
     if (id < 0) {
@@ -2190,16 +2414,42 @@ export class SimulationEngine {
     if (this.input.continuous || at < this.arrivalWindowMs) this.queue.push(at, { t: 'scheduledTick', route: index });
   }
 
+  /**
+   * A workflow step is done. The job's state is saved — that is the
+   * transition time — and it moves to the next step's backlog; after the last
+   * step the workflow is finished. A next step with no room fails the
+   * workflow there, and counts the refusal on that step.
+   */
+  private advanceWorkflow(route: CompiledRoute, message: PendingMessage): void {
+    const tally = route.queueId ? this.workflows.get(route.queueId) : undefined;
+    const node = route.queueId ? this.routing.graph.nodesById.get(route.queueId) : undefined;
+    if (!tally || node?.kind !== 'workflow') return;
+    if (route.workflowNext === null || route.workflowNext === undefined) {
+      tally.completed += 1;
+      tally.duration.record(this.now - message.enqueuedAt);
+      return;
+    }
+    const next = this.backlogs.get(route.workflowNext);
+    if (!(next instanceof QueueModel) || !next.reserveArrival()) { tally.failed += 1; return; }
+    this.queue.push(this.now + node.settings.transitionMs, {
+      t: 'workflowStep',
+      key: route.workflowNext,
+      message: { publishedBy: message.publishedBy, enqueuedAt: message.enqueuedAt, attempts: 1 },
+    });
+  }
+
   private failJob(route: CompiledRoute, request: RequestState): void {
     const b = this.backlogs.get(route.backlogKey!);
     if (!b || !request.message) return;
     const source = this.routing.graph.nodesById.get(route.queueId!);
     const attempts = request.message.attempts ?? 1;
-    if (source?.kind === 'queue' && attempts < source.settings.maxAttempts && b instanceof QueueModel && b.reserveRetry()) {
+    if ((source?.kind === 'queue' || source?.kind === 'workflow') && attempts < source.settings.maxAttempts && b instanceof QueueModel && b.reserveRetry()) {
       this.queue.push(this.now + source.settings.retryDelayMs, { t: 'retry', key: b.key, message: { ...request.message, attempts: attempts + 1 } });
       return;
     }
     b.fail(request.message);
+    // A step that has used its attempts fails the whole workflow.
+    if (source?.kind === 'workflow') { const tally = this.workflows.get(source.id); if (tally) tally.failed += 1; return; }
     if (source?.kind !== 'queue') return;
     const e = (this.routing.graph.outgoing.get(source.id) ?? []).find(e => this.routing.graph.nodesById.get(e.target)?.kind === 'deadLetter');
     const ch = e ? this.channels.get(channelKey(e.id, FORWARD)) : undefined;
@@ -2224,6 +2474,35 @@ export class SimulationEngine {
     this.scheduleJobMaintenance(id);
   }
 
+  private gasEntries(which: 'gas' | 'fee'): (readonly [string, number])[] {
+    const entries: (readonly [string, number])[] = [];
+    for (const model of this.support.values()) {
+      if (!(model instanceof ChainContractModel)) continue;
+      entries.push([model.node.id, which === 'gas' ? model.gasUsed : model.feeWeightedGas] as const);
+      for (const [oracleId, tally] of model.oracles) entries.push([oracleId, which === 'gas' ? tally.gas : tally.feeWeightedGas] as const);
+    }
+    return entries;
+  }
+
+  /** The chain pieces' own numbers; the RPC node reports with the servers. */
+  private chainMetrics(now: number): import('./models/support-service').SupportMetrics[] {
+    const metrics = [...this.support.values()].filter((s) => isChainServiceKind(s.node.kind)).map((s) => s.snapshot(now));
+    for (const [id, oracle] of this.oracles) {
+      const model = this.support.get(oracle.contractId);
+      const tally = model instanceof ChainContractModel ? model.oracleTally(id) : null;
+      const heartbeatMs = oracle.node.settings.heartbeatSeconds * 1000;
+      metrics.push({ nodeId: id, name: oracle.node.name, kind: 'oracle', accepted: tally?.submitted ?? 0, completed: tally?.included ?? 0,
+        rejected: tally?.dropped ?? 0, waiting: Math.max(0, (tally?.submitted ?? 0) - (tally?.included ?? 0) - (tally?.dropped ?? 0)),
+        active: 0, utilisation: 0, waitMsTotal: 0,
+        details: { updates: tally?.submitted ?? 0, included: tally?.included ?? 0, dropped: tally?.dropped ?? 0,
+          inclusionMsAverage: tally?.inclusion.mean ?? 0,
+          // The oldest the on-chain value got: a whole interval, plus the longest wait for a block.
+          maxAgeMs: tally && tally.included > 0 ? heartbeatMs + tally.inclusion.max : 0,
+          gasUsed: tally?.gas ?? 0 } });
+    }
+    return metrics;
+  }
+
   private jobMetrics(): import('./types').JobServiceMetrics[] {
     const metrics: import('./types').JobServiceMetrics[] = [];
     for (const [id, log] of this.logs) {
@@ -2234,6 +2513,14 @@ export class SimulationEngine {
     }
     for (const b of this.backlogs.values()) if (b instanceof DeadLetterModel) metrics.push({ nodeId: b.nodeId, name: b.name, kind: 'deadLetter',
       accepted: b.enqueued, completed: b.processed, failed: b.failed + b.refused, waiting: b.outstanding, details: { expired: b.expired, refused: b.refused } });
+    for (const [id, tally] of this.workflows) {
+      const steps = [...this.backlogs.values()].filter((b) => b.nodeId === id && b instanceof QueueModel) as QueueModel[];
+      metrics.push({ nodeId: id, name: this.routing.graph.nodesById.get(id)!.name, kind: 'workflow',
+        accepted: tally.started, completed: tally.completed, failed: tally.failed,
+        waiting: Math.max(0, tally.started - tally.completed - tally.failed),
+        details: { steps: steps.length, transitions: tally.transitions, retries: sum(steps.map((b) => b.retries)),
+          meanDurationMs: tally.duration.mean } });
+    }
     for (const route of this.routes) if (route.scheduler) metrics.push({ nodeId: route.clientId, name: route.clientName, kind: 'scheduler', accepted: route.offered,
       completed: route.completed, failed: route.rejected, waiting: route.offered - route.completed - route.rejected,
       details: { ticks: route.ticks, skipped: route.skipped } });
@@ -2336,7 +2623,11 @@ export class SimulationEngine {
       admitted: s.admitted,
       completed: s.completed,
       rejected: s.rejected,
-      cpuUtilisation: s.cpuSlots > 0 ? s.cpuBusyAcc.timeAverage(simulatedMs) / s.cpuSlots : 0,
+      // An auto-scaled group's capacity moved, so its CPU use is a share of
+      // the capacity that was actually serving at each moment.
+      cpuUtilisation: s.scaling
+        ? (s.slotsAcc.timeAverage(simulatedMs) > 0 ? s.cpuBusyAcc.timeAverage(simulatedMs) / s.slotsAcc.timeAverage(simulatedMs) : 0)
+        : s.cpuSlots > 0 ? s.cpuBusyAcc.timeAverage(simulatedMs) / s.cpuSlots : 0,
       cpuSlots: s.cpuSlots,
       busySlotsAverage: s.cpuBusyAcc.timeAverage(simulatedMs),
       concurrencyAverage: s.concurrencyAcc.timeAverage(simulatedMs),
@@ -2353,6 +2644,10 @@ export class SimulationEngine {
       cpuWaitMsTotal: s.cpuWaitMsTotal,
       ...(s.kind === 'serverless'
         ? { coldStarts: s.coldStarts, throttled: s.throttled, busyMsTotal: s.busyMsTotal + (activeFunctionMs.get(s.nodeId) ?? 0) }
+        : s.kind === 'rpcNode' ? { throttled: s.throttled } : {}),
+      ...(s.scaling
+        ? { instancesAverage: s.billedAcc.timeAverage(simulatedMs), instancesPeak: s.billedAcc.peak,
+            instancesNow: s.instances, scaleOuts: s.scaleOuts, scaleIns: s.scaleIns }
         : {}),
     }));
 
@@ -2517,7 +2812,8 @@ export class SimulationEngine {
       stations,
       dataServices,
       jobServices: this.jobMetrics(),
-      supportServices: [...this.support.values()].map(s => s.snapshot(simulatedMs)),
+      supportServices: [...this.support.values()].filter((s) => isSupportKind(s.node.kind)).map(s => s.snapshot(simulatedMs)),
+      chainServices: this.chainMetrics(simulatedMs),
       links,
       databaseQueries: this.databaseQueries,
       cacheHits: this.cacheHits,
@@ -2537,7 +2833,9 @@ export class SimulationEngine {
         // looked at, whether they answered it, refused it, or passed it on.
         requestsByNodeId: Object.fromEntries([
           ...dataServices.map((s) => [s.nodeId, s.reads + s.writes] as const),
-          ...[...this.support.values()].map(s => [s.node.id, s.details.attempts ?? 0] as const),
+          ...[...this.support.values()].filter((s) => s.node.kind !== 'wallet').map(s => [s.node.id, s.details.attempts ?? 0] as const),
+          // An RPC node bills what it answered or forwarded, not what it refused.
+          ...[...this.servers.values()].filter((s) => s.kind === 'rpcNode').map((s) => [s.nodeId, s.admitted] as const),
           ...this.routes.filter(r => r.scheduler).map(r => [r.clientId, r.offered] as const),
           ...[...this.backlogs.values()]
             .filter((b) => b.key === b.nodeId)
@@ -2560,6 +2858,9 @@ export class SimulationEngine {
           ...[...this.servers.values()]
             .filter((s) => s.kind === 'serverless')
             .map((s) => [s.nodeId, s.admitted] as const),
+          // Last, so it replaces the first step's backlog count: a workflow
+          // is billed per state transition, every step execution and retry.
+          ...[...this.workflows].map(([id, tally]) => [id, tally.transitions] as const),
         ]),
         scannedGbByNodeId: Object.fromEntries(dataServices.filter((s) => s.kind === 'warehouse').map((s) => [s.nodeId, s.details.scannedGb ?? 0])),
         ingestedBytesByNodeId: Object.fromEntries(dataServices.filter((s) => s.kind === 'timeSeries').map((s) => [s.nodeId, s.details.ingestedBytes ?? 0])),
@@ -2569,6 +2870,17 @@ export class SimulationEngine {
             .filter((st) => st.kind === 'kvStore' || st.kind === 'objectStorage')
             .map((st) => [st.nodeId, st.writes] as const),
         ]),
+        // Billed instances on average, for auto-scaled groups only: the
+        // compute charge is this many machines, not one.
+        instancesByNodeId: Object.fromEntries(
+          [...this.servers.values()].filter((s) => s.scaling)
+            .map((s) => [s.nodeId, s.billedAcc.timeAverage(simulatedMs)] as const),
+        ),
+        // Gas the app's transactions and each oracle's updates used; and the
+        // same gas weighted by the fee of the block that took it, as a
+        // multiple of the starting fee (see models/chain.ts).
+        gasByNodeId: Object.fromEntries(this.gasEntries('gas')),
+        feeWeightedGasByNodeId: Object.fromEntries(this.gasEntries('fee')),
         busyMsByNodeId: Object.fromEntries(
           [...this.servers.values()]
             .filter((s) => s.kind === 'serverless')

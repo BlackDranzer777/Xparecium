@@ -71,6 +71,7 @@
   --tint-data: #ffd2b0;
   --tint-messaging: #ffc4d8;
   --tint-shared: #c4ebd0;
+  --tint-chain: #d6dcff;
 
   --kind-client: #a86a00;
   --kind-balancer: #6d3fc7;
@@ -80,6 +81,7 @@
   --kind-queue: #c0325f;
   --kind-edge: #1d6f95;
   --kind-shared: #1f7a48;
+  --kind-chain: #3b47b8;
 
   --shadow-card: 0 1px 0 rgba(31, 29, 27, 0.04);
   --shadow-float: 0 8px 24px rgba(31, 29, 27, 0.1);
@@ -130,6 +132,7 @@
   --tint-data: #ffd2b0;
   --tint-messaging: #ffc4d8;
   --tint-shared: #c4ebd0;
+  --tint-chain: #d6dcff;
 
   --kind-client: #ffd84d;
   --kind-balancer: #dcc3ff;
@@ -139,6 +142,7 @@
   --kind-queue: #ffc4d8;
   --kind-edge: #bfe3f5;
   --kind-shared: #c4ebd0;
+  --kind-chain: #d6dcff;
 
   --shadow-card: 0 1px 0 rgba(0, 0, 0, 0.3);
   --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.45);

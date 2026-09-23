@@ -2,8 +2,8 @@
   "catalogId": "cloud-profiles",
   "version": 1,
   "currency": "USD",
-  "publishedAt": "2026-09-14",
-  "notice": "AWS and Azure profiles in this file were read from the providers' own machine-readable price lists — the AWS Price List Bulk API and the Azure Retail Prices API — by scripts/refresh-cloud-prices.mjs on 2026-09-14, and carry the provider's publication date in their priceNote. They are on-demand, single-instance, Linux rates in one region each, and are exact quotes of those lists on that date; prices change, and the same script refreshes them. Google Cloud profiles are ILLUSTRATIVE placeholders: the Cloud Billing Catalog API needs an API key (set GCP_BILLING_API_KEY to read it), and the pricing web page carries no figures as text. Self-managed profiles have no rates by design. Every profile says which of these it is in its verified flag and priceNote.",
+  "publishedAt": "2026-09-23",
+  "notice": "AWS and Azure profiles in this file were read from the providers' own machine-readable price lists — the AWS Price List Bulk API and the Azure Retail Prices API — by scripts/refresh-cloud-prices.mjs on 2026-09-23, and carry the provider's publication date in their priceNote. They are on-demand, single-instance, Linux rates in one region each, and are exact quotes of those lists on that date; prices change, and the same script refreshes them. Google Cloud profiles are ILLUSTRATIVE placeholders: the Cloud Billing Catalog API needs an API key (set GCP_BILLING_API_KEY to read it), and the pricing web page carries no figures as text. Self-managed profiles have no rates by design. Every profile says which of these it is in its verified flag and priceNote.",
   "profiles": [
     {
       "id": "aws.ec2.t3-medium.us-east-1",
@@ -19,8 +19,8 @@
       "description": "Burstable general purpose. 2 vCPU, 4 GiB. Intel Skylake E5 2686 v5.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-10T19:55:14Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-21T19:47:12Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
       "charges": {
         "compute": {
           "unit": "instance-hour",
@@ -46,8 +46,8 @@
       "description": "General purpose. 2 vCPU, 8 GiB. Intel Xeon Scalable (Sapphire Rapids).",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-10T19:55:14Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-21T19:47:12Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
       "charges": {
         "compute": {
           "unit": "instance-hour",
@@ -73,8 +73,8 @@
       "description": "General purpose. 4 vCPU, 16 GiB. Intel Xeon Scalable (Sapphire Rapids).",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-10T19:55:14Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-21T19:47:12Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
       "charges": {
         "compute": {
           "unit": "instance-hour",
@@ -100,8 +100,8 @@
       "description": "General purpose. 8 vCPU, 32 GiB. Intel Xeon Scalable (Sapphire Rapids).",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-10T19:55:14Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-21T19:47:12Z). On-demand, USD, us-east-1. Linux, shared tenancy. Outbound transfer uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 100 GB/month free per account.",
       "charges": {
         "compute": {
           "unit": "instance-hour",
@@ -127,8 +127,8 @@
       "description": "Burstable general purpose. 2 vCPU, 4 GiB.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Linux, Virtual Machines BS Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. Linux, Virtual Machines BS Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
       "charges": {
         "compute": {
           "unit": "instance-hour",
@@ -154,8 +154,8 @@
       "description": "General purpose. 2 vCPU, 8 GiB.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Linux, Virtual Machines Dsv5 Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. Linux, Virtual Machines Dsv5 Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
       "charges": {
         "compute": {
           "unit": "instance-hour",
@@ -181,8 +181,8 @@
       "description": "General purpose. 4 vCPU, 16 GiB.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Linux, Virtual Machines Dsv5 Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. Linux, Virtual Machines Dsv5 Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
       "charges": {
         "compute": {
           "unit": "instance-hour",
@@ -208,8 +208,8 @@
       "description": "General purpose. 8 vCPU, 32 GiB.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Linux, Virtual Machines Dsv5 Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. Linux, Virtual Machines Dsv5 Series. Outbound transfer uses the first paid tier on default routing (after 100 GB/month free); Azure charges less beyond 10 TB.",
       "charges": {
         "compute": {
           "unit": "instance-hour",
@@ -321,7 +321,7 @@
       "description": "Managed layer-7 load balancer, billed per hour plus capacity units.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSELB/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AWSELB, published 2026-09-11T12:45:44Z). On-demand, USD, us-east-1. The hourly charge only. AWS also bills Load Balancer Capacity Units (connections, rules, bandwidth), which Aparecium does not model, so a busy balancer costs more than this.",
       "charges": {
         "compute": {
@@ -347,8 +347,8 @@
       "description": "Managed layer-4 load balancer, billed per hour plus data processed.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Priced globally. The hourly charge covers five rules; Azure also bills per GB processed, which Aparecium does not model.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. Priced globally. The hourly charge covers five rules; Azure also bills per GB processed, which Aparecium does not model.",
       "charges": {
         "compute": {
           "unit": "balancer-hour",
@@ -401,8 +401,8 @@
       "description": "Managed relational database instance with separately billed storage. 2 vCPU, 8 GiB.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRDS/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonRDS, published 2026-09-11T12:45:02Z). On-demand, USD, us-east-1. Single-AZ; Multi-AZ roughly doubles the instance charge. Storage is General Purpose (gp3), billed per provisioned GB-month whether or not it is queried.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonRDS, published 2026-09-22T19:31:30Z). On-demand, USD, us-east-1. Single-AZ; Multi-AZ roughly doubles the instance charge. Storage is General Purpose (gp3), billed per provisioned GB-month whether or not it is queried.",
       "charges": {
         "compute": {
           "unit": "instance-hour",
@@ -428,8 +428,8 @@
       "description": "Managed PostgreSQL, General Purpose, 2 vCore, with separately billed storage.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Azure prices this per vCore-hour; the amount here is the 2-vCore SKU. Storage is billed per GB-month.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. Azure prices this per vCore-hour; the amount here is the 2-vCore SKU. Storage is billed per GB-month.",
       "charges": {
         "compute": {
           "unit": "instance-hour",
@@ -481,7 +481,7 @@
       "description": "Managed in-memory cache node. Memory is part of the node, not billed per GB.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonElastiCache/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AmazonElastiCache, published 2026-09-14T06:37:14Z). On-demand, USD, us-east-1. Cache capacity is included in the node price, so no separate storage charge applies.",
       "charges": {
         "compute": {
@@ -503,8 +503,8 @@
       "description": "Managed Redis, replicated. Memory is part of the tier, not billed per GB.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Cache capacity is included in the tier price, so no separate storage charge applies.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. Cache capacity is included in the tier price, so no separate storage charge applies.",
       "charges": {
         "compute": {
           "unit": "node-hour",
@@ -547,7 +547,7 @@
       "description": "Managed DNS. Billed per query answered; nothing is provisioned.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRoute53/current/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AmazonRoute53, published 2026-09-11T12:45:04Z). On-demand, USD, us-east-1. Route 53 is priced globally, not per region. First tier (up to one billion queries a month). AWS also charges $0.50 per hosted zone per month, which Aparecium does not model.",
       "charges": {
         "requests": {
@@ -570,8 +570,8 @@
       "description": "Managed DNS. Billed per query answered; nothing is provisioned.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. DNS is priced by zone, not region; Zone 1 covers North America and Europe. First tier (up to one billion queries a month). Azure also charges $0.50 per hosted zone per month, which Aparecium does not model.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. DNS is priced by zone, not region; Zone 1 covers North America and Europe. First tier (up to one billion queries a month). Azure also charges $0.50 per hosted zone per month, which Aparecium does not model.",
       "charges": {
         "requests": {
           "unit": "million requests",
@@ -616,8 +616,8 @@
       "description": "Managed CDN. Billed per request and per GB sent to users; nothing is provisioned.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonCloudFront/current/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonCloudFront, published 2026-09-11T12:44:15Z). On-demand, USD, us-east-1. CloudFront is priced by edge location, not by region; these are the United States rates. HTTPS requests. Transfer to users uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 1 TB/month and 10 million requests free. Transfer from your origin to CloudFront is not modelled.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonCloudFront, published 2026-09-16T13:22:08Z). On-demand, USD, us-east-1. CloudFront is priced by edge location, not by region; these are the United States rates. HTTPS requests. Transfer to users uses the first tier (up to 10 TB/month); AWS charges less beyond that, and gives 1 TB/month and 10 million requests free. Transfer from your origin to CloudFront is not modelled.",
       "charges": {
         "requests": {
           "unit": "million requests",
@@ -643,8 +643,8 @@
       "description": "Managed CDN. Billed per request and per GB sent to users; nothing is provisioned.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. CDN is priced by zone, not region; Zone 1 covers North America and Europe. First tier of transfer.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. CDN is priced by zone, not region; Zone 1 covers North America and Europe. First tier of transfer.",
       "charges": {
         "requests": {
           "unit": "million requests",
@@ -698,8 +698,8 @@
       "description": "Managed web application firewall. A monthly charge for the rule set, plus a charge per request inspected.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/awswaf/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (awswaf, published 2026-09-11T12:46:22Z). On-demand, USD, us-east-1. One web ACL, prorated hourly from the monthly charge, plus the first request tier. AWS also charges $1.00 per rule per month, which Aparecium does not model, so a real firewall costs a little more.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (awswaf, published 2026-09-14T16:39:21Z). On-demand, USD, us-east-1. One web ACL, prorated hourly from the monthly charge, plus the first request tier. AWS also charges $1.00 per rule per month, which Aparecium does not model, so a real firewall costs a little more.",
       "charges": {
         "compute": {
           "unit": "web ACL-hour",
@@ -749,8 +749,8 @@
       "description": "Managed API front door. Billed per request; nothing is provisioned.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonApiGateway/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonApiGateway, published 2026-09-11T12:44:08Z). On-demand, USD, us-east-1. HTTP API, first tier (up to 300 million requests a month). The first million requests a month are free for a year and are not modelled.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonApiGateway, published 2026-09-21T23:14:04Z). On-demand, USD, us-east-1. HTTP API, first tier (up to 300 million requests a month). The first million requests a month are free for a year and are not modelled.",
       "charges": {
         "requests": {
           "unit": "million requests",
@@ -796,7 +796,7 @@
       "description": "A managed message queue. Nothing is provisioned: the whole charge is what passes through it.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSQueueService/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AWSQueueService, published 2026-09-11T12:46:07Z). On-demand, USD, us-east-1. First tier, standard queue. AWS counts every API call as a request — send, receive and delete — so one message is billed as three requests, which the multiplier below applies. The first million requests a month are free and are not modelled.",
       "charges": {
         "requests": {
@@ -820,8 +820,8 @@
       "description": "A managed message queue billed per operation, with nothing to provision.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Basic tier. Azure counts send, receive and complete as separate operations, so one message is billed as three, which the multiplier below applies.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. Basic tier. Azure counts send, receive and complete as separate operations, so one message is billed as three, which the multiplier below applies.",
       "charges": {
         "requests": {
           "unit": "million requests",
@@ -891,7 +891,7 @@
       "description": "Managed document database, MongoDB-compatible. One instance billed per hour, storage per GB-month; reads and writes are included in the I/O-Optimized configuration.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonDocDB/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AmazonDocDB, published 2026-09-11T12:44:22Z). On-demand, USD, us-east-1. One db.r6g.large instance in the I/O-Optimized configuration, which includes all I/O in the instance and storage rates, so there is no per-request charge to map. Backups beyond the free allowance are not modelled.",
       "charges": {
         "compute": {
@@ -951,8 +951,8 @@
       "description": "Managed wide-column store that scales itself. Billed per read, per write and per GB stored.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonMCS/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonMCS, published 2026-09-11T12:44:52Z). On-demand, USD, us-east-1. On-demand capacity. One read request unit per read and one write request unit per write, which holds for rows up to 4 KB read and 1 KB written; the synchronous write copies drawn on the component are how Keyspaces replicates internally and are not billed separately.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonMCS, published 2026-09-14T16:55:20Z). On-demand, USD, us-east-1. On-demand capacity. One read request unit per read and one write request unit per write, which holds for rows up to 4 KB read and 1 KB written; the synchronous write copies drawn on the component are how Keyspaces replicates internally and are not billed separately.",
       "charges": {
         "requests": {
           "unit": "million requests",
@@ -1017,7 +1017,7 @@
       "description": "Managed search cluster. One data node billed per hour, plus its gp3 storage per GB-month; searches and indexing are not billed per request.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonES/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AmazonES, published 2026-09-11T12:44:27Z). On-demand, USD, us-east-1. One r6g.large.search data node with gp3 storage. A production domain usually has three or more nodes; multiply the compute line by your node count. Dedicated master nodes are not modelled.",
       "charges": {
         "compute": {
@@ -1077,7 +1077,7 @@
       "description": "Serverless reporting over files in S3. Billed per terabyte a report scans, plus S3 storage for the data; nothing is provisioned.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonAthena/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AmazonAthena, published 2026-09-11T12:44:08Z). On-demand, USD, us-east-1. The scan rate is $5.00 per terabyte read, expressed here per GB (1,024 GB to the terabyte). Storage is the S3 Standard first-tier rate for the data the reports scan. Athena rounds each query up to 10 MB; that minimum is not modelled.",
       "charges": {
         "scan": {
@@ -1103,7 +1103,7 @@
       "description": "A provisioned warehouse: one node billed per hour, plus managed storage per GB-month. Reports are not billed by what they scan.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRedshift/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AmazonRedshift, published 2026-09-11T12:45:05Z). On-demand, USD, us-east-1. One ra3.xlplus node with Redshift Managed Storage. Provisioned Redshift does not charge per scan, so the component's scanned volume affects time, not cost, on this profile. Concurrency scaling and Spectrum are not modelled.",
       "charges": {
         "compute": {
@@ -1155,7 +1155,7 @@
       "description": "Managed time-series store. Billed per GB of points taken in and per GB-month kept in the magnetic store; nothing is provisioned.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonTimestream/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AmazonTimestream, published 2026-09-11T12:45:13Z). On-demand, USD, us-east-1. Ingestion is billed by the gigabyte: the run's writes times the record size drawn on the component. Storage is the magnetic store rate; the memory store ($0.036 per GB-hour) and queries ($0.01 per GB scanned) are not modelled, because this model does not measure what a query scans.",
       "charges": {
         "ingest": {
@@ -1216,7 +1216,7 @@
       "description": "A managed event stream. Each partition is a shard billed per hour, and every record written is a payload unit.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonKinesis/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AmazonKinesis, published 2026-09-11T12:44:43Z). On-demand, USD, us-east-1. Provisioned mode. The hourly charge is per shard and is multiplied by the partitions drawn on the component. One payload unit per record up to 25 KB. Retention beyond 24 hours and enhanced fan-out are not modelled.",
       "charges": {
         "compute": {
@@ -1304,7 +1304,7 @@
       "description": "Managed schedules. Billed per job started; nothing is provisioned.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSEvents/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AWSEvents, published 2026-09-11T12:45:49Z). On-demand, USD, us-east-1. Paid tier. The first 14 million scheduled invocations a month are free and are not modelled.",
       "charges": {
         "requests": {
@@ -1341,6 +1341,51 @@
       }
     },
     {
+      "id": "aws.stepfunctions.standard.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "workflow"
+      ],
+      "label": "Step Functions (Standard workflows)",
+      "description": "Managed workflows. Billed per state transition — every step executed, retries included; nothing is provisioned.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonStates/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonStates, published 2026-09-11T12:45:11Z). On-demand, USD, us-east-1. Standard workflows. The first 4,000 state transitions a month are free per account and are not deducted. Express workflows bill per request and duration instead and are not modelled. The workers each step calls are priced on their own lines.",
+      "charges": {
+        "requests": {
+          "unit": "million state transitions",
+          "amount": "25.00",
+          "note": "One step executed, or retried, = one state transition."
+        }
+      }
+    },
+    {
+      "id": "generic.workflow",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "workflow"
+      ],
+      "label": "Workflow engine (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "requests": {
+          "unit": "million state transitions",
+          "amount": null
+        }
+      }
+    },
+    {
       "id": "aws.apigateway-websocket.us-east-1",
       "provider": "aws",
       "providerName": "Amazon Web Services",
@@ -1353,8 +1398,8 @@
       "description": "Managed WebSocket connections. Billed per message; nothing is provisioned.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonApiGateway/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonApiGateway, published 2026-09-11T12:44:08Z). On-demand, USD, us-east-1. First message tier (up to one billion a month). AWS also bills $0.25 per million connection-minutes, which this model does not measure and does not include, so a chatty long-lived connection costs a little more than shown.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonApiGateway, published 2026-09-21T23:14:04Z). On-demand, USD, us-east-1. First message tier (up to one billion a month). AWS also bills $0.25 per million connection-minutes, which this model does not measure and does not include, so a chatty long-lived connection costs a little more than shown.",
       "charges": {
         "requests": {
           "unit": "million requests",
@@ -1454,6 +1499,187 @@
       }
     },
     {
+      "id": "aws.ec2.m7i-large.lock.us-east-1",
+      "provider": "aws",
+      "providerName": "Amazon Web Services",
+      "region": "us-east-1",
+      "regionName": "US East (N. Virginia)",
+      "appliesTo": [
+        "lock"
+      ],
+      "label": "EC2 m7i.large per cluster node (self-run etcd or ZooKeeper)",
+      "description": "No provider sells a lock service by the request, so a lock cluster is priced as the machines it runs on: one 2 vCPU, 8 GiB instance per node.",
+      "verified": true,
+      "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/us-east-1/index.csv",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonEC2, published 2026-09-21T19:47:12Z). On-demand, USD, us-east-1. Linux, shared tenancy. The machine size is a judgement, not a provider product: etcd recommends 2 vCPU and 8 GB for a small cluster, which is an m7i.large. The node count comes from the canvas. Disks and traffic between the nodes are not included.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": "0.1008"
+        }
+      }
+    },
+    {
+      "id": "generic.lock",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "lock"
+      ],
+      "label": "Distributed lock (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+      "charges": {
+        "compute": {
+          "unit": "instance-hour",
+          "amount": null
+        }
+      }
+    },
+    {
+      "id": "generic.wallet",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "wallet"
+      ],
+      "label": "Wallet (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. A wallet costs the app nothing: the person signing pays the gas, which is on the Smart contract’s line.",
+      "charges": {}
+    },
+    {
+      "id": "generic.rpcNode",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "rpcNode"
+      ],
+      "label": "RPC node (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Hosted nodes (Alchemy, Infura, QuickNode) price by plan, often in “compute units” that differ per method, and none publishes a machine-readable price list. Enter your plan’s cost per million requests. A node you run yourself is a server.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": null,
+          "note": "Your plan’s cost per million requests; hosted nodes price by plan, often in compute units."
+        }
+      }
+    },
+    {
+      "id": "generic.smartContract",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "smartContract"
+      ],
+      "label": "Smart contract (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Gas is paid in the chain’s own token, at a base fee that changes every block, so no list can say what it costs today. Enter your cost in USD per million gas at the starting fee: the base fee in gwei, times the token price in USD, divided by 1,000.",
+      "charges": {
+        "gas": {
+          "unit": "million gas",
+          "amount": null,
+          "note": "Enter USD per million gas at the starting fee: the base fee in gwei, times the token price in USD, divided by 1,000."
+        }
+      }
+    },
+    {
+      "id": "generic.indexer",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "indexer"
+      ],
+      "label": "Blockchain indexer (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. The Graph bills queries in GRT, a token whose price moves, and hosted indexers price by plan. Enter your cost per million queries. An indexer you run yourself is a server and a database.",
+      "charges": {
+        "requests": {
+          "unit": "million requests",
+          "amount": null,
+          "note": "Your cost per million queries: The Graph bills in GRT, whose price moves; hosted indexers price by plan."
+        }
+      }
+    },
+    {
+      "id": "generic.oracle",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "oracle"
+      ],
+      "label": "Oracle (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Public price feeds are paid for by their sponsors, so reading them costs you nothing. If you run your own updater, you pay this gas: enter your cost per million gas, worked out as for the contract.",
+      "charges": {
+        "gas": {
+          "unit": "million gas",
+          "amount": null,
+          "note": "Reading a public feed costs you nothing. If you run the updater, enter USD per million gas as for the contract."
+        }
+      }
+    },
+    {
+      "id": "generic.ipfs",
+      "provider": "generic",
+      "providerName": "Editable model (unpriced)",
+      "region": "unspecified",
+      "regionName": "Choose your own deployment",
+      "appliesTo": [
+        "ipfs"
+      ],
+      "label": "Decentralised storage (unpriced)",
+      "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+      "verified": false,
+      "priceSourceUrl": "",
+      "priceCheckedAt": "",
+      "priceNote": "No rates supplied. Pinning services (Pinata, Filebase, web3.storage) price per GB kept and per request by plan, and none publishes a machine-readable price list. Arweave charges once to store for good, in its own token. Enter your plan’s rates.",
+      "charges": {
+        "storage": {
+          "unit": "GB-month",
+          "amount": null,
+          "note": "Your pinning plan’s price per GB kept for a month."
+        },
+        "requests": {
+          "unit": "million requests",
+          "amount": null,
+          "note": "Your pinning plan’s price per million requests."
+        }
+      }
+    },
+    {
       "id": "aws.cognito.us-east-1",
       "provider": "aws",
       "providerName": "Amazon Web Services",
@@ -1466,8 +1692,8 @@
       "description": "A managed identity service billed per monthly active user, a unit this simulation does not measure, so its charge is reported as unpriced rather than as zero.",
       "verified": false,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonCognito/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "No rates applied. Cognito bills per monthly active user, not per check: the price list read on 2026-09-14 (published 2026-09-11T12:44:17Z) gives $0.0055 per MAU for the first 50,000 after the free tier on the User Pools tier, and $0.015 per MAU on the Essentials tier. The simulation measures access checks, and an active user count is not a monthly active user count, so no rate is applied.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "No rates applied. Cognito bills per monthly active user, not per check: the price list read on 2026-09-23 (published 2026-09-11T12:44:17Z) gives $0.0055 per MAU for the first 50,000 after the free tier on the User Pools tier, and $0.015 per MAU on the Essentials tier. The simulation measures access checks, and an active user count is not a monthly active user count, so no rate is applied.",
       "charges": {
         "requests": {
           "unit": "million requests",
@@ -1519,7 +1745,7 @@
       "description": "Managed service discovery. Billed per registered resource per month and per discovery call.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSCloudMap/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AWSCloudMap, published 2026-09-11T12:45:31Z). On-demand, USD, us-east-1. One registered resource, its monthly charge spread over 730 hours, plus discovery API calls. DNS-based discovery through Route 53 is billed separately and is not modelled.",
       "charges": {
         "compute": {
@@ -1577,7 +1803,7 @@
       "description": "Managed secrets. Billed per secret per month and per API call.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSSecretsManager/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AWSSecretsManager, published 2026-09-11T12:46:10Z). On-demand, USD, us-east-1. One secret, its monthly charge spread over 730 hours, plus API calls. Rotation runs a Lambda function, whose cost is not modelled here.",
       "charges": {
         "compute": {
@@ -1635,7 +1861,7 @@
       "description": "Managed email delivery. Billed per recipient; nothing is provisioned.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonSES/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AmazonSES, published 2026-09-11T12:45:07Z). On-demand, USD, us-east-1. Email only, one recipient per notification. SMS and push notifications are billed by other services at other rates. Attachments and dedicated IPs are not modelled.",
       "charges": {
         "requests": {
@@ -1688,8 +1914,8 @@
       "description": "Managed logging. Billed per GB of records taken in; nothing is provisioned.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonCloudWatch/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonCloudWatch, published 2026-09-11T13:44:05Z). On-demand, USD, us-east-1. Ingestion into the Standard log class: the run's records times the record size drawn on the component. Log storage ($0.03 per GB-month) is not modelled — at the default sixty-second retention it is negligible — and custom metrics, alarms and dashboards are separate charges not included here.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonCloudWatch, published 2026-09-22T02:17:15Z). On-demand, USD, us-east-1. Ingestion into the Standard log class: the run's records times the record size drawn on the component. Log storage ($0.03 per GB-month) is not modelled — at the default sixty-second retention it is negligible — and custom metrics, alarms and dashboards are separate charges not included here.",
       "charges": {
         "ingest": {
           "unit": "GB",
@@ -1745,8 +1971,8 @@
       "description": "A managed topic: one publish, a copy to every subscriber. Billed per publish; delivery to queues is free.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonSNS/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonSNS, published 2026-09-11T12:45:11Z). On-demand, USD, us-east-1. Paid tier. The first million requests a month are free and are not modelled. Delivery to SQS queues and Lambda is free; HTTP and email deliveries cost extra and are not modelled.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonSNS, published 2026-09-15T15:19:44Z). On-demand, USD, us-east-1. Paid tier. The first million requests a month are free and are not modelled. Delivery to SQS queues and Lambda is free; HTTP and email deliveries cost extra and are not modelled.",
       "charges": {
         "requests": {
           "unit": "million requests",
@@ -1791,8 +2017,8 @@
       "description": "Code run per request with nothing provisioned. Billed per invocation and per gigabyte-second alive.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSLambda/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AWSLambda, published 2026-09-11T17:35:10Z). On-demand, USD, us-east-1. x86, first duration tier (up to 6 billion GB-seconds a month). The free tier — a million requests and 400,000 GB-seconds a month — is not modelled.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AWSLambda, published 2026-09-19T00:23:59Z). On-demand, USD, us-east-1. x86, first duration tier (up to 6 billion GB-seconds a month). The free tier — a million requests and 400,000 GB-seconds a month — is not modelled.",
       "charges": {
         "requests": {
           "unit": "million requests",
@@ -1819,8 +2045,8 @@
       "description": "Code run per request with nothing provisioned. Billed per execution and per gigabyte-second alive.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. Consumption plan, paid tiers. The free grant — a million executions and 400,000 GB-seconds a month — is not modelled.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. Consumption plan, paid tiers. The free grant — a million executions and 400,000 GB-seconds a month — is not modelled.",
       "charges": {
         "requests": {
           "unit": "million requests",
@@ -1870,7 +2096,7 @@
       "description": "A managed key-value store that scales itself. Billed per read, per write and per GB stored.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonDynamoDB/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
+      "priceCheckedAt": "2026-09-23",
       "priceNote": "Read from the AWS Price List Bulk API (AmazonDynamoDB, published 2026-09-11T12:44:22Z). On-demand, USD, us-east-1. On-demand (pay per request), standard table class. One read request unit per read and one write request unit per write, which holds for items up to 4 KB read and 1 KB written; larger items cost more units. The first 25 GB of storage a month are free and are not modelled.",
       "charges": {
         "requests": {
@@ -1930,8 +2156,8 @@
       "description": "Managed object storage. Billed per GB kept, per read and per write.",
       "verified": true,
       "priceSourceUrl": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3/current/us-east-1/index.csv",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the AWS Price List Bulk API (AmazonS3, published 2026-09-11T12:45:07Z). On-demand, USD, us-east-1. S3 Standard, first storage tier (up to 50 TB). Reads are GET requests and writes are PUT requests. Transfer out to the internet is billed separately and is not on this profile, since the server in front of the bucket carries the response.",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the AWS Price List Bulk API (AmazonS3, published 2026-09-18T17:47:47Z). On-demand, USD, us-east-1. S3 Standard, first storage tier (up to 50 TB). Reads are GET requests and writes are PUT requests. Transfer out to the internet is billed separately and is not on this profile, since the server in front of the bucket carries the response.",
       "charges": {
         "storage": {
           "unit": "GB-month",
@@ -1962,8 +2188,8 @@
       "description": "Managed object storage. Billed per GB kept, per read and per write.",
       "verified": true,
       "priceSourceUrl": "https://prices.azure.com/api/retail/prices",
-      "priceCheckedAt": "2026-09-14",
-      "priceNote": "Read from the Azure Retail Prices API on 2026-09-14. Pay-as-you-go, USD, eastus. General-purpose v2 block blobs, Hot tier, locally redundant, first storage tier (up to 50 TB).",
+      "priceCheckedAt": "2026-09-23",
+      "priceNote": "Read from the Azure Retail Prices API on 2026-09-23. Pay-as-you-go, USD, eastus. General-purpose v2 block blobs, Hot tier, locally redundant, first storage tier (up to 50 TB).",
       "charges": {
         "storage": {
           "unit": "GB-month",

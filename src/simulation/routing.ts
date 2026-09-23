@@ -1,4 +1,5 @@
 import { DEPENDENCY_SUPPORT, ASYNC_SUPPORT } from '../domain/support-services';
+import { CHAIN_DEPENDENCIES } from '../domain/chain-services';
 import { DATA_KINDS, isDataKind } from '../domain/data-services';
 /**
  * Turning a drawing into a runnable route.
@@ -96,6 +97,12 @@ export interface QueueConsumer {
   /** Link from the queue or topic to the server that drains it. */
   deliveryEdgeId: string;
   branch: ServerBranch;
+  /**
+   * Workflow steps only. The backlog the job moves to when this step is done,
+   * or null for the last step, whose completion finishes the workflow.
+   * Absent for queues and topics.
+   */
+  workflowNext?: string | null;
 }
 
 /**
@@ -180,7 +187,13 @@ function isCompute(kind: ComponentKind | null): kind is ComputeKind {
 
 /** What a server may call, and how many of each. */
 const SERVER_TARGETS: Partial<Record<ComponentKind, number>> = {
-  identity: 1, discovery: 1, secrets: 1, notification: 1, monitoring: 1,
+  identity: 1, discovery: 1, secrets: 1, notification: 1, monitoring: 1, lock: 1,
+  // Starting a workflow is publishing its first step, so it shares the
+  // queue's slot: a server publishes to one queue or starts one workflow.
+  workflow: 1,
+  // A server, a function or an RPC node reads through an indexer and
+  // storage, and writes to one contract (entry 076).
+  smartContract: 1, indexer: 1, ipfs: 1,
   eventStream: 1,
   documentDb: 1,
   wideColumn: 1,
@@ -232,9 +245,27 @@ function resolveServerBranch(
     graph.nodesById.has(e.target),
   );
   const ofKind = (kind: ComponentKind) => out.filter((e) => kindOf(graph, e.target) === kind);
+  // An RPC node is the chain's doorway: the one thing it calls is the chain.
+  if (kindOf(graph, serverId) === 'rpcNode') {
+    const wrong = out.filter((e) => kindOf(graph, e.target) !== 'smartContract');
+    const contracts = out.filter((e) => kindOf(graph, e.target) === 'smartContract');
+    if (wrong.length > 0 || contracts.length > 1) {
+      issues.push({
+        severity: 'error',
+        code: 'route/rpc-target',
+        message: wrong.length > 0
+          ? `"${nameOf(graph, serverId)}" is connected to ${wrong.map((e) => `"${nameOf(graph, e.target)}"`).join(', ')}, which an RPC node cannot call.`
+          : `"${nameOf(graph, serverId)}" is connected to ${contracts.length} smart contracts.`,
+        hint: 'An RPC node forwards to one Smart contract and answers reads itself. Put an Application Server in front of anything else.',
+        nodeIds: [serverId],
+        edgeIds: [...wrong, ...contracts.slice(1)].map((e) => e.id),
+      });
+      return null;
+    }
+  }
   const dbEdges = ofKind('database');
   const cacheEdges = ofKind('cache');
-  const queueEdges = ofKind('queue');
+  const queueEdges = out.filter((e) => kindOf(graph, e.target) === 'queue' || kindOf(graph, e.target) === 'workflow');
   const pubsubEdges = ofKind('pubsub');
   const kvEdges = ofKind('kvStore');
   const storageEdges = ofKind('objectStorage');
@@ -328,8 +359,8 @@ function resolveServerBranch(
     issues.push({
       severity: 'error',
       code: 'route/server-multiple-queues',
-      message: `"${nameOf(graph, serverId)}" publishes to ${queueEdges.length} queues.`,
-      hint: 'This version publishes to exactly one queue per server. Remove the extra connection.',
+      message: `"${nameOf(graph, serverId)}" publishes to ${queueEdges.length} queues or workflows.`,
+      hint: 'This version lets a server publish to one Message Queue or start one Workflow engine. Remove the extra connection.',
       nodeIds: [serverId],
       edgeIds: queueEdges.map((e) => e.id),
     });
@@ -361,7 +392,7 @@ function resolveServerBranch(
 
   return {
     serverId,
-    computeKind: kindOf(graph, serverId) === 'serverless' ? 'serverless' : 'server',
+    computeKind: (kindOf(graph, serverId) ?? 'server') as ComputeKind,
     cacheId: cacheEdges[0]?.target ?? null,
     databaseId: dbEdges[0]?.target ?? null,
     queueId: queueEdges[0]?.target ?? null,
@@ -378,7 +409,7 @@ function resolveServerBranch(
     serverObjectStorageEdgeId: storageEdges[0]?.id ?? null,
     streamId: ofKind('eventStream')[0]?.target ?? null,
     serverStreamEdgeId: ofKind('eventStream')[0]?.id ?? null,
-    supportCalls: DEPENDENCY_SUPPORT.flatMap(kind => ofKind(kind).map(e => ({ nodeId: e.target, edgeId: e.id }))),
+    supportCalls: [...DEPENDENCY_SUPPORT, ...CHAIN_DEPENDENCIES].flatMap(kind => ofKind(kind).map(e => ({ nodeId: e.target, edgeId: e.id }))),
     asyncCalls: ASYNC_SUPPORT.flatMap(kind => ofKind(kind).map(e => ({ nodeId: e.target, edgeId: e.id }))),
     dataServices: out.filter((e) => isDataKind(kindOf(graph, e.target) ?? "")).map((e) => ({ nodeId: e.target, edgeId: e.id })),
   };
@@ -399,7 +430,8 @@ function resolveConsumers(
 ): QueueConsumer[] | null {
   const source = graph.nodesById.get(sourceId)!;
   const isTopic = source.kind === 'pubsub' || source.kind === 'eventStream';
-  const label = isTopic ? 'topic' : 'queue';
+  const isWorkflow = source.kind === 'workflow';
+  const label = isTopic ? 'topic' : isWorkflow ? 'workflow' : 'queue';
   const out = (graph.outgoing.get(sourceId) ?? []).filter((e) => graph.nodesById.has(e.target));
   const serverEdges = out.filter((e) => isCompute(kindOf(graph, e.target)));
   const deadLetters = source.kind === 'queue' ? out.filter((e) => kindOf(graph, e.target) === 'deadLetter') : [];
@@ -433,7 +465,7 @@ function resolveConsumers(
     });
     return null;
   }
-  if (!isTopic && serverEdges.length > 1) {
+  if (!isTopic && !isWorkflow && serverEdges.length > 1) {
     issues.push({
       severity: 'error',
       code: 'route/queue-multiple-consumers',
@@ -445,8 +477,12 @@ function resolveConsumers(
     return null;
   }
 
+  // A workflow's steps are its workers, in the order their connections were
+  // drawn. Step one waits in the workflow's own backlog, so starting a
+  // workflow is exactly a publish; each later step has a backlog of its own.
+  const stepKey = (index: number) => (index === 0 ? sourceId : `${sourceId}#${index + 1}`);
   const consumers: QueueConsumer[] = [];
-  for (const deliveryEdge of serverEdges) {
+  for (const [index, deliveryEdge] of serverEdges.entries()) {
     const branch = resolveServerBranch(graph, deliveryEdge.target, deliveryEdge.id, issues);
     if (!branch) return null;
 
@@ -467,9 +503,10 @@ function resolveConsumers(
     }
     consumers.push({
       queueId: sourceId,
-      backlogKey: isTopic ? `${sourceId}|${deliveryEdge.target}` : sourceId,
+      backlogKey: isTopic ? `${sourceId}|${deliveryEdge.target}` : isWorkflow ? stepKey(index) : sourceId,
       deliveryEdgeId: deliveryEdge.id,
       branch,
+      ...(isWorkflow ? { workflowNext: index + 1 < serverEdges.length ? stepKey(index + 1) : null } : {}),
     });
   }
   return consumers;
@@ -493,7 +530,7 @@ function reachesQueue(graph: ArchitectureGraph, from: string, target: string): b
       if (!isCompute(kindOf(graph, consumer.target))) continue;
       for (const next of graph.outgoing.get(consumer.target) ?? []) {
         const kind = kindOf(graph, next.target);
-        if (kind === 'queue' || kind === 'pubsub' || kind === 'eventStream') stack.push(next.target);
+        if (kind === 'queue' || kind === 'pubsub' || kind === 'eventStream' || kind === 'workflow') stack.push(next.target);
       }
     }
   }
@@ -542,15 +579,18 @@ export function validateAndResolve(doc: ArchitectureDocument): RoutingResult {
 
   // ---- Components that never initiate calls in this version --------------
   // A database is the one exception: it replicates to its read replicas.
-  const LEAF_KINDS: ComponentKind[] = [...DATA_KINDS, ...DEPENDENCY_SUPPORT, ...ASYNC_SUPPORT, 'cache', 'dns', 'readReplica', 'kvStore', 'objectStorage'];
+  const LEAF_KINDS: ComponentKind[] = [...DATA_KINDS, ...DEPENDENCY_SUPPORT, ...ASYNC_SUPPORT, 'cache', 'dns', 'readReplica', 'kvStore', 'objectStorage', 'indexer', 'ipfs'];
   for (const node of doc.nodes) {
     const out = graph.outgoing.get(node.id) ?? [];
+    // A contract feeds its indexers every block; that is the only link it starts.
     const wrong =
       node.kind === 'database'
         ? out.filter((e) => kindOf(graph, e.target) !== 'readReplica')
-        : LEAF_KINDS.includes(node.kind)
-          ? out
-          : [];
+        : node.kind === 'smartContract'
+          ? out.filter((e) => kindOf(graph, e.target) !== 'indexer')
+          : LEAF_KINDS.includes(node.kind)
+            ? out
+            : [];
     if (wrong.length > 0) {
       issues.push({
         severity: 'error',
@@ -779,6 +819,14 @@ export function validateAndResolve(doc: ArchitectureDocument): RoutingResult {
     if (branch) routes.push({ clientId: scheduler.id, loadBalancerId: null, clientEdgeId: first.id,
       edgeChain: [], entryEdgeId: first.id, dnsId: null, dnsEdgeId: null, branches: [branch] });
   }
+  // An oracle updates one contract, on its own clock, whoever else is there.
+  for (const oracle of doc.nodes.filter((n) => n.kind === 'oracle')) {
+    const out = graph.outgoing.get(oracle.id) ?? [];
+    if (out.length !== 1 || kindOf(graph, out[0]!.target) !== 'smartContract') {
+      issues.push({ severity: 'error', code: 'route/oracle-target', message: `"${oracle.name}" needs one connection to a Smart contract.`,
+        hint: 'An oracle sends its updates to the contract that reads them. Draw one arrow from the oracle to it.', nodeIds: [oracle.id], edgeIds: out.map((e) => e.id) });
+    }
+  }
   for (const node of doc.nodes.filter((n) => n.kind === 'deadLetter')) {
     const bad = (graph.incoming.get(node.id) ?? []).filter((e) => kindOf(graph, e.source) !== 'queue');
     if (bad.length) issues.push({ severity: 'error', code: 'route/dlq-source', message: 'A Dead-letter queue receives exhausted jobs from a Message Queue.', nodeIds: [node.id], edgeIds: bad.map((e) => e.id) });
@@ -803,7 +851,8 @@ export function validateAndResolve(doc: ArchitectureDocument): RoutingResult {
   // ---- Reachability: provisioned but idle components ---------------------
   const reachable = computeReachable(
     graph,
-    routes.map((r) => r.clientId),
+    // Oracles are sources of their own, like users.
+    [...routes.map((r) => r.clientId), ...doc.nodes.filter((n) => n.kind === 'oracle').map((n) => n.id)],
   );
   for (const node of doc.nodes) {
     if (node.kind === 'client') continue;

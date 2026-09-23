@@ -1,7 +1,9 @@
 import { SUPPORT_KINDS, SUPPORT_SERVICES, isSupportKind, supportDefaults } from './support-services';
 import type { SupportNode } from './support-services';
-import { JOB_SERVICES, DEFAULT_EVENT_STREAM, DEFAULT_DEAD_LETTER, DEFAULT_SCHEDULER } from './job-services';
+import { JOB_SERVICES, DEFAULT_EVENT_STREAM, DEFAULT_DEAD_LETTER, DEFAULT_SCHEDULER, DEFAULT_WORKFLOW } from './job-services';
 import { DATA_KINDS, DATA_SERVICES, dataDefaults } from './data-services';
+import { CHAIN_KINDS, CHAIN_SERVICES, chainDefaults, isChainKind } from './chain-services';
+import type { ChainNode } from './chain-services';
 /**
  * Sensible defaults, hardware profiles and the starter architectures.
  *
@@ -126,6 +128,13 @@ export const DEFAULT_SERVER_SETTINGS: ServerSettings = {
   memoryPerRequestMb: 8,
   memoryPerQueuedRequestMb: 0.5,
   queueLimit: 500,
+  // Off, so a server is one machine unless someone asks for a group.
+  autoscaleEnabled: false,
+  minInstances: 1,
+  maxInstances: 4,
+  targetCpuShare: 0.6,
+  instanceWarmupSeconds: 15,
+  scaleCheckSeconds: 5,
 };
 
 export const DEFAULT_DATABASE_SETTINGS: DatabaseSettings = {
@@ -285,6 +294,14 @@ export const DEFAULT_CLOUD_PROFILE_BY_KIND: Record<ComponentKind, string | null>
   secrets: 'aws.secretsmanager.us-east-1',
   notification: 'aws.ses.us-east-1',
   monitoring: 'aws.cloudwatch-logs.us-east-1',
+  // Nobody sells etcd or ZooKeeper as a service, so a lock cluster is priced
+  // as the machines it runs on (entry 075).
+  lock: 'aws.ec2.m7i-large.lock.us-east-1',
+  workflow: 'aws.stepfunctions.standard.us-east-1',
+  // No provider publishes a machine-readable price for any of these, and gas
+  // and token prices move by the minute: each starts on its rate-less shape,
+  // where the run measures the quantity and you enter today's rate (entry 076).
+  ...(Object.fromEntries(CHAIN_KINDS.map((k) => [k, `generic.${k}`])) as Record<ChainNode['kind'], string>),
   scheduler: 'aws.eventbridge-scheduler.us-east-1',
   deadLetter: 'aws.sqs.us-east-1',
   eventStream: 'aws.kinesis.provisioned.us-east-1',
@@ -311,8 +328,10 @@ export const DEFAULT_CLOUD_PROFILE_BY_KIND: Record<ComponentKind, string | null>
 };
 
 export const COMPONENT_LABELS: Record<ComponentKind, string> = {
+  ...(Object.fromEntries(CHAIN_KINDS.map((k) => [k, CHAIN_SERVICES[k].label])) as Record<ChainNode['kind'], string>),
   ...Object.fromEntries(SUPPORT_KINDS.map(k => [k, SUPPORT_SERVICES[k].label])) as Record<SupportNode['kind'], string>,
   scheduler: JOB_SERVICES.scheduler.label,
+  workflow: JOB_SERVICES.workflow.label,
   deadLetter: JOB_SERVICES.deadLetter.label,
   eventStream: JOB_SERVICES.eventStream.label,
   timeSeries: DATA_SERVICES.timeSeries.label,
@@ -431,6 +450,10 @@ export function upgradeDocument(document: ArchitectureDocument): ArchitectureDoc
   const needsReadShare = document.nodes.some(
     (node) => node.kind === 'database' && node.settings.readShare === undefined,
   );
+  // 6 -> 7 gave a server auto scaling. Off is what every earlier server did.
+  const needsAutoscale = document.nodes.some(
+    (node) => node.kind === 'server' && node.settings.autoscaleEnabled === undefined,
+  );
   // A queue gained failure and retry settings after release. Zero failures
   // and the standard retry policy are what every earlier queue did.
   const needsQueueRetry = document.nodes.some(
@@ -445,6 +468,7 @@ export function upgradeDocument(document: ArchitectureDocument): ArchitectureDoc
     !needsClients &&
     !needsReadShare &&
     !needsQueueRetry &&
+    !needsAutoscale &&
     document.schemaVersion === DOCUMENT_SCHEMA_VERSION
   ) {
     return document;
@@ -480,6 +504,22 @@ export function upgradeDocument(document: ArchitectureDocument): ArchitectureDoc
           },
         };
       }
+      if (node.kind === 'server' && node.settings.autoscaleEnabled === undefined) {
+        const s = node.settings;
+        const d = DEFAULT_SERVER_SETTINGS;
+        return {
+          ...node,
+          settings: {
+            ...s,
+            autoscaleEnabled: d.autoscaleEnabled,
+            minInstances: s.minInstances ?? d.minInstances,
+            maxInstances: s.maxInstances ?? d.maxInstances,
+            targetCpuShare: s.targetCpuShare ?? d.targetCpuShare,
+            instanceWarmupSeconds: s.instanceWarmupSeconds ?? d.instanceWarmupSeconds,
+            scaleCheckSeconds: s.scaleCheckSeconds ?? d.scaleCheckSeconds,
+          },
+        };
+      }
       if (node.kind === 'queue') {
         return {
           ...node,
@@ -498,8 +538,10 @@ export function upgradeDocument(document: ArchitectureDocument): ArchitectureDoc
 }
 
 export const COMPONENT_DESCRIPTIONS: Record<ComponentKind, string> = {
+  ...(Object.fromEntries(CHAIN_KINDS.map((k) => [k, CHAIN_SERVICES[k].description])) as Record<ChainNode['kind'], string>),
   ...Object.fromEntries(SUPPORT_KINDS.map(k => [k, SUPPORT_SERVICES[k].description])) as Record<SupportNode['kind'], string>,
   scheduler: JOB_SERVICES.scheduler.description,
+  workflow: JOB_SERVICES.workflow.description,
   deadLetter: JOB_SERVICES.deadLetter.description,
   eventStream: JOB_SERVICES.eventStream.description,
   timeSeries: DATA_SERVICES.timeSeries.description,
@@ -552,8 +594,10 @@ export function makeNode(
     cloud: { profileId: DEFAULT_CLOUD_PROFILE_BY_KIND[kind] },
   };
   if (isSupportKind(kind)) return { ...base, kind, settings: supportDefaults(kind) } as SupportNode;
+  if (isChainKind(kind)) return { ...base, kind, settings: chainDefaults(kind) } as ChainNode;
   switch (kind) {
     case 'scheduler': return { ...base, kind, settings: { ...DEFAULT_SCHEDULER } };
+    case 'workflow': return { ...base, kind, settings: { ...DEFAULT_WORKFLOW } };
     case 'deadLetter': return { ...base, kind, settings: { ...DEFAULT_DEAD_LETTER } };
     case 'eventStream': return { ...base, kind, settings: { ...DEFAULT_EVENT_STREAM } };
     case 'documentDb': return { ...base, kind, settings: dataDefaults(kind) };
@@ -879,6 +923,84 @@ function supportWorkshopDocument(): ArchitectureDocument {
 }
 
 /**
+ * A checkout, for the three backend pieces added in entry 075. Traffic ramps
+ * up and the server group adds machines; every order takes the lock for its
+ * item, then starts a three-step workflow — charge, reserve, email — that
+ * runs after the user already has an answer.
+ */
+function backendWorkshopDocument(): ArchitectureDocument {
+  const users = makeNode('client', 'users', 'Shoppers', { x: 0, y: 260 });
+  if (users.kind === 'client') Object.assign(users.settings, { requestRateOverridePerSecond: 150, requestBytes: 1200, responseBytes: 4000 });
+  const app = makeNode('server', 'app', 'Checkout service', { x: 300, y: 260 });
+  if (app.kind === 'server') Object.assign(app.settings, { profile: 'custom', cpuSlots: 2, cpuMsPerRequest: 20,
+    autoscaleEnabled: true, minInstances: 1, maxInstances: 5, targetCpuShare: 0.6, instanceWarmupSeconds: 5, scaleCheckSeconds: 2 });
+  const lock = makeNode('lock', 'lock', 'Seat lock', { x: 640, y: 40 });
+  if (lock.kind === 'lock') Object.assign(lock.settings, { lockKeys: 500, holdMs: 15 });
+  const db = makeNode('database', 'db', 'Orders database', { x: 640, y: 220 });
+  const workflow = makeNode('workflow', 'workflow', 'Order workflow', { x: 640, y: 420 });
+  const worker = (id: string, name: string, y: number, cpuMs: number) => {
+    const node = makeNode('server', id, name, { x: 980, y });
+    if (node.kind === 'server') Object.assign(node.settings, { profile: 'custom', cpuSlots: 4, cpuMsPerRequest: cpuMs });
+    return node;
+  };
+  const nodes = [users, app, lock, db, workflow,
+    worker('pay', 'Payment worker', 300, 15), worker('stock', 'Stock worker', 460, 10), worker('email', 'Email worker', 620, 5)];
+  const edges = [
+    link('users', 'app', DEFAULT_EXTERNAL_LINK),
+    link('app', 'lock', DEFAULT_INTERNAL_LINK),
+    link('app', 'db', DEFAULT_INTERNAL_LINK),
+    link('app', 'workflow', DEFAULT_INTERNAL_LINK),
+    // Drawn in order: these are steps one, two and three.
+    link('workflow', 'pay', DEFAULT_INTERNAL_LINK),
+    link('workflow', 'stock', DEFAULT_INTERNAL_LINK),
+    link('workflow', 'email', DEFAULT_INTERNAL_LINK),
+  ];
+  return {
+    schemaVersion: DOCUMENT_SCHEMA_VERSION,
+    nodes,
+    edges,
+    workload: { ...DEFAULT_WORKLOAD, durationSeconds: 30, arrivalPattern: 'ramp',
+      arrivalOptions: { ...DEFAULT_ARRIVAL_OPTIONS, rampStartMultiplier: 0.3, rampEndMultiplier: 1.5 } },
+    pricingOverrides: {},
+  };
+}
+
+/**
+ * An NFT drop, for the blockchain pieces added in entry 076. Buyers sign in
+ * their wallets and mint through an RPC node; the contract takes a price from
+ * an oracle and feeds an indexer; visitors browse through a marketplace API
+ * that reads the indexer and loads images from decentralised storage.
+ */
+function blockchainWorkshopDocument(): ArchitectureDocument {
+  const buyers = makeNode('client', 'buyers', 'Buyers', { x: 0, y: 80 });
+  if (buyers.kind === 'client') Object.assign(buyers.settings, { requestRateOverridePerSecond: 30, requestBytes: 600, responseBytes: 1200 });
+  const wallet = makeNode('wallet', 'wallet', 'Wallet', { x: 300, y: 80 });
+  if (wallet.kind === 'wallet') Object.assign(wallet.settings, { transactionShare: 0.4 });
+  const rpc = makeNode('rpcNode', 'rpc', 'RPC node', { x: 600, y: 80 });
+  const contract = makeNode('smartContract', 'contract', 'NFT contract', { x: 900, y: 80 });
+  // A layer-2 chain: short blocks, one confirmation. A mint uses more gas than a transfer.
+  if (contract.kind === 'smartContract') Object.assign(contract.settings, { writeShare: 0.4, blockSeconds: 2, confirmations: 1, gasPerTx: 120000 });
+  const oracle = makeNode('oracle', 'oracle', 'Price oracle', { x: 900, y: -140 });
+  const indexer = makeNode('indexer', 'indexer', 'Indexer', { x: 1200, y: 260 });
+  const visitors = makeNode('client', 'visitors', 'Visitors', { x: 0, y: 440 });
+  if (visitors.kind === 'client') Object.assign(visitors.settings, { requestRateOverridePerSecond: 40, requestBytes: 600, responseBytes: 8000 });
+  const api = makeNode('server', 'api', 'Marketplace API', { x: 600, y: 440 });
+  const storage = makeNode('ipfs', 'storage', 'NFT images', { x: 1200, y: 520 });
+  const nodes = [buyers, wallet, rpc, contract, oracle, indexer, visitors, api, storage];
+  const edges = [
+    link('buyers', 'wallet', DEFAULT_EXTERNAL_LINK),
+    link('wallet', 'rpc', DEFAULT_EXTERNAL_LINK),
+    link('rpc', 'contract', DEFAULT_EXTERNAL_LINK),
+    link('oracle', 'contract', DEFAULT_EXTERNAL_LINK),
+    link('contract', 'indexer', DEFAULT_EXTERNAL_LINK),
+    link('visitors', 'api', DEFAULT_EXTERNAL_LINK),
+    link('api', 'indexer', DEFAULT_INTERNAL_LINK),
+    link('api', 'storage', DEFAULT_EXTERNAL_LINK),
+  ];
+  return { schemaVersion: DOCUMENT_SCHEMA_VERSION, nodes, edges, workload: { ...DEFAULT_WORKLOAD, durationSeconds: 30 }, pricingOverrides: {} };
+}
+
+/**
  * The components a person can pick from the palette.
  *
  * The sixteen kinds added after the first fifteen share their engine wiring,
@@ -900,6 +1022,8 @@ export const RELEASED_KINDS: readonly ComponentKind[] = [
   'wideColumn', 'searchIndex', 'warehouse', 'timeSeries', // 063
   'eventStream', 'deadLetter', 'scheduler', // 064
   'websocket', 'rateLimiter', 'serviceMesh', 'identity', 'discovery', 'secrets', 'notification', 'monitoring', // 065
+  'lock', 'workflow', // 075
+  'wallet', 'rpcNode', 'smartContract', 'indexer', 'oracle', 'ipfs', // 076
 ];
 
 export function isReleased(kind: ComponentKind): boolean {
@@ -964,6 +1088,8 @@ export const TEMPLATES: StarterTemplate[] = [
   { id: 'support-workshop', name: 'Shared services workshop', summary: 'Connections, access checks, limits, configuration and independent delivery.', build: supportWorkshopDocument },
   { id: 'jobs-workshop', name: 'Background jobs workshop', summary: 'A schedule publishes jobs and events. Failed jobs retry before moving aside.', build: jobsWorkshopDocument },
   { id: 'data-workshop', name: 'Data workshop', summary: 'Five storage models: compare scans, partitions, refresh and retention', build: dataWorkshopDocument },
+  { id: 'blockchain-workshop', name: 'Blockchain workshop: an NFT drop', summary: 'Buyers sign in their wallets and mint through an RPC node while an oracle updates the price; visitors browse through an API that reads an indexer and loads images from decentralised storage. Watch blocks fill and the fee move.', build: blockchainWorkshopDocument },
+  { id: 'backend-workshop', name: 'Backend workshop: locks, workflows, auto scaling', summary: 'A checkout under rising traffic. The server group adds machines as it gets busy; each order locks its seat, then starts a three-step workflow that runs after the shopper has an answer.', build: backendWorkshopDocument },
   {
     id: 'empty',
     name: 'Empty canvas',

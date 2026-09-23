@@ -1,8 +1,10 @@
 import { SUPPORT_SERVICES } from './support-services';
 import type { SupportKind, SupportSettings } from './support-services';
 import { JOB_SERVICES } from './job-services';
-import type { JobKind, EventStreamSettings, DeadLetterSettings, SchedulerSettings } from './job-services';
+import type { JobKind, EventStreamSettings, DeadLetterSettings, SchedulerSettings, WorkflowSettings } from './job-services';
 import { DATA_SERVICES } from './data-services';
+import { CHAIN_SERVICES } from './chain-services';
+import type { ChainKind, ChainSettings } from './chain-services';
 import type { DataKind, DataSettings, NumericSetting } from './data-services';
 /**
  * Runtime validation for everything that crosses a trust boundary:
@@ -58,6 +60,16 @@ export const serverSettingsSchema = z.object({
   memoryPerRequestMb: finite(0, 1_000_000),
   memoryPerQueuedRequestMb: finite(0, 1_000_000),
   queueLimit: z.number().int().min(0).max(1_000_000),
+  // Absent from documents written before version 7: off, as they ran.
+  autoscaleEnabled: z.boolean().default(false),
+  minInstances: z.number().int().min(1).max(1000).default(1),
+  maxInstances: z.number().int().min(1).max(1000).default(4),
+  targetCpuShare: finite(0.05, 1).default(0.6),
+  instanceWarmupSeconds: finite(0, 3600).default(15),
+  scaleCheckSeconds: finite(0.1, 3600).default(5),
+}).refine((s) => s.maxInstances >= s.minInstances, {
+  message: 'The most instances cannot be fewer than the fewest.',
+  path: ['maxInstances'],
 });
 
 export const databaseSettingsSchema = z.object({
@@ -183,6 +195,11 @@ function supportSettingsSchema<K extends SupportKind>(kind: K): z.ZodType<Suppor
   return z.object(Object.fromEntries(Object.entries(fields).map(([key, f]) => [key, f.integer ? finite(f.min, f.max).int() : finite(f.min, f.max)]))) as unknown as z.ZodType<SupportSettings<K>>;
 }
 
+function chainSettingsSchema<K extends ChainKind>(kind: K): z.ZodType<ChainSettings<K>> {
+  const fields = CHAIN_SERVICES[kind].fields as Record<string, NumericSetting>;
+  return z.object(Object.fromEntries(Object.entries(fields).map(([key, f]) => [key, f.integer ? finite(f.min, f.max).int() : finite(f.min, f.max)]))) as unknown as z.ZodType<ChainSettings<K>>;
+}
+
 function dataSettingsSchema<K extends DataKind>(kind: K): z.ZodType<DataSettings<K>> {
   const shape = Object.fromEntries(Object.entries(DATA_SERVICES[kind].fields).map(([key, spec]) => {
     const field: NumericSetting = spec;
@@ -193,9 +210,10 @@ function dataSettingsSchema<K extends DataKind>(kind: K): z.ZodType<DataSettings
   return z.object(shape) as unknown as z.ZodType<DataSettings<K>>;
 }
 
-function jobSettingsSchema<K extends JobKind>(kind: K): z.ZodType<{
-  eventStream: EventStreamSettings; deadLetter: DeadLetterSettings; scheduler: SchedulerSettings;
-}[K]> {
+type JobSettingsByKind = {
+  eventStream: EventStreamSettings; deadLetter: DeadLetterSettings; scheduler: SchedulerSettings; workflow: WorkflowSettings;
+};
+function jobSettingsSchema<K extends JobKind>(kind: K): z.ZodType<JobSettingsByKind[K]> {
   const shape = Object.fromEntries(Object.entries(JOB_SERVICES[kind].fields).map(([key, field]) => {
     if ('toggle' in field) return [key, z.boolean()];
     if ('options' in field) return [key, z.enum(field.options.map((o) => o.value) as [string, ...string[]])];
@@ -203,13 +221,14 @@ function jobSettingsSchema<K extends JobKind>(kind: K): z.ZodType<{
     if (field.integer) schema = schema.int();
     return [key, schema];
   }));
-  return z.object(shape) as unknown as z.ZodType<{ eventStream: EventStreamSettings; deadLetter: DeadLetterSettings; scheduler: SchedulerSettings }[K]>;
+  return z.object(shape) as unknown as z.ZodType<JobSettingsByKind[K]>;
 }
 
 export const archNodeSchema = z.discriminatedUnion('kind', [
   z.object({ ...nodeBase, kind: z.literal('eventStream'), settings: jobSettingsSchema('eventStream') }),
   z.object({ ...nodeBase, kind: z.literal('deadLetter'), settings: jobSettingsSchema('deadLetter') }),
   z.object({ ...nodeBase, kind: z.literal('scheduler'), settings: jobSettingsSchema('scheduler') }),
+  z.object({ ...nodeBase, kind: z.literal('workflow'), settings: jobSettingsSchema('workflow') }),
 
   z.object({ ...nodeBase, kind: z.literal('websocket'), settings: supportSettingsSchema('websocket') }),
   z.object({ ...nodeBase, kind: z.literal('notification'), settings: supportSettingsSchema('notification') }),
@@ -219,6 +238,13 @@ export const archNodeSchema = z.discriminatedUnion('kind', [
   z.object({ ...nodeBase, kind: z.literal('secrets'), settings: supportSettingsSchema('secrets') }),
   z.object({ ...nodeBase, kind: z.literal('monitoring'), settings: supportSettingsSchema('monitoring') }),
   z.object({ ...nodeBase, kind: z.literal('serviceMesh'), settings: supportSettingsSchema('serviceMesh') }),
+  z.object({ ...nodeBase, kind: z.literal('lock'), settings: supportSettingsSchema('lock') }),
+  z.object({ ...nodeBase, kind: z.literal('wallet'), settings: chainSettingsSchema('wallet') }),
+  z.object({ ...nodeBase, kind: z.literal('rpcNode'), settings: chainSettingsSchema('rpcNode') }),
+  z.object({ ...nodeBase, kind: z.literal('smartContract'), settings: chainSettingsSchema('smartContract') }),
+  z.object({ ...nodeBase, kind: z.literal('indexer'), settings: chainSettingsSchema('indexer') }),
+  z.object({ ...nodeBase, kind: z.literal('oracle'), settings: chainSettingsSchema('oracle') }),
+  z.object({ ...nodeBase, kind: z.literal('ipfs'), settings: chainSettingsSchema('ipfs') }),
   z.object({ ...nodeBase, kind: z.literal('documentDb'), settings: dataSettingsSchema('documentDb') }),
   z.object({ ...nodeBase, kind: z.literal('wideColumn'), settings: dataSettingsSchema('wideColumn') }),
   z.object({ ...nodeBase, kind: z.literal('searchIndex'), settings: dataSettingsSchema('searchIndex') }),
@@ -304,6 +330,7 @@ export const rateOverridesSchema = z.object({
   duration: decimalString.nullable().optional(),
   scan: decimalString.nullable().optional(),
   ingest: decimalString.nullable().optional(),
+  gas: decimalString.nullable().optional(),
 });
 
 export const architectureDocumentSchema = z.object({

@@ -84,11 +84,28 @@ export function nodeMetricsFrom(result: SimulationResult | null): Map<string, No
       });
       continue;
     }
+    if (server.kind === 'rpcNode') {
+      // A node's own number is how much of the plan the app used, and what it turned away.
+      const throttled = server.throttled ?? 0;
+      byId.set(server.nodeId, {
+        kind: 'rpcNode',
+        utilisation: server.cpuUtilisation,
+        headline: `${formatNumber(server.admitted)} answered`,
+        detail: throttled > 0 ? `${formatNumber(throttled)} over the plan limit` : `${formatNumber(server.completed)} served · none refused`,
+        tone: throttled > 0 ? 'bad' : toneFor(server.cpuUtilisation, false),
+        rejected: throttled > 0,
+      });
+      continue;
+    }
     byId.set(server.nodeId, {
       kind: 'server',
       utilisation: server.cpuUtilisation,
       headline: formatPercent(server.cpuUtilisation, 0),
-      detail: `${formatNumber(server.completed)} served${queueSuffix(server.cpuQueuePeak)}`,
+      // An auto-scaled group says how many machines it took, which is what
+      // its bill follows.
+      detail: server.instancesAverage !== undefined
+        ? `${formatNumber(server.instancesAverage, 1)} instances avg · peak ${formatNumber(server.instancesPeak ?? 0)}`
+        : `${formatNumber(server.completed)} served${queueSuffix(server.cpuQueuePeak)}`,
       tone: toneFor(server.cpuUtilisation, server.rejected > 0),
       rejected: server.rejected > 0,
     });
@@ -227,7 +244,11 @@ export function nodeMetricsFrom(result: SimulationResult | null): Map<string, No
     list.push(queue);
     byBacklogOwner.set(queue.nodeId, list);
   }
+  // A workflow's steps are backlogs too, but its card is the workflow's own
+  // tally below: how many ran to the end, and how many failed.
+  const workflowIds = new Set((result.jobServices ?? []).filter((s) => s.kind === 'workflow').map((s) => s.nodeId));
   for (const [nodeId, backlogs] of byBacklogOwner) {
+    if (workflowIds.has(nodeId)) continue;
     const outstanding = backlogs.reduce((n, q) => n + q.outstanding, 0);
     const failed = backlogs.reduce((n, q) => n + (q.failed ?? 0), 0);
     const refused = backlogs.reduce((n, q) => n + q.refused, 0);
@@ -261,10 +282,27 @@ export function nodeMetricsFrom(result: SimulationResult | null): Map<string, No
   }
   for (const service of result.jobServices ?? []) {
     const detail = service.kind === 'eventStream' ? `${formatNumber(service.details.retained ?? 0)} retained · ${service.details.groups} groups`
+      : service.kind === 'workflow' ? `${formatNumber(service.completed)} finished · ${formatNumber(service.details.retries ?? 0)} retries${service.failed > 0 ? ` · ${formatNumber(service.failed)} failed` : ''}`
       : service.kind === 'scheduler' ? `${formatNumber(service.details.ticks ?? 0)} ticks · ${formatNumber(service.details.skipped ?? 0)} skipped`
       : `${formatNumber(service.accepted)} received · ${formatNumber(service.details.expired ?? 0)} expired`;
     byId.set(service.nodeId, { kind: service.kind, utilisation: null, headline: service.waiting > 0 ? `${formatNumber(service.waiting)} waiting` : `${formatNumber(service.completed)} done`,
       detail, tone: service.failed > 0 ? 'bad' : service.waiting > 0 || (service.details.skipped ?? 0) > 0 ? 'warn' : 'ok', rejected: service.failed > 0 });
+  }
+  for (const service of result.chainServices ?? []) {
+    const d = service.details;
+    const headline =
+      service.kind === 'smartContract' ? `${formatNumber(d.transactions ?? 0)} in blocks`
+        : service.kind === 'wallet' ? `${formatNumber(d.signed ?? 0)} signed`
+          : service.kind === 'indexer' ? `${formatNumber((d.lagAverageMs ?? 0) / 1000, 1)} s behind`
+            : service.kind === 'oracle' ? `${formatNumber(d.included ?? 0)} updates`
+              : `${formatNumber(service.completed)} done`;
+    // A contract's bar is how full its blocks were; the rest have none worth showing
+    // except storage, which is slots in use like any service.
+    const utilisation = service.kind === 'smartContract' || service.kind === 'ipfs' || service.kind === 'indexer' ? service.utilisation : null;
+    const trouble = service.rejected > 0 || (d.pending ?? 0) > 0;
+    byId.set(service.nodeId, { kind: service.kind, utilisation, headline, detail: supportDetails(service),
+      tone: trouble ? 'bad' : service.kind === 'smartContract' && (d.feeMultiplierPeak ?? 1) >= 2 ? 'warn' : utilisation !== null ? toneFor(utilisation, false) : 'ok',
+      rejected: service.rejected > 0 });
   }
   for (const service of result.supportServices ?? []) {
     const refused = service.rejected + (service.kind === 'secrets' ? service.details.denied ?? 0 : 0);

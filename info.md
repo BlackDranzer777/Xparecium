@@ -13,7 +13,7 @@ system slows down and what changing one part might do.
 ## What you can do today
 
 - Start with a ready-to-run example or an empty drawing.
-- Build from thirty-one kinds of piece: **Users** (the people using it); at the
+- Build from thirty-nine kinds of piece: **Users** (the people using it); at the
   edge a **DNS** (turns your name into an address), a **CDN** (answers most
   requests before they reach you), a **WAF** (turns bad requests away) and an
   **API Gateway** (the front door, with a rate limit); then a **Load Balancer**
@@ -24,8 +24,17 @@ system slows down and what changing one part might do.
   **Object Storage** (files), and five specialised stores (document, wide-column,
   search, warehouse, time-series); a **Message Queue** (work done later by one
   worker), a **Pub/Sub Topic** (one event, many listeners), an **Event stream**,
-  a **Dead-letter queue** and a **Scheduler**; and eight shared services, from a
-  **WebSocket server** and a **Rate limiter** to **Monitoring**. Thirteen of
+  a **Dead-letter queue**, a **Scheduler** and a **Workflow engine** (a job as
+  ordered steps that retry on their own); and nine shared services, from a
+  **WebSocket server** and a **Rate limiter** to **Monitoring** and a
+  **Distributed lock** (one request at a time for things that must not happen
+  twice). An Application Server can also **scale itself**, adding machines when
+  it is busy and removing them when it is quiet. And six blockchain pieces: a
+  **Wallet** (where a person signs), an **RPC node** (the app's doorway to the
+  chain), a **Smart contract** (transactions wait for blocks, and fees rise when
+  blocks are full), a **Blockchain indexer**, an **Oracle** and **Decentralised
+  storage**. Blockchain has no official price list, so these measure the
+  quantities — gas, queries, storage — and you enter today's rates. Thirteen of
   the sixteen newest start on a real AWS rate; the identity service, the rate
   limiter and the mesh proxy stay unpriced, each for a stated reason.
 - Change traffic, machine capacity, database speed, cache hit rate and connections.
@@ -82,7 +91,7 @@ for features that have not been built yet.
 
 ## Component expansion (complete)
 
-All thirty-one components are released in the main application (entries 062–065), thirteen of the sixteen newest carry verified AWS rates and three are unpriced with a stated reason (entry 066). The copy under `.implementation/all-components` is a reference only; nothing is copied from it any more. The five data stores introduce indexed/scanned documents, partition contention, delayed search visibility, warehouse scan volume and time-series retention; event streams retain history; dead-letter queues hold jobs that exhausted retries; schedulers start jobs at a chosen interval. Retry/replay/retention controls are explicit. No calendar cron parser or durable external broker is launched.
+All thirty-nine components are released in the main application (entries 062–065, 075 for the distributed lock and the workflow engine, and 076 for the six blockchain pieces), thirteen of the sixteen newest carry verified AWS rates and three are unpriced with a stated reason (entry 066). The copy under `.implementation/all-components` is a reference only; nothing is copied from it any more. The five data stores introduce indexed/scanned documents, partition contention, delayed search visibility, warehouse scan volume and time-series retention; event streams retain history; dead-letter queues hold jobs that exhausted retries; schedulers start jobs at a chosen interval. Retry/replay/retention controls are explicit. No calendar cron parser or durable external broker is launched.
 
 ## Measurement and saved projects (entries 067–070)
 

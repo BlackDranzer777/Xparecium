@@ -318,6 +318,38 @@ Firefox and WebKit are untested. **Priority:** medium.
 
 All sixteen additions are released in the main application (entries 062–065) and priced where a provider sells the thing (entry 066). Remaining fidelity limits: exactly-once side effects, durable recovery after browser closure, partition rebalance and calendar/time-zone cron scheduling. Provider-specific deployment profiles and full database internals remain outside these simplified models.
 
+### Follow-ups from the blockchain set (entry 076)
+- **No fee market.** The pending pool is first come, first served; priority
+  tips, fee bidding, and transactions dropped or replaced for a higher fee are
+  not modelled. **Priority:** medium.
+- **Nothing goes wrong on the chain.** Reorganisations, failed transactions
+  that still cost gas, and finality beyond the confirmation count are not
+  modelled. **Priority:** medium.
+- **Everyone else is one number.** Other users' demand is one share of each
+  block, elastic to the fee; real demand comes in waves. **Priority:** low.
+- **A person's client polls.** Waiting for a receipt costs RPC calls in real
+  apps; the model does not count them. **Priority:** low.
+- **Rates are yours to enter.** Gas, RPC plans, indexer queries and pinning
+  have no machine-readable price list. A dated snapshot from a public gas
+  tracker could be offered as an explicitly unverified example. **Priority:** low.
+
+### Follow-ups from the backend set (entry 075)
+- **Workflows are straight lines.** Steps run one after another in the order
+  their connections were drawn. Parallel steps, branches, compensation when a
+  later step fails (a saga), and waiting days for a person are not modelled,
+  and reordering steps means redrawing connections. **Priority:** medium.
+- **The lock never breaks.** A holder always releases after its hold time.
+  Lease expiry, a holder that crashes, fencing tokens and leader election are
+  not modelled, and the held work is a set time rather than the request's
+  real downstream calls. **Priority:** medium.
+- **One scaling policy.** Target tracking on CPU only, removing one instance per
+  check. Step scaling, scheduled or predictive scaling, scaling on queue depth,
+  and a separate scale-in cooldown are not modelled. In a Timed run nothing is
+  started after the traffic stops. **Priority:** low.
+- **Other providers.** The workflow is priced as Step Functions Standard and
+  the lock as EC2 machines; Express workflows, Temporal Cloud, Azure Durable
+  Functions and Google Workflows are not in the catalog. **Priority:** low.
+
 ### Follow-ups from the entry 067 fixes
 - **Monitoring ingestion is still records × record size from the canvas.** The
   time-series store now bills the bytes the engine measured; the monitoring

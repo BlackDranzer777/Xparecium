@@ -202,9 +202,22 @@ export function estimateCost(input: PricingInput): CostEstimate {
     // ---- Compute / provisioning: fixed, independent of traffic ------------
     const compute = effectiveCharge(profile, 'compute', overrides);
     if (compute) {
-      // An event stream is provisioned per partition — a shard each — so its
-      // hourly charge is multiplied by the partitions it is drawn with.
-      const instances = node.kind === 'eventStream' ? Math.max(1, node.settings.partitions) : 1;
+      // An event stream is provisioned per partition — a shard each — and a
+      // lock service runs on a cluster of machines, so their hourly charge is
+      // multiplied by what the canvas draws. An auto-scaled server group is
+      // as many machines as the run measured on average, or its minimum when
+      // there has been no run: never fewer than it always keeps.
+      const scaled = node.kind === 'server' && node.settings.autoscaleEnabled ? node.settings : null;
+      const measuredInstances = scaled && usage && usage.measuredSeconds > 0 ? usage.instancesByNodeId?.[node.id] : undefined;
+      const instances = new Decimal(
+        node.kind === 'eventStream'
+          ? Math.max(1, node.settings.partitions)
+          : node.kind === 'lock'
+            ? Math.max(1, node.settings.clusterNodes)
+            : scaled
+              ? (measuredInstances ?? scaled.minInstances)
+              : 1,
+      );
       const hours = new Decimal(hoursPerMonth).times(instances);
       const monthly = compute.amount === null ? null : new Decimal(compute.amount).times(hours);
       if (monthly) total = total.plus(monthly);
@@ -220,12 +233,18 @@ export function estimateCost(input: PricingInput): CostEstimate {
           key: `${node.id}:compute`,
           chargeType: 'compute',
           chargeLabel: CHARGE_LABELS.compute,
-          basis: floor
-            ? `1 instance running for all ${hoursPerMonth} hours of the month, priced as the largest machine this provider has in the catalog. The hardware configured here is bigger than that machine, so this is a floor — the real charge is at least this much.`
-            : instances > 1
-              ? `${instances} partitions, each provisioned for all ${hoursPerMonth} hours of the month. This charge does not depend on how much traffic the component handled.`
-              : `1 instance running for all ${hoursPerMonth} hours of the month. This charge does not depend on how much traffic the component handled.`,
-          quantity: hours.toFixed(0),
+          basis: scaled
+            ? measuredInstances !== undefined
+              ? `An auto-scaled group of ${scaled.minInstances} to ${scaled.maxInstances} instances aiming for ${Math.round(scaled.targetCpuShare * 100)}% CPU. Over the ${usage!.measuredSeconds.toFixed(2)} seconds measured it billed ${instances.toFixed(2)} instances on average — those warming up included, since a provider bills from the moment an instance starts. That average is assumed to hold for every hour of a ${hoursPerMonth}-hour month.${floor ? ' Each instance is priced as the largest machine in the catalog, which is smaller than the one configured, so this is a floor.' : ''}`
+              : `An auto-scaled group never runs fewer than its minimum of ${scaled.minInstances} instance${scaled.minInstances === 1 ? '' : 's'}, so that many for all ${hoursPerMonth} hours of the month is the least it costs. Run the simulation to measure how many it really uses.`
+            : floor
+              ? `1 instance running for all ${hoursPerMonth} hours of the month, priced as the largest machine this provider has in the catalog. The hardware configured here is bigger than that machine, so this is a floor — the real charge is at least this much.`
+              : node.kind === 'lock'
+                ? `${instances.toFixed(0)} cluster node${instances.eq(1) ? '' : 's'}, each a machine running for all ${hoursPerMonth} hours of the month. A lock service is run on your own machines — nobody sells etcd or ZooKeeper by the request — so this does not depend on traffic.`
+                : instances.gt(1)
+                  ? `${instances.toFixed(0)} partitions, each provisioned for all ${hoursPerMonth} hours of the month. This charge does not depend on how much traffic the component handled.`
+                  : `1 instance running for all ${hoursPerMonth} hours of the month. This charge does not depend on how much traffic the component handled.`,
+          quantity: hours.isInteger() ? hours.toFixed(0) : hours.toFixed(2),
           quantityUnit: compute.unit,
           rate: compute.amount,
           rateUnit: `${catalog.currency} per ${compute.unit}`,
@@ -257,6 +276,9 @@ export function estimateCost(input: PricingInput): CostEstimate {
       } else if (node.kind === 'cache') {
         gb = new Decimal(node.settings.capacityGb);
         basis = `${node.settings.capacityGb} GB of provisioned cache capacity, charged for the whole month.`;
+      } else if (node.kind === 'ipfs') {
+        gb = new Decimal(node.settings.storedGb);
+        basis = `${node.settings.storedGb} GB pinned, kept available for the whole month.`;
       } else if (node.kind === 'kvStore' || node.kind === 'objectStorage') {
         gb = new Decimal(node.settings.storedGb);
         basis = `${node.settings.storedGb} GB of stored data, charged for the whole month whether or not it is touched.`;
@@ -310,6 +332,8 @@ export function estimateCost(input: PricingInput): CostEstimate {
       const what =
         node.kind === 'queue' || node.kind === 'pubsub'
           ? 'messages'
+          : node.kind === 'workflow'
+            ? 'state transitions'
           : node.kind === 'serverless'
             ? 'invocations'
             : meteredWrites
@@ -494,6 +518,46 @@ export function estimateCost(input: PricingInput): CostEstimate {
             unpricedReason:
               ingest.amount === null ? (ingest.note ?? 'Xparecium has no rate for this charge.') : null,
             edited: ingest.edited,
+          }),
+        );
+      }
+    }
+
+    // ---- Gas: what a chain's transactions used, at the fee they paid -------
+    // Gas is paid in the chain's own token, at a base fee that changes every
+    // block, so no price list can say what it costs today; the rate is the
+    // person's to enter. What the run can say is how much gas was used and how
+    // much dearer each block was than the first: each transaction is weighted
+    // by the base fee of the block that took it (EIP-1559), so a run whose own
+    // traffic filled the blocks is billed for the higher fee it caused.
+    const gas = effectiveCharge(profile, 'gas', overrides);
+    if (gas) {
+      if (!usage || usage.measuredSeconds <= 0) {
+        warnings.push(
+          `Gas for "${node.name}" is not included: it is measured from a simulation run, and this design has not been run yet.`,
+        );
+      } else {
+        const used = new Decimal(usage.gasByNodeId?.[node.id] ?? 0);
+        const weighted = new Decimal(usage.feeWeightedGasByNodeId?.[node.id] ?? 0);
+        const perMonth = weighted.div(usage.measuredSeconds).times(hoursPerMonth).times(3600).div(1_000_000);
+        const multiple = used.gt(0) ? weighted.div(used) : new Decimal(1);
+        const monthly = gas.amount === null ? null : new Decimal(gas.amount).times(perMonth);
+        if (monthly) total = total.plus(monthly);
+        lines.push(
+          line({
+            ...common,
+            key: `${node.id}:gas`,
+            chargeType: 'gas',
+            chargeLabel: CHARGE_LABELS.gas,
+            basis: `Over ${usage.measuredSeconds.toFixed(2)} seconds the run's ${node.kind === 'oracle' ? 'updates' : 'transactions'} used ${used.toFixed(0)} gas. Weighted by the base fee of the block that took each one, that is ${weighted.toFixed(0)} gas at the starting fee — ${multiple.toFixed(3)}× on average, because blocks ${multiple.gte(1) ? 'more' : 'less'} than half full move the fee by the chain's own rule. That rate is assumed to continue for every second of a ${hoursPerMonth}-hour month.`,
+            quantity: perMonth.toFixed(4),
+            quantityUnit: gas.unit,
+            rate: gas.amount,
+            rateUnit: `${catalog.currency} per ${gas.unit}`,
+            monthly,
+            unpricedReason:
+              gas.amount === null ? (gas.note ?? 'Xparecium has no rate for this charge.') : null,
+            edited: gas.edited,
           }),
         );
       }

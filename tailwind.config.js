@@ -58,6 +58,8 @@ export default {
         'tint-data': 'var(--tint-data)',
         'tint-messaging': 'var(--tint-messaging)',
         'tint-shared': 'var(--tint-shared)',
+        'tint-chain': 'var(--tint-chain)',
+        'kind-chain': 'var(--kind-chain)',
       },
       boxShadow: {
         card: 'var(--shadow-card)',

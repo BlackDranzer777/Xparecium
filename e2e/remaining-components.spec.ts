@@ -6,7 +6,8 @@ test('background workshop settings, retries and saved result history', async ({ 
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await page.goto('/'); await expect(page.getByRole('button', { name: 'Run simulation' })).toBeEnabled();
   await page.getByText('Background jobs workshop', { exact: true }).click();
-  for (const kind of JOB_KINDS) {
+  // The kinds this workshop holds; the workflow engine lives in the Backend workshop.
+  for (const kind of JOB_KINDS.filter((k) => k !== 'workflow')) {
     await page.evaluate(id => window.aparecium!.store.getState().select({ type: 'node', id }), kind);
     for (const field of Object.values(JOB_SERVICES[kind].fields)) await expect(page.getByLabel(field.label)).toBeAttached();
   }
@@ -27,7 +28,8 @@ test('shared workshop exposes every setting and preserves edits through recalcul
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await page.goto('/'); await expect(page.getByRole('button', { name: 'Run simulation' })).toBeEnabled();
   await page.getByText('Shared services workshop', { exact: true }).click();
-  for (const kind of SUPPORT_KINDS) {
+  // The kinds this workshop holds; the lock lives in the Backend workshop.
+  for (const kind of SUPPORT_KINDS.filter((k) => k !== 'lock')) {
     await page.evaluate(id => window.aparecium!.store.getState().select({ type: 'node', id }), kind);
     for (const field of Object.values(SUPPORT_SERVICES[kind].fields)) await expect(page.getByLabel(field.label)).toBeAttached();
   }

@@ -490,5 +490,186 @@
         "amount": null
       }
     }
+  },
+  {
+    "id": "generic.lock",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "lock"
+    ],
+    "label": "Distributed lock (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "compute": {
+        "unit": "instance-hour",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.workflow",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "workflow"
+    ],
+    "label": "Workflow engine (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Unpriced charges are excluded from the numeric subtotal; this service is not free. Enter rates only for the deployment you intend to use.",
+    "charges": {
+      "requests": {
+        "unit": "million state transitions",
+        "amount": null
+      }
+    }
+  },
+  {
+    "id": "generic.wallet",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "wallet"
+    ],
+    "label": "Wallet (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. A wallet costs the app nothing: the person signing pays the gas, which is on the Smart contract’s line.",
+    "charges": {}
+  },
+  {
+    "id": "generic.rpcNode",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "rpcNode"
+    ],
+    "label": "RPC node (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Hosted nodes (Alchemy, Infura, QuickNode) price by plan, often in “compute units” that differ per method, and none publishes a machine-readable price list. Enter your plan’s cost per million requests. A node you run yourself is a server.",
+    "charges": {
+      "requests": {
+        "unit": "million requests",
+        "amount": null,
+        "note": "Your plan’s cost per million requests; hosted nodes price by plan, often in compute units."
+      }
+    }
+  },
+  {
+    "id": "generic.smartContract",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "smartContract"
+    ],
+    "label": "Smart contract (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Gas is paid in the chain’s own token, at a base fee that changes every block, so no list can say what it costs today. Enter your cost in USD per million gas at the starting fee: the base fee in gwei, times the token price in USD, divided by 1,000.",
+    "charges": {
+      "gas": {
+        "unit": "million gas",
+        "amount": null,
+        "note": "Enter USD per million gas at the starting fee: the base fee in gwei, times the token price in USD, divided by 1,000."
+      }
+    }
+  },
+  {
+    "id": "generic.indexer",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "indexer"
+    ],
+    "label": "Blockchain indexer (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. The Graph bills queries in GRT, a token whose price moves, and hosted indexers price by plan. Enter your cost per million queries. An indexer you run yourself is a server and a database.",
+    "charges": {
+      "requests": {
+        "unit": "million requests",
+        "amount": null,
+        "note": "Your cost per million queries: The Graph bills in GRT, whose price moves; hosted indexers price by plan."
+      }
+    }
+  },
+  {
+    "id": "generic.oracle",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "oracle"
+    ],
+    "label": "Oracle (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Public price feeds are paid for by their sponsors, so reading them costs you nothing. If you run your own updater, you pay this gas: enter your cost per million gas, worked out as for the contract.",
+    "charges": {
+      "gas": {
+        "unit": "million gas",
+        "amount": null,
+        "note": "Reading a public feed costs you nothing. If you run the updater, enter USD per million gas as for the contract."
+      }
+    }
+  },
+  {
+    "id": "generic.ipfs",
+    "provider": "generic",
+    "providerName": "Editable model (unpriced)",
+    "region": "unspecified",
+    "regionName": "Choose your own deployment",
+    "appliesTo": [
+      "ipfs"
+    ],
+    "label": "Decentralised storage (unpriced)",
+    "description": "Editable cost assumptions. No provider, machine size or deployment region has been selected.",
+    "verified": false,
+    "priceSourceUrl": "",
+    "priceCheckedAt": "",
+    "priceNote": "No rates supplied. Pinning services (Pinata, Filebase, web3.storage) price per GB kept and per request by plan, and none publishes a machine-readable price list. Arweave charges once to store for good, in its own token. Enter your plan’s rates.",
+    "charges": {
+      "storage": {
+        "unit": "GB-month",
+        "amount": null,
+        "note": "Your pinning plan’s price per GB kept for a month."
+      },
+      "requests": {
+        "unit": "million requests",
+        "amount": null,
+        "note": "Your pinning plan’s price per million requests."
+      }
+    }
   }
 ]

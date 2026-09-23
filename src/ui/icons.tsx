@@ -333,10 +333,80 @@ export const ChartIcon = (p: IconProps) => (
   </Icon>
 );
 
+/** A padlock: the distributed lock. */
+export const LockIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="4.5" y="10.5" width="15" height="10" rx="2" />
+    <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3M12 14.5v2.5" />
+  </Icon>
+);
+
+/** Three steps joined in order: the workflow engine. */
+export const WorkflowIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="2.5" y="9" width="5" height="6" rx="1.5" />
+    <rect x="9.5" y="9" width="5" height="6" rx="1.5" />
+    <rect x="16.5" y="9" width="5" height="6" rx="1.5" />
+    <path d="M7.5 12h2M14.5 12h2" />
+  </Icon>
+);
+
+/** A wallet with its clasp. */
+export const WalletIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M3.5 7.5A2.5 2.5 0 0 1 6 5h11.5v2.5" />
+    <rect x="3.5" y="7.5" width="17" height="12" rx="2.5" />
+    <path d="M20.5 11.5h-4a2 2 0 0 0 0 4h4" />
+  </Icon>
+);
+
+/** A server with a link to the chain: the RPC node. */
+export const RpcNodeIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3" y="3.5" width="12" height="7" rx="2" />
+    <rect x="3" y="13.5" width="12" height="7" rx="2" />
+    <path d="M6.5 7h.01M6.5 17h.01M15 7h2.5a3 3 0 0 1 3 3v4a3 3 0 0 1-3 3H15" />
+  </Icon>
+);
+
+/** Two chain links: the smart contract on its chain. */
+export const ContractIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M10 14.5a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1 1" />
+    <path d="M14 9.5a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l1-1" />
+  </Icon>
+);
+
+/** A magnifier over rows: the indexer. */
+export const IndexerIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M3.5 6h8M3.5 11h5M3.5 16h4" />
+    <circle cx="15.5" cy="13" r="4" />
+    <path d="M18.5 16l3 3" />
+  </Icon>
+);
+
+/** An antenna sending outside data in: the oracle. */
+export const OracleIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="1.8" />
+    <path d="M8.2 15.8a5.4 5.4 0 0 1 0-7.6M15.8 8.2a5.4 5.4 0 0 1 0 7.6M5.4 18.6a9.3 9.3 0 0 1 0-13.2M18.6 5.4a9.3 9.3 0 0 1 0 13.2" />
+  </Icon>
+);
+
+/** A cube: content-addressed storage. */
+export const IpfsIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z" />
+    <path d="M4 7.4l8 4.6 8-4.6M12 12v9.2" />
+  </Icon>
+);
+
 import type { ComponentKind } from '../domain/types';
 
 export const KIND_ICONS: Record<ComponentKind, (p: IconProps) => JSX.Element> = {
-  websocket: ServerIcon, notification: QueueIcon, identity: WafIcon, rateLimiter: ApiGatewayIcon, discovery: DnsIcon, secrets: WafIcon, monitoring: DatabaseIcon, serviceMesh: LoadBalancerIcon,
+  websocket: ServerIcon, notification: QueueIcon, identity: WafIcon, rateLimiter: ApiGatewayIcon, discovery: DnsIcon, secrets: WafIcon, monitoring: DatabaseIcon, serviceMesh: LoadBalancerIcon, lock: LockIcon, workflow: WorkflowIcon,
+  wallet: WalletIcon, rpcNode: RpcNodeIcon, smartContract: ContractIcon, indexer: IndexerIcon, oracle: OracleIcon, ipfs: IpfsIcon,
   documentDb: DatabaseIcon,
   wideColumn: DatabaseIcon,
   searchIndex: DatabaseIcon,

@@ -18,7 +18,7 @@
 import { StreamingStat, TimeWeightedAccumulator } from '../metrics';
 import { RingQueue } from '../ring-queue';
 import type { PubSubNode, QueueNode } from '../../domain/types';
-import type { DeadLetterNode } from '../../domain/job-services';
+import type { DeadLetterNode, WorkflowNode } from '../../domain/job-services';
 
 export interface PendingMessage {
   /** The request that published it, for the journey trace. */
@@ -48,6 +48,8 @@ export class QueueModel {
   failed = 0;
   retries = 0;
   retrying = 0;
+  /** Workflow steps only: jobs moving here from the step before, space reserved. */
+  arriving = 0;
   refused = 0;
   /** Total time messages spent waiting to be picked up. */
   backlogWaitMsTotal = 0;
@@ -56,9 +58,9 @@ export class QueueModel {
   /** Published-to-finished time, for messages that were finished. */
   readonly latency = new StreamingStat();
 
-  constructor(node: QueueNode | PubSubNode | DeadLetterNode, key: string = node.id) {
+  constructor(node: QueueNode | PubSubNode | DeadLetterNode | WorkflowNode, key: string = node.id, name: string = node.name) {
     this.nodeId = node.id;
-    this.name = node.name;
+    this.name = name;
     this.key = key;
     this.maxDepth = node.settings.maxDepth;
     this.messageBytes = node.settings.messageBytes;
@@ -69,7 +71,7 @@ export class QueueModel {
   }
 
   get hasRoom(): boolean {
-    return this.backlog.length + this.retrying < this.maxDepth;
+    return this.backlog.length + this.retrying + this.arriving < this.maxDepth;
   }
 
   /** Accepts the message, or returns false when the queue is full. */
@@ -115,6 +117,28 @@ export class QueueModel {
     this.depthAcc.set(now, this.backlog.length);
   }
 
+  /**
+   * Reserve room for a job arriving from a workflow's previous step, which
+   * spends a moment saving its state before it gets here. A step with no room
+   * refuses it, and the workflow fails there rather than waiting unbounded.
+   */
+  reserveArrival(): boolean {
+    if (!this.hasRoom) {
+      this.refused += 1;
+      return false;
+    }
+    this.arriving += 1;
+    return true;
+  }
+
+  restoreArrival(message: PendingMessage, now: number): void {
+    if (this.arriving <= 0) throw new Error('An arriving step has no reserved space.');
+    this.arriving -= 1;
+    this.backlog.push({ ...message, availableAt: now });
+    this.enqueued += 1;
+    this.depthAcc.set(now, this.backlog.length);
+  }
+
   finish(publishedAt: number, now: number, _message?: PendingMessage): void {
     this.processed += 1;
     this.inFlight -= 1;
@@ -127,6 +151,6 @@ export class QueueModel {
    * keeping up.
    */
   get outstanding(): number {
-    return this.backlog.length + this.inFlight + this.retrying;
+    return this.backlog.length + this.inFlight + this.retrying + this.arriving;
   }
 }

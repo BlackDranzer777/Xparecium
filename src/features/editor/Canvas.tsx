@@ -316,6 +316,31 @@ const edgeTypes = { flow: FlowEdge };
 function summarise(document: ArchitectureDocument, nodeId: string): string {
   const node = document.nodes.find((n) => n.id === nodeId);
   if (!node) return '';
+  switch (node.kind) {
+    case 'wallet':
+      return `${formatNumber(node.settings.transactionShare * 100)}% signed · ${formatNumber(node.settings.serviceTimeMs / 1000, 1)} s each`;
+    case 'rpcNode':
+      return `${formatNumber(node.settings.ratePerSecond)}/s limit · ${node.settings.requestMs} ms`;
+    case 'smartContract':
+      return `block ${formatNumber(node.settings.blockSeconds, 2)} s · ${formatNumber(node.settings.gasPerTx)} gas`;
+    case 'indexer':
+      return `${node.settings.serviceTimeMs} ms query · ${node.settings.indexMsPerTx} ms/tx`;
+    case 'oracle':
+      return `every ${formatNumber(node.settings.heartbeatSeconds, 1)} s · ${formatNumber(node.settings.gasPerUpdate)} gas`;
+    case 'ipfs':
+      return `${formatNumber(node.settings.gatewayHitShare * 100)}% cached · ${node.settings.storedGb} GB`;
+    default:
+      break;
+  }
+  if (node.kind === 'lock') {
+    const s = node.settings;
+    return `${s.lockKeys === 1 ? 'one lock' : `${formatNumber(s.lockKeys)} locks`} · ${s.holdMs} ms held`;
+  }
+  if (node.kind === 'workflow') {
+    // The steps are the workers it is connected to, in the order drawn.
+    const steps = document.edges.filter((e) => e.source === node.id && document.nodes.some((n) => n.id === e.target && (n.kind === 'server' || n.kind === 'serverless'))).length;
+    return `${steps} step${steps === 1 ? '' : 's'} · ${node.settings.transitionMs} ms between`;
+  }
   if (isSupportKind(node.kind)) return SUPPORT_SERVICES[node.kind].label;
   if (isJobKind(node.kind)) return JOB_SERVICES[node.kind].label;
   if (isDataKind(node.kind)) return DATA_SERVICES[node.kind].label;
@@ -325,7 +350,9 @@ function summarise(document: ArchitectureDocument, nodeId: string): string {
     case 'loadBalancer':
       return `${node.settings.policy === 'least-busy' ? 'least busy' : 'round robin'} · ${node.settings.serviceTimeMs} ms`;
     case 'server':
-      return `${node.settings.cpuSlots} CPU · ${formatNumber(node.settings.ramMb / 1024, 1)} GB · ${node.settings.cpuMsPerRequest} ms/req`;
+      return node.settings.autoscaleEnabled
+        ? `${node.settings.cpuSlots} CPU × ${node.settings.minInstances}–${node.settings.maxInstances} · ${node.settings.cpuMsPerRequest} ms/req`
+        : `${node.settings.cpuSlots} CPU · ${formatNumber(node.settings.ramMb / 1024, 1)} GB · ${node.settings.cpuMsPerRequest} ms/req`;
     case 'database':
       return `${node.settings.queryServiceTimeMs} ms · ${node.settings.maxConcurrentQueries} slots · ${node.settings.dataSizeGb} GB`;
     case 'cache':

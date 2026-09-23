@@ -463,6 +463,15 @@ function ComponentsTab({ result }: { result: SimulationResult }) {
           <tbody>{result.supportServices?.map(s => <tr key={s.nodeId} className="border-b border-line"><td className="py-2">{s.name}</td><td>{formatNumber(s.completed)}</td><td>{formatNumber(s.rejected)}</td><td>{formatNumber(s.waiting + s.active)}</td><td>{supportDetails(s)}</td></tr>)}</tbody>
         </table></div>
       </div>}
+      {((result.chainServices ?? []).length > 0 || result.servers.some((s) => s.kind === 'rpcNode')) && <div>
+        <h3 className="ap-eyebrow mb-2.5">Blockchain</h3>
+        <div className="overflow-x-auto"><table className="w-full text-left text-xs"><thead><tr><th>Component</th><th>Completed</th><th>Refused / failed</th><th>Waiting</th><th>Details</th></tr></thead>
+          <tbody>
+            {result.servers.filter((s) => s.kind === 'rpcNode').map((s) => <tr key={s.nodeId} className="border-b border-line"><td className="py-2">{s.name}</td><td>{formatNumber(s.completed)}</td><td>{formatNumber(s.rejected)}</td><td>{formatNumber(s.cpuQueuePeak)}</td><td>{formatNumber(s.admitted)} answered · {formatNumber(s.throttled ?? 0)} over the plan limit</td></tr>)}
+            {result.chainServices?.map((s) => <tr key={s.nodeId} className="border-b border-line"><td className="py-2">{s.name}</td><td>{formatNumber(s.completed)}</td><td>{formatNumber(s.rejected)}</td><td>{formatNumber(s.waiting + s.active + (s.details.pending ?? 0) + (s.details.lockWaiting ?? 0))}</td><td>{supportDetails(s)}</td></tr>)}
+          </tbody>
+        </table></div>
+      </div>}
       {(result.jobServices ?? []).length > 0 && <div>
         <h3 className="ap-eyebrow mb-2.5">Background jobs</h3>
         <div className="overflow-x-auto"><table className="w-full text-left text-xs"><thead><tr><th>Component</th><th>Accepted</th><th>Completed</th><th>Failed / lost</th><th>Waiting</th><th>Details</th></tr></thead>

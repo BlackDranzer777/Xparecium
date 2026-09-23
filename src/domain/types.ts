@@ -1,6 +1,7 @@
 import type { SupportKind, SupportNode } from './support-services';
 import type { JobKind, JobServiceNode } from './job-services';
 import type { DataKind, DataServiceNode } from './data-services';
+import type { ChainKind, ChainNode } from './chain-services';
 /**
  * Xparecium domain types.
  *
@@ -22,8 +23,14 @@ import type { DataKind, DataServiceNode } from './data-services';
  * 4 -> 5: five more kinds — serverless function, read replica, key-value
  * store, object storage, pub/sub topic — and a database's `readShare`, filled
  * in with the default for older documents.
+ * 5 -> 6: sixteen more kinds (data stores, jobs, shared services).
+ * 6 -> 7: two more kinds — distributed lock, workflow engine — and a server's
+ * auto-scaling settings, filled in (off) for older documents.
+ * 7 -> 8: six blockchain kinds — wallet, RPC node, smart contract, indexer,
+ * oracle, decentralised storage. Nothing to fill in; a build that does not
+ * know them must refuse the document with the version message.
  */
-export const DOCUMENT_SCHEMA_VERSION = 6;
+export const DOCUMENT_SCHEMA_VERSION = 8;
 
 export type ComponentKind =
   | 'client'
@@ -42,14 +49,18 @@ export type ComponentKind =
   | 'queue'
   | 'pubsub'
   | DataKind
-  | JobKind | SupportKind;
+  | JobKind | SupportKind | ChainKind;
 
-/** The kinds that run your code: an entry point, a queue's consumer. */
-export const COMPUTE_KINDS = ['server', 'serverless'] as const;
+/**
+ * The kinds that run your code: an entry point, a queue's consumer. An RPC
+ * node is one too — the entry point of an app with no backend of its own,
+ * whose requests go from the person's wallet straight to the chain's doorway.
+ */
+export const COMPUTE_KINDS = ['server', 'serverless', 'rpcNode'] as const;
 export type ComputeKind = (typeof COMPUTE_KINDS)[number];
 
 /** The four kinds that sit in front of the entry point, in the request's path. */
-export const EDGE_KINDS = ['cdn', 'waf', 'apiGateway', 'websocket', 'rateLimiter', 'serviceMesh'] as const;
+export const EDGE_KINDS = ['cdn', 'waf', 'apiGateway', 'websocket', 'rateLimiter', 'serviceMesh', 'wallet'] as const;
 export type EdgeKind = (typeof EDGE_KINDS)[number];
 
 /** Where a component lives. `null` means "not assigned to a cloud profile". */
@@ -129,6 +140,22 @@ export interface ServerSettings {
   memoryPerQueuedRequestMb: number;
   /** How many requests may wait for admission. Beyond this, requests are rejected. */
   queueLimit: number;
+  /**
+   * Auto scaling: when on, this box stands for a group of identical
+   * instances, each with the resources above. Every few seconds the group
+   * compares its CPU use with the target; above it, it starts more instances,
+   * which serve only after they have warmed up; below it, it stops one.
+   * Absent from documents written before schema version 7.
+   */
+  autoscaleEnabled: boolean;
+  minInstances: number;
+  maxInstances: number;
+  /** The CPU share the group aims for, 0 to 1. */
+  targetCpuShare: number;
+  /** Time from starting an instance to it taking requests. It is billed from the start. */
+  instanceWarmupSeconds: number;
+  /** How often the group looks at its CPU use and decides. */
+  scaleCheckSeconds: number;
 }
 
 export interface DatabaseSettings {
@@ -450,6 +477,7 @@ export interface CacheNode extends NodeBase {
 }
 
 export type ArchNode =
+  | ChainNode
   | SupportNode
   | JobServiceNode
   | DataServiceNode
@@ -544,7 +572,9 @@ export type ChargeType =
   | 'duration'
   | 'scan'
   /** Gigabytes taken in: log records, time-series points. */
-  | 'ingest';
+  | 'ingest'
+  /** Gas a chain's transactions used, weighted by the fee when each went in. */
+  | 'gas';
 
 /**
  * User edits to catalog rates, keyed by cloud profile id. Amounts are decimal

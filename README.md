@@ -124,7 +124,7 @@ is top right and your choice is remembered in this browser.
 | **WAF** | Inspects every request for an average time and refuses an assumed share as malicious, counted as rejected under its own reason. What it blocks never reaches anything behind it. | Detection itself — rules, signatures, bot scoring. The block share is your assumption. |
 | **API Gateway** | Forwards with an average service time and enforces a rate limit as a token bucket: a steady rate plus a burst allowance. What finds no token is refused on the spot, never queued. | Authentication, routing rules, request transformation, per-client quotas. |
 | **Load Balancer** | A bounded number of requests in flight, an average forwarding time, a bounded queue, and round-robin or least-busy selection across a pool of servers. | Health checks, connection reuse, sticky sessions, retries, TLS termination. It forwards; it never computes. |
-| **Application Server** | CPU slots, application concurrency and a memory budget as three separate resources; a bounded admission queue. | OS scheduling; threads; garbage collection. |
+| **Application Server** | CPU slots, application concurrency and a memory budget as three separate resources; a bounded admission queue. With **auto scaling** on, the box is a group of identical instances: every few seconds it compares CPU use with a target and starts instances — billed from the start, serving after a warm-up — or stops one. Billed for the instances it measured on average. | OS scheduling; threads; garbage collection. Step and predictive scaling policies; scaling during a Timed run's drain. |
 | **Database** | A fixed number of concurrent slots with an average service time, and a bounded queue; provisioned data size for costing. | Query planning, indexes, transactions, replication. Data size does not affect query time. |
 | **Cache** | A fixed assumed hit rate, an average lookup time, concurrent slots, a bounded queue, optional write-back after a miss. | Individual keys, expiry, LRU/LFU. Populating the cache does not raise the hit rate. |
 | **Message Queue** | A broker that accepts publishes with an average service time and its own concurrency, and a backlog with a depth limit drained by one Application Server or Serverless Function behind it. The publisher waits only for the acknowledgement. | Retries, dead-letter queues, acknowledgement timeouts, ordering guarantees, partitions, more than one consumer. |
@@ -141,6 +141,7 @@ is top right and your choice is remembered in this browser.
 | **Event stream** | Events are retained across partitions, up to a depth and a retention time; each connected worker is its own consumer group with its own offsets, reading from the earliest or the latest. Reading never deletes. Priced as Kinesis provisioned: a shard-hour per partition plus a payload unit per record. | Exactly-once semantics, compaction, rebalancing. |
 | **Dead-letter queue** | Receives a job once the source queue's retry allowance is exhausted, holds it for a retention time, and can replay it to a connected worker after a delay. Priced as SQS, three billed requests per message. | Poison-message detection, per-message redrive policies. |
 | **Scheduler** | Starts a batch of jobs at a fixed interval, after a first delay, with a bound on how many may be outstanding; late jobs are skipped and counted. Priced as EventBridge Scheduler, per job started. | Calendar cron expressions, time zones, missed-run catch-up. |
+| **Workflow engine** | Runs one job as ordered steps — one connected worker per step, in the order the connections were drawn — saving its state between steps. A failed step is retried on its own up to a limit; a step that runs out of attempts, or whose waiting line is full, fails the workflow. The server that starts it gets its answer at once. Priced as Step Functions (Standard), per state transition — every step executed, retries included. | Parallel or branching steps, compensation (sagas), long waits for a person, Express workflows. |
 | **WebSocket server** | Keeps a connection per user for a lease, with a handshake, a memory cost and heartbeat traffic each way; refuses connections over its limit or memory. Sits between the users and the server. Priced as an API Gateway WebSocket API, per message; connection-minutes are not modelled. | Rooms, broadcasts, backpressure per socket. |
 | **Rate limiter** | A shared token budget refilled per second with a burst allowance; requests over it are refused, never queued. Sits on the path before the server. Unpriced: nothing is sold as a rate limiter on its own. | Per-client keys, sliding windows, distributed counters. |
 | **Service mesh proxy** | One proxy hop that retries a configured share of failed connection attempts up to a bound, and opens a circuit after repeated failures for a reset time. Unpriced: Envoy and Istio are free software you run yourself. | A whole mesh, mTLS, traffic splitting. |
@@ -149,6 +150,13 @@ is top right and your choice is remembered in this browser.
 | **Secrets manager** | A credential fetch the server makes, cached; rotation makes a cached version too old, and those operations fail until the cache expires, within a grace period. Priced as Secrets Manager: one secret plus a call per fetch. Never enter actual secrets. | Encryption, leases, audit trails. |
 | **Notification service** | Delivery work handed off after the server answers: a provider rate, a failed share, bounded attempts with a delay. Acceptance is not delivery. Priced as SES email, per recipient. No real messages. | Templates, channels, provider-specific quotas. |
 | **Monitoring / logging** | Samples a share of completed operations and accepts their telemetry in the background; overload drops telemetry, not requests; records expire after a retention time. Priced as CloudWatch Logs, per GB taken in (records times record size). | Real log text, dashboards, alert rules. |
+| **Distributed lock** | A share of requests take a lock before protected work; one holder per lock, the rest wait in that lock's own line and give up after a time limit. One lock for everything, or one per item. Granting and releasing use the service's slots; holding one does not. Priced as the machines of its cluster — nodes × an EC2 m7i.large — since nobody sells etcd or ZooKeeper by the request. | Lease expiry, fencing tokens, a holder that crashes, leader election. |
+| **Wallet** | Sits between the users and the app. Only actions that change the chain are signed — a configured share; reads pass straight through. Signing takes the person's time, and a share refuse or give up. Each person signs in their own wallet, so nobody waits for anybody else. Costs the app nothing. | Keys, seed phrases, real signatures, gas estimation shown to the person. |
+| **RPC node** | The app's doorway to the chain: an entry point like a server, answering reads itself and forwarding transactions to the one Smart contract it calls. A plan limit refuses what is over it, never queues it. Unpriced: hosted nodes price by plan, often in compute units, with no machine-readable list; enter your plan's cost per million requests. | Polling for receipts, archive vs full nodes, failover between providers. |
+| **Smart contract** | A transaction waits in the pending pool for the next block, on a fixed beat, and is done after the chosen number of blocks. A block holds a fixed amount of gas, shared with everyone else; when blocks are more than half full the base fee rises by EIP-1559's rule (up to an eighth a block), and others use less space as it rises. Reads never reach it. Gas is measured, weighted by the fee of the block that took each transaction; unpriced until you enter USD per million gas. | Priority tips and fee bidding, reorganisations, failed or replaced transactions, the contract's own code. |
+| **Blockchain indexer** | Reads every block of the contract it is fed by, taking time per transaction and per block, in order; a busy chain leaves it behind, and the lag is measured. Queries from a server are fast, with slots and a bounded line. Unpriced: The Graph bills in its own token. | Subgraph mappings, reorganisation handling, real queries. |
+| **Oracle** | Sends an update transaction to one contract on a fixed interval, taking block space like any transaction; reports how stale the on-chain value got. Unpriced: public feeds are paid for by sponsors; running your own updater pays the gas. | Price deviation triggers, aggregation across nodes, disputes. |
+| **Decentralised storage** | Uploads are pinned; a read is quick when a gateway has the file cached and slow when it must be found on the network first. Unpriced: pinning services price by plan. | Content addressing, replication, deals and retrieval markets. |
 | **Network connection** | One message at a time per direction; transfer time = bits ÷ bandwidth; plus a one-way propagation delay. Both directions counted. | Congestion control, packet loss, retransmission, TCP/QUIC. |
 
 ### Routes
@@ -332,13 +340,13 @@ engine be unit tested in plain Node and run either in a worker or inline.
 | Check | Command | Result |
 |---|---|---|
 | Types | `npm run typecheck` | passes |
-| Unit tests | `npm test` | 428 passed, 22 files |
-| Browser workflow | `npm run test:e2e` | 66 passed |
+| Unit tests | `npm test` | 473 passed, 24 files |
+| Browser workflow | `npm run test:e2e` | 78 passed |
+| Production build | `npm run build` | succeeds |
 
 The interface font is [Manrope](https://github.com/googlefonts/manrope), served
 from `public/fonts` under the SIL Open Font Licence (`Manrope-OFL.txt`); the
 page loads nothing from a third party.
-| Production build | `npm run build` | succeeds |
 
 The unit tests are named after the acceptance checks they cover, so a failure
 points straight at the requirement it broke.
@@ -349,4 +357,4 @@ points straight at the requirement it broke.
 
 MIT.
 
-All thirty-one components are part of the running application (entries 062–066). [implementation-plan.md](implementation-plan.md) records how the last sixteen were staged and released, and what remains outside their models.
+All thirty-nine components are part of the running application (entries 062–066, 075 and 076), and the Application Server can scale itself (entry 075). [implementation-plan.md](implementation-plan.md) records how the last sixteen were staged and released, and what remains outside their models.

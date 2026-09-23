@@ -294,6 +294,32 @@ The cheaper "Internet routing" option is 0.080 / 0.065 / 0.060 / 0.040 across th
 
 ---
 
+## Added 2026-09-23 (entry 075)
+
+| Component | Priced as | Source row | Rate |
+|---|---|---|---|
+| Workflow engine | Step Functions, Standard workflows | `AmazonStates`, usage type `USE1-StateTransition`, published 2026-09-11 | $0.000025 per state transition = **$25.00 per million** |
+| Distributed lock | One EC2 m7i.large per cluster node | `AmazonEC2`, the same Linux on-demand row as the m7i.large server | **$0.1008 per instance-hour** |
+
+The first 4,000 state transitions a month are free per account (a separate
+`Global-StateTransition` row at $0); this is not deducted. AWS sells no
+managed etcd or ZooKeeper, so a lock cluster is priced as the machines it runs
+on; the m7i.large size (2 vCPU, 8 GiB) follows etcd's hardware guidance for a
+small cluster and is a judgement, stated in the profile's note.
+
+## Blockchain (entry 076, 2026-09-24): no machine-readable source
+
+Nothing a blockchain app pays for has an official machine-readable price list:
+gas is priced in the chain's own token at a base fee that changes every block;
+hosted RPC nodes (Alchemy, Infura, QuickNode) sell plans, often in compute
+units that differ by method; The Graph bills queries in GRT; pinning services
+sell plans; Arweave charges once, in AR. So all six blockchain components start
+on rate-less profiles (`generic.wallet`, `generic.rpcNode`,
+`generic.smartContract`, `generic.indexer`, `generic.oracle`, `generic.ipfs`),
+each note saying how to work the rate out — for gas, USD per million gas is the
+base fee in gwei times the token price in USD, divided by 1,000. The wallet has
+no charge at all: the person signing pays the gas.
+
 ## What is still needed
 
 **Google Cloud.** The only official machine-readable source needs an API key.

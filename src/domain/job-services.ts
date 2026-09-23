@@ -27,12 +27,30 @@ export interface SchedulerSettings {
   requestBytes: number;
   responseBytes: number;
 }
+/**
+ * A workflow runs one job as ordered steps. Its fields deliberately share the
+ * Message Queue's names — accepting a start is a publish, each step waits in
+ * a backlog like a queued message, and a failed step retries the way a queued
+ * job does — so the engine drives both with the same machinery.
+ */
+export interface WorkflowSettings {
+  publishServiceTimeMs: number;
+  maxConcurrentPublishes: number;
+  publishQueueLimit: number;
+  messageBytes: number;
+  maxDepth: number;
+  transitionMs: number;
+  processingFailureShare: number;
+  maxAttempts: number;
+  retryDelayMs: number;
+}
 export type EventStreamNode = NodeBase & { kind: 'eventStream'; settings: EventStreamSettings };
 export type DeadLetterNode = NodeBase & { kind: 'deadLetter'; settings: DeadLetterSettings };
 export type SchedulerNode = NodeBase & { kind: 'scheduler'; settings: SchedulerSettings };
-export type JobServiceNode = EventStreamNode | DeadLetterNode | SchedulerNode;
+export type WorkflowNode = NodeBase & { kind: 'workflow'; settings: WorkflowSettings };
+export type JobServiceNode = EventStreamNode | DeadLetterNode | SchedulerNode | WorkflowNode;
 export type JobKind = JobServiceNode['kind'];
-export const JOB_KINDS = ['eventStream', 'deadLetter', 'scheduler'] as const;
+export const JOB_KINDS = ['eventStream', 'deadLetter', 'scheduler', 'workflow'] as const;
 export const isJobKind = (kind: string): kind is JobKind => (JOB_KINDS as readonly string[]).includes(kind);
 
 export const DEFAULT_EVENT_STREAM: EventStreamSettings = {
@@ -41,11 +59,25 @@ export const DEFAULT_EVENT_STREAM: EventStreamSettings = {
 };
 export const DEFAULT_DEAD_LETTER: DeadLetterSettings = { maxDepth: 10000, retentionSeconds: 3600, messageBytes: 1024, replayEnabled: false, replayDelaySeconds: 5 };
 export const DEFAULT_SCHEDULER: SchedulerSettings = { intervalSeconds: 5, startAfterSeconds: 0, batchSize: 1, maxConcurrentJobs: 10, requestBytes: 1024, responseBytes: 256 };
+export const DEFAULT_WORKFLOW: WorkflowSettings = {
+  publishServiceTimeMs: 5, maxConcurrentPublishes: 256, publishQueueLimit: 1000, messageBytes: 2048, maxDepth: 10000,
+  transitionMs: 20, processingFailureShare: 0, maxAttempts: 3, retryDelayMs: 1000,
+};
 
 export type ServiceField = NumericSetting | { label: string; options: readonly { value: string; label: string }[]; help?: string }
   | { label: string; toggle: true; help?: string };
 const n = (label: string, value: number, min: number, max: number, unit?: string, integer = false): NumericSetting => ({ label, value, min, max, unit, integer });
 export const JOB_SERVICES: Record<JobKind, { label: string; description: string; fields: Record<string, ServiceField> }> = {
+  workflow: {
+    label: 'Workflow engine', description: 'Runs one job as a series of steps — charge the card, reserve the stock, send the email — and remembers where it got to. After each step it saves the job’s state, so a failed step is retried on its own instead of starting over. Connect a server to start workflows, then connect one worker per step; the order you draw the connections is the order of the steps. The server gets its answer as soon as the workflow is started, not when it finishes.',
+    fields: {
+      transitionMs: n('Time to save state between steps', 20, 0, 600000, 'ms'), processingFailureShare: n('Step failure share (0–1)', 0, 0, 1),
+      maxAttempts: n('Attempts per step', 3, 1, 100, undefined, true), retryDelayMs: n('Wait before retrying a step', 1000, 0, 86400000, 'ms'),
+      maxDepth: n('Waiting workflows per step', 10000, 0, 1000000, undefined, true), messageBytes: n('Workflow state size', 2048, 0, 100000000, 'bytes', true),
+      publishServiceTimeMs: n('Time to start a workflow', 5, 0, 600000, 'ms'), maxConcurrentPublishes: n('Concurrent starts', 256, 1, 100000, undefined, true),
+      publishQueueLimit: n('Start waiting queue limit', 1000, 0, 100000, undefined, true),
+    },
+  },
   eventStream: {
     label: 'Event stream', description: 'Keeps an event history. Each connected worker is an independent consumer group. Reading does not delete events; slow readers can fall behind retention. Connect a server to publish, and workers to read.',
     fields: {

@@ -14,7 +14,7 @@
  * cache keys, eviction or expiry. Those are listed as deferred work. The
  * service time is a single average that the user sets.
  */
-import type { EventStreamNode } from '../../domain/job-services';
+import type { EventStreamNode, WorkflowNode } from '../../domain/job-services';
 import { TimeWeightedAccumulator } from '../metrics';
 import { RingQueue } from '../ring-queue';
 import type {
@@ -45,7 +45,7 @@ export type StationNode =
   | ReadReplicaNode
   | KvStoreNode
   | ObjectStorageNode
-  | PubSubNode | EventStreamNode;
+  | PubSubNode | EventStreamNode | WorkflowNode;
 
 export type StationOp =
   | 'dbQuery'
@@ -110,14 +110,14 @@ export class StationModel {
     this.name = node.name;
     this.kind = node.kind;
     this.queueLimit =
-      node.kind === 'queue' || node.kind === 'pubsub' || node.kind === 'eventStream'
+      node.kind === 'queue' || node.kind === 'pubsub' || node.kind === 'eventStream' || node.kind === 'workflow'
         ? node.settings.publishQueueLimit
         : node.settings.queueLimit;
     if (node.kind === 'database' || node.kind === 'readReplica') {
       this.slots = node.settings.maxConcurrentQueries;
     } else if (node.kind === 'cache') {
       this.slots = node.settings.maxConcurrentLookups;
-    } else if (node.kind === 'queue' || node.kind === 'pubsub' || node.kind === 'eventStream') {
+    } else if (node.kind === 'queue' || node.kind === 'pubsub' || node.kind === 'eventStream' || node.kind === 'workflow') {
       this.slots = node.settings.maxConcurrentPublishes;
     } else if (node.kind === 'dns') {
       this.slots = node.settings.maxConcurrentLookups;

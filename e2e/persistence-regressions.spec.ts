@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
+import { DOCUMENT_SCHEMA_VERSION } from '../src/domain/types';
 
 const pageErrors = new WeakMap<Page, string[]>();
 test.afterEach(async ({ page }) => { expect(pageErrors.get(page) ?? []).toEqual([]); });
@@ -203,7 +204,8 @@ test('a queue saved before it had failure and retry settings reopens with the de
     return { version: state.project!.document.schemaVersion, name: state.project!.name, settings: node.settings };
   });
   expect(queue.name).toBe('Older queue');
-  expect(queue.version).toBe(6);
+  // Stamped with whatever the current version is.
+  expect(queue.version).toBe(DOCUMENT_SCHEMA_VERSION);
   expect(queue.settings).toMatchObject({ processingFailureShare: 0, maxAttempts: 3, retryDelayMs: 100 });
   await expect(page.getByLabel('Worker failure share (0–1)')).toHaveValue('0');
   await expect(page.getByLabel('Maximum attempts per job')).toHaveValue('3');

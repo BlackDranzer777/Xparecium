@@ -19,6 +19,7 @@ export const CHARGE_LABELS: Record<ChargeType, string> = {
   duration: 'Metered compute time',
   scan: 'Data scanned',
   ingest: 'Data ingested',
+  gas: 'Gas',
 };
 
 /**
@@ -51,7 +52,8 @@ export const cloudProfileSchema = z.object({
         'client', 'dns', 'cdn', 'waf', 'apiGateway',
         'loadBalancer', 'server', 'serverless',
         'database', 'readReplica', 'kvStore', 'objectStorage', 'cache',
-        'queue', 'pubsub', 'documentDb', 'wideColumn', 'searchIndex', 'warehouse', 'timeSeries', 'eventStream', 'deadLetter', 'scheduler', 'websocket', 'notification', 'identity', 'rateLimiter', 'discovery', 'secrets', 'monitoring', 'serviceMesh',
+        'queue', 'pubsub', 'documentDb', 'wideColumn', 'searchIndex', 'warehouse', 'timeSeries', 'eventStream', 'deadLetter', 'scheduler', 'websocket', 'notification', 'identity', 'rateLimiter', 'discovery', 'secrets', 'monitoring', 'serviceMesh', 'lock', 'workflow',
+        'wallet', 'rpcNode', 'smartContract', 'indexer', 'oracle', 'ipfs',
       ]),
     )
     .min(1),
@@ -84,6 +86,7 @@ export const cloudProfileSchema = z.object({
     duration: chargeSchema.optional(),
     scan: chargeSchema.optional(),
     ingest: chargeSchema.optional(),
+    gas: chargeSchema.optional(),
   }),
 });
 

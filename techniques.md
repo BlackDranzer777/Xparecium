@@ -1079,6 +1079,71 @@ housekeeping before, exactly at and after the measurement endpoint;
 `tests/primitives.test.ts` for `endAt`; `e2e/remaining-components.spec.ts` for
 the same reproduction through the worker.
 
+## Three backend pieces on existing machinery (entry 075)
+
+**What it is.** A distributed lock, a workflow engine and auto scaling, each
+built from a mechanism the engine already had.
+
+**How it works here.**
+- *A lock's own line.* `SupportServiceModel.finishLock` separates the lock
+  service's work from the lock itself. A request occupies a slot only while its
+  grant or release is processed; then it either holds its lock (a map of
+  holders by lock number) or joins that lock's own waiting line, with a timeout
+  scheduled. One event per request can mean three things — grant processed,
+  hold over, or waited too long — and which one is told by where the request
+  is, so a timeout that fires after the request was granted does nothing.
+- *A workflow as chained backlogs.* The workflow node gets a broker station and
+  one `QueueModel` per step (step one keyed by the node id, so a start is an
+  ordinary publish). A finished step reserves room in the next backlog with
+  `reserveArrival`, and the job arrives after the state-save time with
+  `restoreArrival`. Billing counts `transitions`: every step taken off a
+  backlog, retries included.
+- *A server that is a group.* `ServerModel` keeps one instance's resources and
+  multiplies them by `instances` through getters, so every existing check —
+  free CPU, admission, memory, queue room — follows the group with no change.
+  A check reads CPU busy and slot *areas* since the last check
+  (`TimeWeightedAccumulator.integral`), so utilisation is a share of what was
+  actually serving. A started instance is counted in `billedAcc` at once and
+  in capacity only when ready.
+
+**Verified by.** `tests/backend-components.test.ts` (24 tests: the 50-a-second
+lock cap, per-item locks, skipped requests, timeouts; step order, durations,
+retries, failed and refused steps, transitions billed; scaling out, bounds,
+scaling in, warm-up, Timed-run interval, Live, billing and fallback, version
+6 upgrade), the release cases in `e2e/released-components.spec.ts`, and
+`e2e/backend-components.spec.ts`.
+
+## A chain on the event queue (entry 076)
+
+**What it is.** Blocks, a pending pool and a moving fee, simulated with the same
+event queue as everything else.
+
+**How it works here.**
+- *Blocks on a beat.* A `chainBlock` event per contract, every block time. In a
+  Timed run the beat continues while traffic arrives and, after that, only while
+  something is pending; a transaction arriving when no block is scheduled asks
+  for the next beat (`ensureBlock`), so blocks stay aligned to the chain's
+  clock. Live keeps the beat for ever.
+- *Two events per transaction.* The submission is processed in a slot and put
+  in the pool; the block that takes it schedules one more event at its last
+  confirmation, which finishes the request. Waiting in the pool is counted as
+  the request's waiting time.
+- *The fee.* `fee *= 1 + (fullness − 0.5) / 0.5 / 8` after each block, with
+  fullness counting everyone else's elastic share (`backgroundShare / fee`).
+  Each transaction records the fee of its block; the gas bill uses that
+  weighting.
+- *One decision per request.* `chainTx` is set by the first chain piece that
+  asks, so a wallet and a contract never disagree about what a request is.
+
+**Verified by.** `tests/blockchain.test.ts` (18 tests: waiting for blocks and
+confirmations, reads that never wait, a layer-2's speed, a block's gas cap, the
+fee rule and its ceiling, a full pool, gas billing and an entered rate, the
+wallet's share and refusals and its agreement with the contract, the RPC plan
+limit and its one target, indexer lag, oracle updates and staleness, cached and
+uncached storage, schema and saved runs, rate-less profiles, Live, version 8,
+the workshop); six release cases in `e2e/released-components.spec.ts`; and
+`e2e/blockchain.spec.ts`.
+
 ## Specialized data resources (released; entries 062–066)
 
 `domain/data-services.ts` defines numeric settings, limits, labels and editable defaults once. The document schema and Inspector consume this metadata so fields cannot silently lose validation or editing. A separate pure TypeScript `DataServiceModel` prepares operations and owns per-partition ring queues, active slots, visibility state and bounded retention buckets. The main event heap schedules completion; both request and response use the existing network channels. No extra real timer, DOM or worker API is used by the model. Queue wait is added to the same request's wait total. Snapshots copy counters and derive visibility without changing engine state.

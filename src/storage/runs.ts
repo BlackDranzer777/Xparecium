@@ -103,7 +103,7 @@ export function diffRunInputs(before: RunRecord, after: RunRecord): InputDiffere
   const b = after.inputDocument;
 
   for (const profile of new Set([...Object.keys(a.pricingOverrides), ...Object.keys(b.pricingOverrides)])) {
-    for (const charge of ['compute', 'storage', 'egress', 'requests', 'writes', 'duration', 'scan', 'ingest'] as const) {
+    for (const charge of ['compute', 'storage', 'egress', 'requests', 'writes', 'duration', 'scan', 'ingest', 'gas'] as const) {
       const previous = a.pricingOverrides[profile]?.[charge];
       const next = b.pricingOverrides[profile]?.[charge];
       if (previous !== next) differences.push({ label: `Billing rate ${profile}: ${charge}`,

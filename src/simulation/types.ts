@@ -46,7 +46,7 @@ export type RejectionReason =
   | 'storage-queue-full'
   | 'pubsub-publish-full'
   | 'function-throttled'
-  | 'data-service-full' | 'stream-publish-full' | 'worker-failed' | 'support-queue-full' | 'identity-denied' | 'dependency-unavailable' | 'secret-expired' | 'rate-limited' | 'connection-limit' | 'circuit-open' | 'mesh-unavailable';
+  | 'data-service-full' | 'stream-publish-full' | 'worker-failed' | 'support-queue-full' | 'identity-denied' | 'dependency-unavailable' | 'secret-expired' | 'rate-limited' | 'connection-limit' | 'circuit-open' | 'mesh-unavailable' | 'lock-timeout' | 'wallet-rejected' | 'rpc-rate-limited' | 'mempool-full';
 
 export const REJECTION_LABELS: Record<RejectionReason, string> = {
   'support-queue-full': 'Shared service waiting queue is full',
@@ -57,6 +57,10 @@ export const REJECTION_LABELS: Record<RejectionReason, string> = {
   'connection-limit': 'WebSocket connection or memory limit reached',
   'circuit-open': 'Mesh proxy circuit is open',
   'mesh-unavailable': 'Mesh connection retries exhausted',
+  'lock-timeout': 'Gave up waiting for a lock',
+  'wallet-rejected': 'The person refused or abandoned the signature',
+  'rpc-rate-limited': 'The RPC node refused it: over the plan limit',
+  'mempool-full': 'The chain’s pending pool was full',
   'stream-publish-full': 'Event stream publish queue was full',
   'worker-failed': 'The worker failed this attempt',
   'data-service-full': 'Data service waiting queue was full',
@@ -110,7 +114,7 @@ export interface ServerMetrics {
   nodeId: string;
   name: string;
   /** Absent from records written before serverless functions existed. */
-  kind?: 'server' | 'serverless';
+  kind?: 'server' | 'serverless' | 'rpcNode';
   admitted: number;
   completed: number;
   rejected: number;
@@ -135,6 +139,13 @@ export interface ServerMetrics {
   throttled?: number;
   /** Serverless only: wall-clock milliseconds invocations were alive, summed. */
   busyMsTotal?: number;
+  /** Auto-scaled servers only: billed instances, on average and at most. */
+  instancesAverage?: number;
+  instancesPeak?: number;
+  /** Instances serving when the run ended. */
+  instancesNow?: number;
+  scaleOuts?: number;
+  scaleIns?: number;
 }
 
 export interface DataServiceMetrics {
@@ -160,7 +171,7 @@ export interface StationMetrics {
     | 'readReplica'
     | 'kvStore'
     | 'objectStorage'
-    | 'pubsub' | 'eventStream';
+    | 'pubsub' | 'eventStream' | 'workflow';
   operations: number;
   rejected: number;
   /** Fraction of total slot-time that was busy, time-weighted. */
@@ -193,7 +204,7 @@ export interface StationMetrics {
  * round to.
  */
 export interface QueueMetrics {
-  kind?: 'queue' | 'pubsub' | 'eventStream' | 'deadLetter';
+  kind?: 'queue' | 'pubsub' | 'eventStream' | 'deadLetter' | 'workflow';
   retries?: number;
   retrying?: number;
   expired?: number;
@@ -296,6 +307,18 @@ export interface UsageLedger {
    * bill counts. Absent from runs saved before it was measured.
    */
   ingestedBytesByNodeId?: Record<string, number>;
+  /**
+   * Auto-scaled servers: billed instances, averaged over the measured
+   * interval — serving and warming up. Absent from runs saved before it.
+   */
+  instancesByNodeId?: Record<string, number>;
+  /** Gas used by a contract's own transactions, and by each oracle's updates. */
+  gasByNodeId?: Record<string, number>;
+  /**
+   * The same gas, each transaction weighted by the base fee of the block that
+   * took it as a multiple of the starting fee. What gas costs follows this.
+   */
+  feeWeightedGasByNodeId?: Record<string, number>;
   measuredSeconds: number;
   /** Bytes sent from a server towards a client. Used for outbound transfer pricing. */
   egressBytes: number;
@@ -322,12 +345,14 @@ export interface Finding {
 }
 
 export interface JobServiceMetrics {
-  nodeId: string; name: string; kind: 'eventStream' | 'scheduler' | 'deadLetter';
+  nodeId: string; name: string; kind: 'eventStream' | 'scheduler' | 'deadLetter' | 'workflow';
   accepted: number; completed: number; failed: number; waiting: number;
   details: Record<string, number>;
 }
 export interface SimulationResult {
   supportServices?: SupportMetrics[];
+  /** Wallet, smart contract, indexer, storage and oracles. The RPC node reports with the servers. */
+  chainServices?: SupportMetrics[];
   jobServices?: JobServiceMetrics[];
   engineVersion: string;
   seed: number;

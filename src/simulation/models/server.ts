@@ -20,6 +20,7 @@
 import { TimeWeightedAccumulator } from '../metrics';
 import { RingQueue } from '../ring-queue';
 import type { ServerNode, ServerlessNode } from '../../domain/types';
+import type { ChainNodeOf } from '../../domain/chain-services';
 
 /** How a compute node is configured for the model, whichever kind it is. */
 export interface ComputeShape {
@@ -53,23 +54,71 @@ export function shapeOfFunction(node: ServerlessNode): ComputeShape {
   };
 }
 
+/**
+ * A hosted RPC node as the same model. It processes a request in a CPU slot;
+ * a request waiting for its transaction's block does not hold one of the
+ * node's own limits — the person's client polls for the receipt — so
+ * concurrency is not what bounds a node. Its plan's rate is, and that is
+ * checked before admission, like a gateway's.
+ */
+export function shapeOfRpcNode(node: ChainNodeOf<'rpcNode'>): ComputeShape {
+  const s = node.settings;
+  return {
+    cpuSlots: s.maxConcurrentRequests,
+    ramMb: Number.MAX_SAFE_INTEGER,
+    cpuMsPerRequest: s.requestMs,
+    concurrencyLimit: Number.MAX_SAFE_INTEGER,
+    baselineMemoryMb: 0,
+    memoryPerRequestMb: 0,
+    memoryPerQueuedRequestMb: 0,
+    queueLimit: 0,
+  };
+}
+
 export interface WaitingRequest {
   requestId: number;
   queuedAt: number;
 }
 
+/** An auto-scaled group's policy, in milliseconds. */
+export interface ScalingPolicy {
+  min: number;
+  max: number;
+  target: number;
+  warmupMs: number;
+  checkMs: number;
+}
+
 export class ServerModel {
   readonly nodeId: string;
   readonly name: string;
-  readonly kind: 'server' | 'serverless';
-  readonly cpuSlots: number;
-  readonly ramMb: number;
+  readonly kind: 'server' | 'serverless' | 'rpcNode';
   readonly cpuMsPerRequest: number;
-  readonly concurrencyLimit: number;
-  readonly baselineMemoryMb: number;
   readonly memoryPerRequestMb: number;
   readonly memoryPerQueuedRequestMb: number;
-  readonly queueLimit: number;
+  // One instance's resources. A server that is not auto-scaled is one
+  // instance, so these are its whole capacity, exactly as before.
+  private readonly perInstance: { cpuSlots: number; ramMb: number; concurrencyLimit: number; baselineMemoryMb: number; queueLimit: number };
+  /** Null unless the server is auto-scaled. */
+  readonly scaling: ScalingPolicy | null;
+  /** Instances serving requests. */
+  instances = 1;
+  /** Instances started and still warming up: billed, not yet serving. */
+  pending = 0;
+  scaleOuts = 0;
+  scaleIns = 0;
+  /** Serving capacity over time, so CPU use is a share of what existed. */
+  readonly slotsAcc = new TimeWeightedAccumulator(0);
+  /** Billed instances over time — serving plus warming up. */
+  readonly billedAcc = new TimeWeightedAccumulator(0);
+  /** CPU and slot areas at the last scaling check. */
+  lastCheck = { busyArea: 0, slotArea: 0 };
+
+  get cpuSlots(): number { return this.perInstance.cpuSlots * this.instances; }
+  get ramMb(): number { return this.perInstance.ramMb * this.instances; }
+  get concurrencyLimit(): number { return this.perInstance.concurrencyLimit * this.instances; }
+  get baselineMemoryMb(): number { return this.perInstance.baselineMemoryMb * this.instances; }
+  get queueLimit(): number { return this.perInstance.queueLimit * this.instances; }
 
   cpuBusy = 0;
   admittedCount = 0;
@@ -95,20 +144,50 @@ export class ServerModel {
   throttled = 0;
   busyMsTotal = 0;
 
-  constructor(node: ServerNode | ServerlessNode) {
-    const s = node.kind === 'serverless' ? shapeOfFunction(node) : node.settings;
+  constructor(node: ServerNode | ServerlessNode | ChainNodeOf<'rpcNode'>) {
+    const s = node.kind === 'serverless' ? shapeOfFunction(node) : node.kind === 'rpcNode' ? shapeOfRpcNode(node) : node.settings;
     this.nodeId = node.id;
     this.name = node.name;
     this.kind = node.kind;
-    this.cpuSlots = s.cpuSlots;
-    this.ramMb = s.ramMb;
+    this.perInstance = { cpuSlots: s.cpuSlots, ramMb: s.ramMb, concurrencyLimit: s.concurrencyLimit,
+      baselineMemoryMb: s.baselineMemoryMb, queueLimit: s.queueLimit };
     this.cpuMsPerRequest = s.cpuMsPerRequest;
-    this.concurrencyLimit = s.concurrencyLimit;
-    this.baselineMemoryMb = s.baselineMemoryMb;
     this.memoryPerRequestMb = s.memoryPerRequestMb;
     this.memoryPerQueuedRequestMb = s.memoryPerQueuedRequestMb;
-    this.queueLimit = s.queueLimit;
+    const settings = node.kind === 'server' ? node.settings : null;
+    this.scaling = settings?.autoscaleEnabled
+      ? { min: settings.minInstances, max: Math.max(settings.minInstances, settings.maxInstances),
+          target: settings.targetCpuShare, warmupMs: settings.instanceWarmupSeconds * 1000,
+          checkMs: settings.scaleCheckSeconds * 1000 }
+      : null;
+    this.instances = this.scaling ? this.scaling.min : 1;
+    this.slotsAcc.set(0, this.cpuSlots);
+    this.billedAcc.set(0, this.instances);
     this.memoryAcc.set(0, this.baselineMemoryMb);
+  }
+
+  /**
+   * Change how many instances serve. Requests already running keep going on
+   * the capacity they had; only new admissions and CPU starts see the change.
+   */
+  setInstances(count: number, now: number): void {
+    this.instances = count;
+    this.slotsAcc.set(now, this.cpuSlots);
+    this.billedAcc.set(now, this.instances + this.pending);
+    this.syncMemory(now);
+  }
+
+  /** An instance has been started; it bills from now and serves after warming up. */
+  startInstance(now: number): void {
+    this.pending += 1;
+    this.scaleOuts += 1;
+    this.billedAcc.set(now, this.instances + this.pending);
+  }
+
+  /** A started instance has warmed up and takes requests. */
+  instanceReady(now: number): void {
+    this.pending -= 1;
+    this.setInstances(this.instances + 1, now);
   }
 
   /** Memory in use right now, given a hypothetical extra admitted/queued request. */

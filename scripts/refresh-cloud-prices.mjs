@@ -336,6 +336,12 @@ async function build() {
     shardHour: (r) => onDemand(r) && r.usageType === 'Storage-ShardHour' && r.Unit === 'ShardHour',
     putUnits: (r) => onDemand(r) && r.usageType === 'PutRequestPayloadUnits',
   });
+  log('AWS: Step Functions…');
+  // Standard workflows. The first 4,000 transitions a month are free on a
+  // separate "Global-" row, which this matcher does not pick up.
+  const states = await awsLookup('AmazonStates', {
+    transition: (r) => onDemand(r) && r.usageType === 'USE1-StateTransition' && r.Unit === 'StateTransitions' && r.StartingRange === '0',
+  });
   log('AWS: EventBridge Scheduler…');
   const scheduler = await awsLookup('AWSEvents', {
     invocationsPaid: (r) => onDemand(r) && r.usageType === 'USE1-ScheduledInvocation' && r.StartingRange === '14000000',
@@ -881,6 +887,21 @@ async function build() {
       },
     },
     ...ILLUSTRATIVE.filter((p) => p.appliesTo.includes('scheduler')),
+    {
+      id: 'aws.stepfunctions.standard.us-east-1',
+      provider: 'aws', providerName: 'Amazon Web Services', region: AWS_REGION, regionName: AWS_REGION_NAME,
+      appliesTo: ['workflow'],
+      label: 'Step Functions (Standard workflows)',
+      description: 'Managed workflows. Billed per state transition — every step executed, retries included; nothing is provisioned.',
+      verified: true,
+      priceSourceUrl: awsUrl('AmazonStates'),
+      priceCheckedAt: today,
+      priceNote: awsNote('AmazonStates', states.publication, 'Standard workflows. The first 4,000 state transitions a month are free per account and are not deducted. Express workflows bill per request and duration instead and are not modelled. The workers each step calls are priced on their own lines.'),
+      charges: {
+        requests: { unit: 'million state transitions', amount: amount(Number(states.rows.transition.PricePerUnit) * 1_000_000), note: 'One step executed, or retried, = one state transition.' },
+      },
+    },
+    ...ILLUSTRATIVE.filter((p) => p.appliesTo.includes('workflow')),
 
     // ---- Shared services and real-time -----------------------------------
     {
@@ -900,6 +921,27 @@ async function build() {
     ...ILLUSTRATIVE.filter((p) => p.appliesTo.includes('websocket')),
     ...ILLUSTRATIVE.filter((p) => p.appliesTo.includes('rateLimiter')),
     ...ILLUSTRATIVE.filter((p) => p.appliesTo.includes('serviceMesh')),
+    {
+      id: 'aws.ec2.m7i-large.lock.us-east-1',
+      provider: 'aws', providerName: 'Amazon Web Services', region: AWS_REGION, regionName: AWS_REGION_NAME,
+      appliesTo: ['lock'],
+      label: 'EC2 m7i.large per cluster node (self-run etcd or ZooKeeper)',
+      description: `No provider sells a lock service by the request, so a lock cluster is priced as the machines it runs on: one ${ec2.rows['m7i.large'].vCPU} vCPU, ${ec2.rows['m7i.large'].Memory} instance per node.`,
+      verified: true,
+      priceSourceUrl: awsUrl('AmazonEC2'),
+      priceCheckedAt: today,
+      priceNote: awsNote('AmazonEC2', ec2.publication, 'Linux, shared tenancy. The machine size is a judgement, not a provider product: etcd recommends 2 vCPU and 8 GB for a small cluster, which is an m7i.large. The node count comes from the canvas. Disks and traffic between the nodes are not included.'),
+      charges: {
+        compute: { unit: 'instance-hour', amount: amount(ec2.rows['m7i.large'].PricePerUnit) },
+      },
+    },
+    ...ILLUSTRATIVE.filter((p) => p.appliesTo.includes('lock')),
+
+    // ---- Blockchain (entry 076) --------------------------------------------
+    // Nothing here has a machine-readable price list, and gas and token prices
+    // move by the minute, so every piece starts on its rate-less shape.
+    ...['wallet', 'rpcNode', 'smartContract', 'indexer', 'oracle', 'ipfs'].flatMap((kind) =>
+      ILLUSTRATIVE.filter((p) => p.appliesTo.includes(kind))),
     {
       id: 'aws.cognito.us-east-1',
       provider: 'aws', providerName: 'Amazon Web Services', region: AWS_REGION, regionName: AWS_REGION_NAME,

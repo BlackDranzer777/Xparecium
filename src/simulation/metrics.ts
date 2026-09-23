@@ -188,6 +188,12 @@ export class TimeWeightedAccumulator {
     this.set(time, this.level + delta);
   }
 
+  /** Level × time accumulated up to `time`, without changing anything. */
+  integral(time: number): number {
+    const until = Math.min(time, this.endTime);
+    return this.area + this.level * Math.max(0, until - this.lastTime);
+  }
+
   timeAverage(endTime: number): number {
     const until = Math.min(endTime, this.endTime);
     const elapsed = until - this.startTime;

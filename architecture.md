@@ -707,7 +707,7 @@ told what is covered. ADR-014 is the consequence.
 *Entry 071* restyled the app after a dashboard mock — cream ground, pastel
 component cards by category, one orange-red action, pill tabs, firm outlines —
 without changing this rule. New roles: `--outline` (the firm border),
-`--tint-<category>` for the six palette categories, `--ink-on-tint` and
+`--tint-<category>` for the seven palette categories (blockchain joined in entry 076), `--ink-on-tint` and
 `--ok/warn/bad-on-tint` (a pastel card keeps dark text and dark status colours
 in both themes), and `--frame*` for dark panels. `src/ui/kind-style.ts` maps a
 component kind to its category's tint once, for the canvas node and the palette
@@ -1041,6 +1041,77 @@ flowchart LR
   Controls --> Stop[Stop cancels active engine]
   Stop --> Driver
 ```
+
+### ADR-036 — Blockchain: a chain is a service with its own clock and its own fee
+**Status:** accepted. **Entry:** 076.
+Six pieces, defined once in `src/domain/chain-services.ts` (settings, labels,
+descriptions; schema and forms are built from it), and each placed on the
+machinery that already fits:
+- **Wallet** is an inline hop, like a WebSocket server: it signs only requests
+  that are transactions, and a share of people refuse. The first chain piece a
+  request meets — a wallet, or the contract — decides whether it is a
+  transaction, and the request carries that (`chainTx`), so what was signed as a
+  transaction is what the chain receives as one.
+- **RPC node** is a compute kind (`COMPUTE_KINDS`), so it is an entry point with
+  a branch like a server; its shape is slots for processing and no concurrency
+  bound, and a token bucket refuses what is over the plan. It may call only a
+  Smart contract.
+- **Smart contract** is `ChainContractModel`, a subclass of the shared-service
+  model: submissions use its slots, then wait in a bounded mempool; blocks come
+  on a fixed beat (`chainBlock` events, while traffic arrives or anything is
+  pending), take the pool oldest first into the space others leave, and finish
+  a transaction after its confirmations. The fee is a multiple of the starting
+  fee, moved each block by EIP-1559's rule; everyone else's share of a block is
+  elastic (divided by that multiple) so a busy chain settles rather than rising
+  for ever, while the app's own transactions are not. A read is answered from
+  the node's copy of the chain and never waits for a block.
+- **Indexer** and **Decentralised storage** are shared services the server
+  calls; the indexer is fed each block by the contract it is connected from and
+  indexes sequentially, which is where its lag comes from. Storage has two read
+  speeds, cached and not.
+- **Oracle** is a source on its own clock, like a scheduler, submitting detached
+  transactions to one contract.
+Money: a new charge type, **gas**, bills the gas used weighted by the fee
+multiple when each transaction was included (`feeWeightedGasByNodeId`). No
+provider publishes a machine-readable price for any of this, and gas and token
+prices change by the minute, so every piece starts on a rate-less profile whose
+note says how to work the rate out; the run supplies the quantity (ADR-034).
+*Why:* the lessons a chain teaches are exactly these mechanisms — waiting for a
+block, a fixed block size, a fee that punishes full blocks, reads that cost
+nothing. *Trade-off:* no tips or fee bidding, no reorganisations, no failed
+transactions; documents are version 8.
+
+### ADR-035 — The backend set is completed on existing machinery
+**Status:** accepted. **Entry:** 075.
+Three missing backend pieces, each built from something the engine already had
+rather than a new mechanism:
+- **Distributed lock** is a shared service (`SUPPORT_SERVICES.lock`, a
+  dependency the server calls like identity). What is new is that holding a
+  lock takes no service slot: the model keeps a holder and a waiting line *per
+  lock*, apart from its slots, so the service is idle while a request holds a
+  lock and contention shows up as that lock's line — one lock with 20 ms held
+  caps a system at 50 a second, one per item removes the waiting. The held
+  work is the hold time the canvas sets, before the request goes on; it is not
+  the request's own downstream work.
+- **Workflow engine** is a Message Queue's machinery in a chain. Its fields
+  share the queue's names, starting a workflow *is* a publish into step one's
+  backlog, each step is a consumer route to its worker, and a finished step
+  moves the job to the next step's backlog after the state-save time (a
+  reserved "arriving" slot keeps that bounded). Retries and worker failure use
+  the queue's code; a step out of attempts fails the workflow. Step order is
+  the order connections were drawn, and the settings panel says so.
+- **Auto scaling** is a setting on the Application Server, not a box: with it
+  on, the box stands for a group of identical instances. Capacity fields
+  become per-instance × instances; a check every few seconds does target
+  tracking on CPU; a started instance bills at once and serves after its
+  warm-up. In a Timed run checks and starts happen only while traffic arrives,
+  so an idle group cannot stretch the measured interval (ADR-011).
+*Why:* each piece teaches something the others do not — contention, durable
+multi-step work, capacity that follows load — and reusing machinery keeps the
+engine's behaviour, bounds and tests shared instead of copied. *Trade-off:*
+the workflow is linear and ordered by drawing; the lock does not model lease
+expiry or a crashed holder; scaling is target tracking only (future.md).
+Documents are version 7: older servers open with auto scaling off.
 
 ### ADR-034 — A charge's quantity comes from the run and the canvas, never from a guess
 **Status:** accepted. **Entry:** 066.

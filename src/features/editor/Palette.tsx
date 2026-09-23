@@ -33,7 +33,8 @@ const ALL_CATEGORIES: { title: string; kinds: ComponentKind[] }[] = [
   { title: 'Compute', kinds: ['loadBalancer', 'server', 'serverless'] },
   { title: 'Shared services', kinds: [...SUPPORT_KINDS] },
   { title: 'Data', kinds: ['database', 'readReplica', 'cache', 'kvStore', 'objectStorage', 'documentDb', 'wideColumn', 'searchIndex', 'warehouse', 'timeSeries'] },
-  { title: 'Messaging', kinds: ['queue', 'pubsub', 'eventStream', 'deadLetter', 'scheduler'] },
+  { title: 'Messaging', kinds: ['queue', 'pubsub', 'eventStream', 'deadLetter', 'scheduler', 'workflow'] },
+  { title: 'Blockchain', kinds: ['wallet', 'rpcNode', 'smartContract', 'indexer', 'oracle', 'ipfs'] },
 ];
 
 // Only released components are offered; see RELEASED_KINDS for what that means.

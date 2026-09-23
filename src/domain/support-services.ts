@@ -30,6 +30,14 @@ export const SUPPORT_SERVICES = {
   monitoring: { label: 'Monitoring / logging', examples: 'OpenTelemetry Collector · Prometheus · Loki',
     description: 'Samples completed application operations and accepts their telemetry in the background. Connect the application to it. Overload drops telemetry, not user requests. Retention stores bounded aggregate counts, not real log text.',
     fields: { ...common, sampleShare: n('Sampled operation share (0–1)', 1, 0, 1), recordBytes: n('Telemetry record size', 256, 0, 100000000, 'bytes', true), maxRecords: n('Retained record limit', 10000, 0, 100000, undefined, true), retentionSeconds: n('Telemetry retention', 60, 0.001, 31536000, 's') } },
+  lock: { label: 'Distributed lock', examples: 'etcd · ZooKeeper · Consul · Redis (Redlock)',
+    description: 'Makes sure only one request at a time does something that must not happen twice, like selling the last seat or charging the same order. The application asks for a lock before that work; while one request holds it, others with the same lock wait in line, and give up after a time limit. Connect the application to it. One lock for everything is simple and slow; one lock per item lets different items go at once.',
+    fields: { serviceTimeMs: n('Time to grant or release a lock', 2, 0, 600000, 'ms'), maxConcurrentRequests: n('Parallel lock operations', 64, 1, 4096, undefined, true),
+      queueLimit: n('Waiting operations limit', 1000, 0, 100000, undefined, true),
+      requestBytes: n('Lock request size', 128, 0, 100000000, 'bytes', true), responseBytes: n('Lock reply size', 64, 0, 100000000, 'bytes', true),
+      lockShare: n('Requests that need the lock (0–1)', 1, 0, 1), lockKeys: n('Separate locks', 1, 1, 1000000, undefined, true),
+      holdMs: n('Work done while holding the lock', 20, 0, 600000, 'ms'), waitTimeoutMs: n('Give up waiting after', 1000, 0, 3600000, 'ms'),
+      clusterNodes: n('Cluster nodes', 3, 1, 9, undefined, true) } },
   serviceMesh: { label: 'Service mesh proxy', examples: 'Envoy · Istio · Linkerd',
     description: 'Represents one proxy hop on the request path. It retries simulated connection failures and opens a circuit after repeated failures. Place before the application. It does not retry a write after it was delivered, or model a whole mesh control plane.',
     fields: { ...common, connectionFailureShare: n('Failed connection attempt share (0–1)', 0.01, 0, 1), connectMs: n('Time per connection attempt', 2, 0, 600000, 'ms'), maxAttempts: n('Connection attempts', 3, 1, 20, undefined, true), retryDelayMs: n('Connection retry delay', 10, 0, 600000, 'ms'), failureThreshold: n('Failed requests before circuit opens', 5, 1, 1000, undefined, true), resetSeconds: n('Circuit open time', 5, 0.001, 86400, 's') } },
@@ -37,7 +45,7 @@ export const SUPPORT_SERVICES = {
 export type SupportKind = keyof typeof SUPPORT_SERVICES;
 export const SUPPORT_KINDS = Object.keys(SUPPORT_SERVICES) as SupportKind[];
 export const INLINE_SUPPORT = ['websocket', 'rateLimiter', 'serviceMesh'] as const;
-export const DEPENDENCY_SUPPORT = ['identity', 'discovery', 'secrets'] as const;
+export const DEPENDENCY_SUPPORT = ['identity', 'discovery', 'secrets', 'lock'] as const;
 export const ASYNC_SUPPORT = ['notification', 'monitoring'] as const;
 export const isSupportKind = (kind: string): kind is SupportKind => (SUPPORT_KINDS as readonly string[]).includes(kind);
 export type SupportSettings<K extends SupportKind> = { [P in keyof (typeof SUPPORT_SERVICES)[K]['fields']]: number };

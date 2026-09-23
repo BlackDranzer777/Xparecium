@@ -1,5 +1,6 @@
-import { SUPPORT_KINDS, SUPPORT_SERVICES, isSupportKind } from '../../domain/support-services';
+import { SUPPORT_SERVICES, isSupportKind } from '../../domain/support-services';
 import { isJobKind, JOB_SERVICES } from '../../domain/job-services';
+import { CHAIN_SERVICES, isChainKind } from '../../domain/chain-services';
 import { ServiceSettingsForm } from './ServiceSettingsForm';
 import { DATA_SERVICES, isDataKind } from '../../domain/data-services';
 import type { DataServiceNode, NumericSetting } from '../../domain/data-services';
@@ -55,34 +56,7 @@ import {
   Toggle,
 } from '../../ui/primitives';
 import { useEditor } from './store';
-
-const KIND_COLOR = {
-  ...Object.fromEntries(SUPPORT_KINDS.map(k => [k, 'text-kind-edge'])) as Record<(typeof SUPPORT_KINDS)[number], string>,
-  eventStream: 'text-kind-queue',
-  deadLetter: 'text-kind-queue',
-  scheduler: 'text-kind-queue',
-  documentDb: 'text-kind-database',
-  wideColumn: 'text-kind-database',
-  searchIndex: 'text-kind-database',
-  warehouse: 'text-kind-database',
-  timeSeries: 'text-kind-database',
-
-  client: 'text-kind-client',
-  loadBalancer: 'text-kind-balancer',
-  server: 'text-kind-server',
-  database: 'text-kind-database',
-  cache: 'text-kind-cache',
-  queue: 'text-kind-queue',
-  dns: 'text-kind-edge',
-  cdn: 'text-kind-edge',
-  waf: 'text-kind-edge',
-  apiGateway: 'text-kind-edge',
-  serverless: 'text-kind-server',
-  readReplica: 'text-kind-database',
-  kvStore: 'text-kind-database',
-  objectStorage: 'text-kind-database',
-  pubsub: 'text-kind-queue',
-} as const;
+import { kindIconClass } from '../../ui/kind-style';
 
 function Intro({ children }: { children: React.ReactNode }) {
   return <p className="mb-4 text-[12px] leading-relaxed text-ink-3">{children}</p>;
@@ -681,9 +655,64 @@ function ServerSettingsForm({ node }: { node: ArchNode & { kind: 'server' } }) {
           <span className="font-mono text-ink">
             {Number.isFinite(capacity) ? formatRate(capacity) : 'unlimited'}
           </span>{' '}
-          at best. A CPU slot is a deliberately simplified stand-in for usable compute capacity,
+          at best{s.autoscaleEnabled ? <>{' '}per instance, so{' '}
+            <span className="font-mono text-ink">
+              {Number.isFinite(capacity) ? formatRate(capacity * s.maxInstances) : 'unlimited'}
+            </span>{' '}with all {s.maxInstances} running</> : null}. A CPU slot is a deliberately simplified stand-in for usable compute capacity,
           not a core count.
         </Callout>
+      </div>
+
+      <div className="mb-4">
+        <Collapsible title="Auto scaling" defaultOpen={s.autoscaleEnabled} badge={s.autoscaleEnabled ? <Badge tone="accent">On</Badge> : null}>
+          <p className="mb-3 text-[12px] leading-relaxed text-ink-3">
+            Adds machines when this server gets busy and removes them when it is quiet. Every few
+            seconds it compares its CPU use with the target: at twice the target it wants twice the
+            machines. A new machine is paid for from the moment it starts, but only takes requests
+            after it has warmed up.
+          </p>
+          <div className="mb-4">
+            <Toggle
+              checked={s.autoscaleEnabled}
+              onChange={(on) => patch({ autoscaleEnabled: on })}
+              label="Scale this server automatically"
+            />
+          </div>
+          {s.autoscaleEnabled && (
+            <>
+              <Field label="Fewest instances" hint="Always running, even with no traffic — and always billed.">
+                {(id) => (
+                  <NumberInput id={id} value={s.minInstances} min={1} max={1000} step={1}
+                    onCommit={(v) => patch({ minInstances: Math.round(v), maxInstances: Math.max(Math.round(v), s.maxInstances) })} />
+                )}
+              </Field>
+              <Field label="Most instances" hint="The ceiling. Past it, requests wait or are refused as on one machine.">
+                {(id) => (
+                  <NumberInput id={id} value={s.maxInstances} min={1} max={1000} step={1}
+                    onCommit={(v) => patch({ maxInstances: Math.max(Math.round(v), s.minInstances) })} />
+                )}
+              </Field>
+              <Field label="Target CPU use (0–1)" hint="Lower keeps more spare room for a sudden rush, and costs more.">
+                {(id) => (
+                  <NumberInput id={id} value={s.targetCpuShare} min={0.05} max={1} step={0.05}
+                    onCommit={(v) => patch({ targetCpuShare: Math.min(1, Math.max(0.05, v)) })} />
+                )}
+              </Field>
+              <Field label="Warm-up time" unit="s" hint="From starting a machine to it taking requests. A virtual machine takes a minute or more; a container, tens of seconds.">
+                {(id) => (
+                  <NumberInput id={id} value={s.instanceWarmupSeconds} min={0} max={3600} step={1}
+                    onCommit={(v) => patch({ instanceWarmupSeconds: Math.max(0, v) })} />
+                )}
+              </Field>
+              <Field label="Check every" unit="s" hint="How often it looks at CPU use and decides. In a Timed run, scaling happens while traffic arrives.">
+                {(id) => (
+                  <NumberInput id={id} value={s.scaleCheckSeconds} min={0.1} max={3600} step={1}
+                    onCommit={(v) => patch({ scaleCheckSeconds: Math.max(0.1, v) })} />
+                )}
+              </Field>
+            </>
+          )}
+        </Collapsible>
       </div>
 
       <Collapsible title="Advanced" badge={s.profile === 'custom' ? <Badge>Custom</Badge> : null}>
@@ -1924,7 +1953,7 @@ export function Inspector() {
       <div className="mb-4">
         <div className="mb-2 flex items-center justify-between gap-2">
           <span className="flex items-center gap-2">
-            <span className={KIND_COLOR[node.kind]}>
+            <span className={kindIconClass(node.kind)}>
               <Glyph size={16} />
             </span>
             <span className="ap-eyebrow">{COMPONENT_LABELS[node.kind]}</span>
@@ -1972,6 +2001,8 @@ export function Inspector() {
       {node.kind === 'pubsub' && <PubSubSettingsForm node={node} />}
       {isSupportKind(node.kind) && <ServiceSettingsForm node={node} description={SUPPORT_SERVICES[node.kind].description} fields={SUPPORT_SERVICES[node.kind].fields} />}
       {isJobKind(node.kind) && <ServiceSettingsForm node={node} {...JOB_SERVICES[node.kind]} />}
+      {node.kind === 'workflow' && <WorkflowSteps workflowId={node.id} />}
+      {isChainKind(node.kind) && <ServiceSettingsForm node={node} description={CHAIN_SERVICES[node.kind].description} fields={CHAIN_SERVICES[node.kind].fields} />}
       {node.kind === 'queue' && <ServiceSettingsForm node={node} description="Retries: failed attempts can try again. Exhausted jobs go to a connected Dead-letter queue; otherwise they are counted as failed." fields={{
         processingFailureShare: { label: 'Worker failure share (0–1)', value: 0, min: 0, max: 1, help: 'Sampled before downstream work. Dependency failures also trigger retries.' },
         maxAttempts: { label: 'Maximum attempts per job', value: 3, min: 1, max: 100, integer: true },
@@ -1986,6 +2017,37 @@ export function Inspector() {
           </Section>
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * A workflow's steps are the workers it is connected to, in the order the
+ * connections were drawn. Saying so here is the only way to see the order.
+ */
+function WorkflowSteps({ workflowId }: { workflowId: string }) {
+  const document = useEditor((s) => s.project?.document);
+  if (!document) return null;
+  const steps = document.edges
+    .filter((e) => e.source === workflowId)
+    .map((e) => document.nodes.find((n) => n.id === e.target))
+    .filter((n): n is ArchNode => !!n && (n.kind === 'server' || n.kind === 'serverless'));
+  return (
+    <div className="mb-4 mt-2">
+      <p className="ap-label">Steps, in order</p>
+      {steps.length === 0 ? (
+        <p className="ap-hint">No steps yet. Connect this workflow to an Application Server or a Function for each step.</p>
+      ) : (
+        <ol className="space-y-1.5">
+          {steps.map((step, i) => (
+            <li key={step.id} className="flex items-center gap-2 text-[12.5px] text-ink">
+              <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-outline text-[11px] font-bold text-surface">{i + 1}</span>
+              {step.name}
+            </li>
+          ))}
+        </ol>
+      )}
+      <p className="ap-hint">The order is the order the connections were drawn. To change it, delete a connection and draw it again.</p>
     </div>
   );
 }

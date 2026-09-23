@@ -20,6 +20,11 @@ function stream(settings = {}) {
   return doc([client('u', { requestRateOverridePerSecond: 10 }), server('s'), job('eventStream', 'log', settings), server('w1'), server('w2')],
     [edge('u', 's', INSTANT), edge('s', 'log', INSTANT), edge('log', 'w1', INSTANT), edge('log', 'w2', INSTANT)], { durationSeconds: 1, drainSeconds: 2 });
 }
+/** Users start a two-step workflow; each step is its own worker. */
+function workflowDesign(settings = {}) {
+  return doc([client('u', { requestRateOverridePerSecond: 10 }), server('s'), job('workflow', 'wf', settings), server('step1'), server('step2')],
+    [edge('u', 's', INSTANT), edge('s', 'wf', INSTANT), edge('wf', 'step1', INSTANT), edge('wf', 'step2', INSTANT)], { durationSeconds: 1, drainSeconds: 3 });
+}
 function failedQueue(settings = {}, dlqSettings = {}) {
   return doc([client('u', { requestRateOverridePerSecond: 10 }), server('s'), queue('q', { processingFailureShare: 1, maxAttempts: 3, retryDelayMs: 10, ...settings }), server('w'), job('deadLetter', 'dlq', dlqSettings)],
     [edge('u', 's', INSTANT), edge('s', 'q', INSTANT), edge('q', 'w', INSTANT), edge('q', 'dlq', INSTANT)], { durationSeconds: 1, drainSeconds: 3 });
@@ -79,7 +84,7 @@ describe('Background job integration', () => {
     b.step(1000000, 2000); expect(a.result().jobServices).toEqual(b.result().jobServices);
   });
   for (const kind of JOB_KINDS) it(`${kind}: settings and immutable run metrics reopen; the rate-less shape stays unpriced`, () => {
-    const d = kind === 'eventStream' ? stream() : kind === 'deadLetter' ? failedQueue() : doc([job('scheduler', 'cron'), server('w')], [edge('cron', 'w', INSTANT)]);
+    const d = kind === 'eventStream' ? stream() : kind === 'deadLetter' ? failedQueue() : kind === 'workflow' ? workflowDesign() : doc([job('scheduler', 'cron'), server('w')], [edge('cron', 'w', INSTANT)]);
     expect(architectureDocumentSchema.parse(JSON.parse(JSON.stringify(d)))).toEqual(d);
     const target = d.nodes.find(n => n.kind === kind)!;
     for (const [key, field] of Object.entries(JOB_SERVICES[kind].fields)) {

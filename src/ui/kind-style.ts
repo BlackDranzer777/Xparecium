@@ -11,15 +11,17 @@
  * theme picks its own values without any component knowing.
  */
 import { SUPPORT_KINDS } from '../domain/support-services';
+import { CHAIN_KINDS } from '../domain/chain-services';
 import type { ComponentKind } from '../domain/types';
 
-export type KindCategory = 'traffic' | 'edge' | 'compute' | 'data' | 'messaging' | 'shared';
+export type KindCategory = 'traffic' | 'edge' | 'compute' | 'data' | 'messaging' | 'shared' | 'chain';
 
 export const KIND_CATEGORY: Record<ComponentKind, KindCategory> = {
   ...(Object.fromEntries(SUPPORT_KINDS.map((k) => [k, 'shared'])) as Record<
     (typeof SUPPORT_KINDS)[number],
     KindCategory
   >),
+  ...(Object.fromEntries(CHAIN_KINDS.map((k) => [k, 'chain'])) as Record<(typeof CHAIN_KINDS)[number], KindCategory>),
   client: 'traffic',
   dns: 'edge',
   cdn: 'edge',
@@ -43,6 +45,7 @@ export const KIND_CATEGORY: Record<ComponentKind, KindCategory> = {
   eventStream: 'messaging',
   deadLetter: 'messaging',
   scheduler: 'messaging',
+  workflow: 'messaging',
 };
 
 /** The pastel card background for a category. */
@@ -53,6 +56,7 @@ const CATEGORY_TINT: Record<KindCategory, string> = {
   data: 'bg-tint-data',
   messaging: 'bg-tint-messaging',
   shared: 'bg-tint-shared',
+  chain: 'bg-tint-chain',
 };
 
 /** The icon colour for a category, where the icon sits on a plain surface. */
@@ -63,6 +67,7 @@ const CATEGORY_ICON: Record<KindCategory, string> = {
   data: 'text-kind-database',
   messaging: 'text-kind-queue',
   shared: 'text-kind-shared',
+  chain: 'text-kind-chain',
 };
 
 export function kindTintClass(kind: ComponentKind): string {

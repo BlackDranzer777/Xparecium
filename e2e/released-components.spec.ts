@@ -4,6 +4,7 @@ import { DATA_SERVICES } from '../src/domain/data-services';
 import { COMPONENT_LABELS, RELEASED_KINDS } from '../src/domain/defaults';
 import { JOB_SERVICES } from '../src/domain/job-services';
 import { SUPPORT_SERVICES } from '../src/domain/support-services';
+import { CHAIN_SERVICES } from '../src/domain/chain-services';
 import type { ComponentKind } from '../src/domain/types';
 
 /**
@@ -24,8 +25,11 @@ import type { ComponentKind } from '../src/domain/types';
  * - source: it sends work to the server on its own (a scheduler).
  * - stream: the server publishes to it, and a second server reads from it.
  * - deadLetter: the server publishes to a queue whose worker fails every job.
+ * - workflow: the server starts it, and a second server is its one step.
+ * - rpc: it replaces the server as the entry point, calling a new contract.
+ * - oracle: it updates a new contract of its own.
  */
-type Placement = 'behindServer' | 'inFront' | 'source' | 'stream' | 'deadLetter';
+type Placement = 'behindServer' | 'inFront' | 'source' | 'stream' | 'deadLetter' | 'workflow' | 'rpc' | 'oracle';
 
 interface Release {
   kind: ComponentKind;
@@ -40,13 +44,16 @@ interface Release {
   section: string;
 }
 
-/** Nothing to read for these: see entry 066. */
-const UNPRICED_BY_DESIGN: ComponentKind[] = ['identity', 'rateLimiter', 'serviceMesh'];
+/** Nothing to read for these: see entries 066 and 076. */
+const UNPRICED_BY_DESIGN: ComponentKind[] = ['identity', 'rateLimiter', 'serviceMesh', 'rpcNode', 'smartContract', 'indexer', 'oracle', 'ipfs'];
+/** A wallet costs the app nothing, so it has no line at all (entry 076). */
+const NO_COST_LINES: ComponentKind[] = ['wallet'];
 
 const dataLabels = (kind: keyof typeof DATA_SERVICES) => Object.values(DATA_SERVICES[kind].fields).map((f) => f.label);
 const jobLabels = (kind: keyof typeof JOB_SERVICES) =>
   Object.values(JOB_SERVICES[kind].fields as Record<string, { label: string }>).map((f) => f.label);
 const supportLabels = (kind: keyof typeof SUPPORT_SERVICES) => Object.values(SUPPORT_SERVICES[kind].fields).map((f) => f.label);
+const chainLabels = (kind: keyof typeof CHAIN_SERVICES) => Object.values(CHAIN_SERVICES[kind].fields).map((f) => f.label);
 
 const RELEASES: Release[] = [
   // ---- data stores (entries 062, 063) -----------------------------------------
@@ -84,6 +91,24 @@ const RELEASES: Release[] = [
     edit: { label: 'Delivery attempts', type: '2', setting: 'maxAttempts', expected: 2 }, detail: /delivered · [\d,]+ retries/ },
   { kind: 'monitoring', placement: 'behindServer', labels: supportLabels('monitoring'), section: 'Shared services and real-time traffic',
     edit: { label: 'Sampled operation share (0–1)', type: '0.5', setting: 'sampleShare', expected: 0.5 }, detail: /retained · [\d,]+ dropped/ },
+  // ---- completing the backend set (entry 075) ---------------------------------
+  { kind: 'lock', placement: 'behindServer', labels: supportLabels('lock'), section: 'Shared services and real-time traffic',
+    edit: { label: 'Separate locks', type: '10', setting: 'lockKeys', expected: 10 }, detail: /waited · [\d,]+ gave up/ },
+  { kind: 'workflow', placement: 'workflow', labels: jobLabels('workflow'), section: 'Background jobs',
+    edit: { label: 'Attempts per step', type: '2', setting: 'maxAttempts', expected: 2 }, detail: /finished · [\d,]+ retries/ },
+  // ---- blockchain (entry 076) ---------------------------------------------------
+  { kind: 'wallet', placement: 'inFront', labels: chainLabels('wallet'), section: 'Blockchain',
+    edit: { label: 'Actions that need a signature (0–1)', type: '0.5', setting: 'transactionShare', expected: 0.5 }, detail: /signed · [\d,]+ refused/ },
+  { kind: 'rpcNode', placement: 'rpc', labels: chainLabels('rpcNode'), section: 'Blockchain',
+    edit: { label: 'Plan limit (requests per second)', type: '300', setting: 'ratePerSecond', expected: 300 }, detail: /answered/ },
+  { kind: 'smartContract', placement: 'behindServer', labels: chainLabels('smartContract'), section: 'Blockchain',
+    edit: { label: 'Time between blocks', type: '2', setting: 'blockSeconds', expected: 2 }, detail: /in blocks · fee ×[\d.]+/ },
+  { kind: 'indexer', placement: 'behindServer', labels: chainLabels('indexer'), section: 'Blockchain',
+    edit: { label: 'Query time', type: '8', setting: 'serviceTimeMs', expected: 8 }, detail: /queries · [\d.]+ s lag/ },
+  { kind: 'oracle', placement: 'oracle', labels: chainLabels('oracle'), section: 'Blockchain',
+    edit: { label: 'Update every', type: '5', setting: 'heartbeatSeconds', expected: 5 }, detail: /updates · [\d.]+ s oldest/ },
+  { kind: 'ipfs', placement: 'behindServer', labels: chainLabels('ipfs'), section: 'Blockchain',
+    edit: { label: 'Reads the gateway has cached (0–1)', type: '0.5', setting: 'gatewayHitShare', expected: 0.5 }, detail: /cached · [\d,]+ uncached/ },
 ];
 
 function collectConsoleErrors(page: Page): string[] {
@@ -142,6 +167,31 @@ async function wire(page: Page, kind: ComponentKind, placement: Placement): Prom
           state().connect(node.id, reader.id);
           break;
         }
+        case 'rpc': {
+          // The RPC node is the entry point; the starter's server and database go.
+          const database = nodes().find((n) => n.kind === 'database')!;
+          state().deleteNode(server.id);
+          state().deleteNode(database.id);
+          state().addComponent('smartContract');
+          const contract = lastAdded();
+          state().connect(users.id, node.id);
+          state().connect(node.id, contract.id);
+          break;
+        }
+        case 'oracle': {
+          state().addComponent('smartContract');
+          const contract = lastAdded();
+          state().connect(server.id, contract.id);
+          state().connect(node.id, contract.id);
+          break;
+        }
+        case 'workflow': {
+          state().addComponent('server');
+          const step = lastAdded();
+          state().connect(server.id, node.id);
+          state().connect(node.id, step.id);
+          break;
+        }
         case 'deadLetter': {
           state().addComponent('queue');
           const queue = lastAdded();
@@ -182,6 +232,8 @@ test('unreleased components are not offered in the palette', async ({ page }) =>
     ['Data workshop', ['documentDb', 'wideColumn', 'searchIndex', 'warehouse', 'timeSeries']],
     ['Background jobs workshop', ['scheduler', 'deadLetter', 'eventStream']],
     ['Shared services workshop', ['websocket', 'rateLimiter', 'serviceMesh', 'identity', 'discovery', 'secrets', 'notification', 'monitoring']],
+    ['Backend workshop: locks, workflows, auto scaling', ['lock', 'workflow']],
+    ['Blockchain workshop: an NFT drop', ['wallet', 'rpcNode', 'smartContract', 'indexer', 'oracle', 'ipfs']],
   ] as const) {
     const released = kinds.every((k) => RELEASED_KINDS.includes(k));
     await expect(page.getByText(template, { exact: true })).toHaveCount(released ? 1 : 0);
@@ -241,12 +293,15 @@ for (const release of RELEASES) {
       const own =
         (result.dataServices ?? []).find((s) => s.nodeId === nodeId) ??
         (result.jobServices ?? []).find((s) => s.nodeId === nodeId) ??
-        (result.supportServices ?? []).find((s) => s.nodeId === nodeId);
+        (result.supportServices ?? []).find((s) => s.nodeId === nodeId) ??
+        (result.chainServices ?? []).find((s) => s.nodeId === nodeId);
+      // An RPC node reports with the servers, as the compute it is.
+      const node = result.servers.find((s) => s.nodeId === nodeId && s.kind === 'rpcNode');
       return {
         completed: result.completed,
         rejected: result.rejected,
-        reported: own !== undefined,
-        worked: own ? ('accepted' in own ? own.accepted : own.completed) : 0,
+        reported: own !== undefined || node !== undefined,
+        worked: own ? ('accepted' in own ? own.accepted : own.completed) : node ? node.admitted : 0,
       };
     }, id);
     expect(summary.completed, 'users were still answered').toBeGreaterThan(0);
@@ -271,6 +326,11 @@ for (const release of RELEASES) {
         .filter((l) => l.nodeId === nodeId)
         .map((l) => ({ unpriced: l.unpriced, monthly: l.monthly, verified: l.verified }));
     }, id);
+    if (NO_COST_LINES.includes(release.kind)) {
+      expect(lines, 'nothing to bill the app for').toEqual([]);
+      expect(errors, `console errors: ${errors.join(' | ')}`).toEqual([]);
+      return;
+    }
     expect(lines.length, 'the cost sheet has a line for it').toBeGreaterThan(0);
     const stayUnpriced = UNPRICED_BY_DESIGN.includes(release.kind);
     for (const line of lines) {
